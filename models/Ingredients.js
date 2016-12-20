@@ -1,7 +1,7 @@
 var mongoose = require ('mongoose');
 
 var IngredientSchema = new mongoose.Schema({
-	nom:String,
+	nomi:String,
 	nombre: Number,
 	rayon: String,
 	unite: String,

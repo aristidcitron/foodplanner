@@ -8,22 +8,58 @@ app.config([
 			.state('home',{
 				url:'/home',
 				templateUrl:'/home.html',
-				controller:'MainCtrl'
+				controller:'MainCtrl',
+				resolve:{
+					recettePromise:['recettes', function(recettes){
+						return recettes.getAll();
+					}]
+				}
 			})
 			.state('recettes',{
 				url: '/recettes/{id}',
 				templateUrl:'/recettes.html',
-				controller: 'RecettesCtrl'
+				controller: 'RecettesCtrl',
+				resolve: {
+					recette:['$stateParams','recettes', function($stateParams, recettes){
+						return recettes.getingredients($stateParams.id);
+					}]
+				}
 			})
 		$urlRouterProvider.otherwise ('home');
 
 
 	}])
 
-app.factory('recettes',[function(){
+//méthodes d'appel a la bdd
+app.factory('recettes',['$http', function($http){
 	var o = {
 		recettes:[]
 	};
+	o.getAll = function(){
+		return $http.get('/recettes').success(function(data){
+			angular.copy(data,o.recettes);
+		});
+	};
+	o.getingredients = function(id){
+		return $http.get('/recettes/'+ id).then(function(res){
+			return res.data;
+		});
+	};
+
+	o.createrecette=function(recette){
+		return $http.post('/recettes', recette).success(function(data){
+			o.recettes.push(data)
+		});
+	};
+	o.upvote = function (recette){
+		return $http.put('/recettes/' + recette._id + '/upvote').success(function(data){
+			recette.upvotes +=1;
+		});
+	};
+	o.addingredient = function(id, ingredient){
+		return $http.post('/recettes/' + id + '/ingredients', ingredient);
+	};
+
 	return o;
 }])
 
@@ -35,26 +71,23 @@ function($scope,recettes){
   $scope.test = 'Hello world!';
   $scope.recettes = recettes.recettes;
   $scope.ajouterRecette = function() {
- 		if ($scope.nom ===''|| $scope.tempsdecuisson <1|| $scope.tempsdepreparation <1) { return; }
- 		$scope.recettes.push ({
- 			nom: $scope.nom,
+ 		if ($scope.nomr ===''|| $scope.tempsdecuisson <1|| $scope.tempsdepreparation <1) { return; }
+ 		recettes.createrecette ({
+ 			nomr: $scope.nomr,
  			upvotes: 0,
  			tempsdecuisson: $scope.tempsdecuisson,
  			tempsdepreparation:$scope.tempsdepreparation,
  			insctructions:$scope.instructions,
- 			ingredients:[
- 				{nom: 'carottes',nombre: '200'},
- 				{nom: 'tomates',nombre: '300'},
- 			]
+
  		});
- 		$scope.nom='';
+ 		$scope.nomr='';
  		$scope.tempsdepreparation='';
  		$scope.tempsdecuisson='';
  		$scope.instructions='';
  	}
 
  	$scope.incrementUpvotes = function(recette){
- 		recette.upvotes +=1;
+ 		recettes.upvote(recette);
  	}
 
 	$scope.supprimerRecette = function(index) { 
@@ -67,17 +100,20 @@ app.controller('RecettesCtrl', [
 	'$scope',
 	'$stateParams',
 	'recettes',
-function($scope,$stateParams,recettes){
-	$scope.recette = recettes.recettes[$stateParams.id];
-
+	'recette',
+function($scope,$stateParams,recettes,recette){
+	$scope.recette = recette;
 	$scope.ajouterIngredient = function() {
- 		if ($scope.nom ==='') { return; }
- 		$scope.recette.ingredients.push ({
- 			nom: $scope.nom,
+ 		if ($scope.nomi ==='') { return; }
+ 		recettes.addingredient(recette._id, {
+ 			nomi: $scope.nomi,
  			nombre: $scope.nombre,
+ 		}).success(function(ingredient){
+ 			$scope.recette.ingredients.push(ingredient);
  		});
- 		$scope.nom='';
+ 		$scope.nomi='';
  		$scope.nombre=''; 
+
  	}			
 }])
 ;
