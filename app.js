@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require ('mongoose');
-mongoose.connect ('mongodb://localhost/food');
+mongoose.connect ('mongodb://toto:28021986@ec2-54-235-42-48.compute-1.amazonaws.com:27017/dummyDB');
 require('./models/Recettes.js');
 require('./models/Ingredients.js');
 var index = require('./routes/index');
