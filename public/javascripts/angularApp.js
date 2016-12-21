@@ -24,7 +24,7 @@ app.config([
 						return recettes.getingredients($stateParams.id);
 					}]
 				}
-			})
+			});
 		$urlRouterProvider.otherwise ('home');
 
 
@@ -48,7 +48,7 @@ app.factory('recettes',['$http', function($http){
 
 	o.createrecette=function(recette){
 		return $http.post('/recettes', recette).success(function(data){
-			o.recettes.push(data)
+			o.recettes.push(data);
 		});
 	};
 	o.upvote = function (recette){
@@ -71,7 +71,7 @@ function($scope,recettes){
   $scope.test = 'Hello world!';
   $scope.recettes = recettes.recettes;
   $scope.ajouterRecette = function() {
- 		if ($scope.nomr ===''|| $scope.tempsdecuisson <1|| $scope.tempsdepreparation <1) { return; }
+ 		if (!$scope.nomr || $scope.nomr ===''|| $scope.tempsdecuisson <1|| $scope.tempsdepreparation <1) { return; }
  		recettes.createrecette ({
  			nomr: $scope.nomr,
  			upvotes: 0,
@@ -84,15 +84,15 @@ function($scope,recettes){
  		$scope.tempsdepreparation='';
  		$scope.tempsdecuisson='';
  		$scope.instructions='';
- 	}
+ 	};
 
  	$scope.incrementUpvotes = function(recette){
  		recettes.upvote(recette);
- 	}
+ 	};
 
 	$scope.supprimerRecette = function(index) { 
 		$scope.recettes.splice(index,1);
-	}
+	};
 	
 
 }]);
@@ -103,17 +103,15 @@ app.controller('RecettesCtrl', [
 	'recette',
 function($scope,$stateParams,recettes,recette){
 	$scope.recette = recette;
-	$scope.ajouterIngredient = function() {
- 		if ($scope.nomi ==='') { return; }
- 		recettes.addingredient(recette._id, {
+	$scope.ajouterIngredient = function(){
+ 		if (!$scope.nomi || $scope.nomi ==='') { return; }
+ 		recettes.addingredient(recette._id,{
  			nomi: $scope.nomi,
- 			nombre: $scope.nombre,
- 		}).success(function(ingredient){
- 			$scope.recette.ingredients.push(ingredient);
+ 			nombre: $scope.nombre
+ 			}).success(function(ingredient){
+ 				$scope.recette.ingredients.push(ingredient);
  		});
  		$scope.nomi='';
  		$scope.nombre=''; 
-
- 	}			
-}])
-;
+ 	};			
+}]);
