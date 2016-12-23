@@ -9,13 +9,14 @@ router.get('/', function(req, res, next) {
 var mongoose = require('mongoose');
 var Recette = mongoose.model('Recette');
 var Ingredient = mongoose.model('Ingredient');
+var Ingredientsdispo = mongoose.model('Ingredientsdispo');
 
 //avoir la liste des recettes
 router.get('/recettes', function (req,res,next){
 	Recette.find(function(err, recettes){
 		if (err) {next(err);}
 		res.json(recettes);
-	})
+	});
 });
 
 //ajouter une recette
@@ -24,7 +25,7 @@ router.post('/recettes/', function (req,res,next){
 	recette.save(function(err, recette){
 		if (err) { return next (err);}
 		res.json(recette);
-	})
+	});
 });	
 
 //récupérer l'id de recette en paramètre pour ajouter dans un url
@@ -35,15 +36,26 @@ router.param('recette', function(req,res,next,id){
 		if (!recette) {return next(new Error("je ne trouve pas cette recette :("));}
 		req.recette = recette;
 	return next();
-	})
+	});
 });
 
 //avoir les infos d'une recette
 router.get('/recettes/:recette', function (req, res) {
-	req.recette.populate('ingredients', function(err,post){
+	req.recette.populate('ingredients', function(err,recette){
 		res.json(req.recette);
 	});		
 });
+
+
+// supprimer une recette
+router.delete('/recettes/:recette', function(req,res){
+	req.recette.remove(function(err,recette){
+		if (err) {return next (err);}
+		res.json(recette);
+	});
+});
+
+
 // ajouter un like
 router.put('/recettes/:recette/upvote', function(req,res,next){
 	req.recette.upvote(function(err,recette){
@@ -56,15 +68,24 @@ router.put('/recettes/:recette/upvote', function(req,res,next){
 router.post('/recettes/:recette/ingredients', function(req,res,next){
 	var ingredient = new Ingredient(req.body);
 	ingredient.recette = req.recette;
-	ingredient.save(function(err,comment){
+	ingredient.save(function(err,ingredient){
 		if(err) {return next(err);}
 		req.recette.ingredients.push(ingredient);
 		req.recette.save(function(err,recette){
 			if(err) {return next(err);}
-			res.json(recette);
+			res.json(ingredient);
 		});
 	});
 });
+
+//ajouter un ingredient dispo
+router.post('/ingredientsdispo/', function (req,res,next){
+	var ingredientsdispo = new Ingredientsdispo(req.body);
+	ingredientsdispo.save(function(err, ingredientsdispo){
+		if (err) { return next (err);}
+		res.json(ingredietnsdispo);
+	});
+});	
 
 
 module.exports = router;

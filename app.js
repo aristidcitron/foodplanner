@@ -8,6 +8,7 @@ var mongoose = require ('mongoose');
 mongoose.connect ('mongodb://toto:28021986@ec2-54-235-42-48.compute-1.amazonaws.com:27017/dummyDB');
 require('./models/Recettes.js');
 require('./models/Ingredients.js');
+require('./models/Ingredientsdispos.js');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
