@@ -39,6 +39,17 @@ router.param('recette', function(req,res,next,id){
 	});
 });
 
+
+//récupérer l'id de ingredientsdispo en paramètre pour ajouter dans un url
+router.param('ingredientsdispo', function(req,res,next,id){
+	var query = Ingredientsdispo.findById(id);
+	query.exec(function(err, ingredientsdispo){
+		if (err) {return next(err);}
+		if (!ingredientsdispo) {return next(new Error("je ne trouve pas cette ingredient :("));}
+		req.ingredientsdispo = ingredientsdispo;
+	return next();
+	});
+});
 //avoir les infos d'une recette
 router.get('/recettes/:recette', function (req, res) {
 	req.recette.populate('ingredients', function(err,recette){
@@ -79,13 +90,39 @@ router.post('/recettes/:recette/ingredients', function(req,res,next){
 });
 
 //ajouter un ingredient dispo
-router.post('/ingredientsdispo/', function (req,res,next){
+router.post('/ingredientsdispos/', function (req,res,next){
 	var ingredientsdispo = new Ingredientsdispo(req.body);
 	ingredientsdispo.save(function(err, ingredientsdispo){
 		if (err) { return next (err);}
-		res.json(ingredietnsdispo);
+		res.json(ingredientsdispo);
 	});
 });	
+
+//récupérer la liste des ingredients dispo
+router.get('/ingredientsdispos/', function (req,res,next){
+	Ingredientsdispo.find(function(err, ingredientsdispos){
+		if (err) {next(err);}
+		res.json(ingredientsdispos);
+	});
+});
+
+// supprimer un ingredient dispo
+router.delete('/ingredientsdispos/:ingredientsdispo', function(req,res){
+	req.ingredientsdispo.remove(function(err,ingredientsdispo){
+		if (err) {return next (err);}
+		res.json(ingredientsdispo);
+	});
+});
+
+
+// supprimer une recette
+router.delete('/recettes/:recette', function(req,res){
+	req.recette.remove(function(err,recette){
+		if (err) {return next (err);}
+		res.json(recette);
+	});
+});
+
 
 
 module.exports = router;

@@ -49,7 +49,7 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
               <li class="active"><a href="#">Recettes <span class="sr-only">(current)</span></a></li>
-              <li><a href="#/ingredientsdispo">Ingredients</a></li>
+              <li><a href="#/ingredientsdispos">Ingredients</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -67,6 +67,9 @@
         </div><!-- /.container-fluid -->
       </nav>
     </script>
+
+
+
 
 
 
@@ -128,7 +131,7 @@
 
 
 
-     <script type="text/ng-template" id="/ingredientsdispo.html">
+     <script type="text/ng-template" id="/ingredientsdispos.html">
          <div class="page-header">
           <h1>Liste des ingredients</h1>
         </div>
@@ -140,8 +143,8 @@
           <td>  </td>
         <tr ng-repeat="ingredientdispo in ingredientdispos | orderBy :'nomid'">
           <td>{{ingredientdispo.nomid}}</a></td>
-          <td>{{recette.rayon}}</td>
-          <td>{{recette.unite}}</td>
+          <td>{{ingredientdispo.rayon}}</td>
+          <td>{{ingredientdispo.unite}}</td>
           <td> 
             <span class="glyphicon glyphicon-remove" ng-click="supprimerIngredientdispo(ingredientdispo)"></span>
            </td>

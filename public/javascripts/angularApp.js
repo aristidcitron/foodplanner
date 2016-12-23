@@ -25,15 +25,15 @@ app.config([
 				
 			})
 
-			.state('ingredientsdispo',{
-				url:'/ingredientsdispo',
+			.state('ingredientsdispos',{
+				url:'/ingredientsdispos',
 				views:{
 					'page':{
-						templateUrl:'/ingredientsdispo.html',
-						controller:'IngredientsdispoCtrl',
+						templateUrl:'/ingredientsdispos.html',
+						controller:'IngredientsdisposCtrl',
 						resolve:{
-							recettePromise:['recettes', function(recettes){
-								return recettes.getAll();
+							ingredientsdisposPromise:['ingredientsdispos', function(ingredientsdispos){
+								return ingredientsdispos.getIngredientsdispo();
 							}]
 						}
 					},
@@ -82,6 +82,14 @@ app.factory('recettes',['$http', function($http){
 			angular.copy(data,o.recettes);
 		});
 	};
+
+		// récupérer la liste de tous les ingredientsdispos 
+	o.getIngredientsdispo = function(){
+		return $http.get('/ingredientsdispos').success(function(data){
+			angular.copy(data,o.ingredientsdispos);
+		});
+	};
+
 	// récupérer la liste des ingrédients pour une recette 	
 	o.getingredients = function(id){
 		return $http.get('/recettes/'+ id).then(function(res){
@@ -94,6 +102,14 @@ app.factory('recettes',['$http', function($http){
 			o.recettes.push(data);
 		});
 	};
+
+	// ajouter un nouve ingredientsdispo
+	o.createingredientsdispo=function(ingredientsdispo){
+		return $http.post('/ingredientsdispos', ingredientsdispo).success(function(data){
+			o.ingredientsdispos.push(data);
+		});
+	};
+
 	// upvote une recette
 	o.upvote = function (recette){
 		return $http.put('/recettes/' + recette._id + '/upvote').success(function(data){
@@ -109,15 +125,45 @@ app.factory('recettes',['$http', function($http){
 		return $http.delete('/recettes/' + recette._id);
 	};
 	return o;
-
+	// supprimer un ingredientsdispo
+	o.deleteingredientsdispo = function (ingredientsdispo){
+		return $http.delete('/ingredientsdispos/' + recette._id);
+	};
+	return o;
 }])
+
+
+app.controller('IngredientsdisposCtrl', [
+'$scope',
+'ingredientsdispos',
+function($scope,ingredientsdispos){
+  $scope.ingredientsdispos = ingredientsdispos.ingredientsdispos;
+  $scope.ajouterIngredientsdispo = function() {
+ 		if (!$scope.nomid || $scope.nomid ==='') { return; }
+ 		recettes.createingredientsdispo ({
+ 			nomid: $scope.nomid,
+ 			rayon: $scope.rayon,
+ 			unite: $scope.unite,
+ 		});
+ 		$scope.nomid='';
+ 		$scope.rayon='';
+ 		$scope.unite='';
+ 	};
+
+ 	
+	$scope.supprimerIngredientsdispos = function(ingredientsdispo) {
+		var tampon=ingredientsdispo;
+		ingredientsdispos.deleteingredientsdispo(ingredientsdispo).success(function(ingredientsdispo){
+			$scope.ingredientsdispos.splice($scope.ingredientsdispos.indexOf(tampon),1);
+		})};
+	
+	}]);
 
 
 app.controller('MainCtrl', [
 '$scope',
 'recettes',
 function($scope,recettes){
-  $scope.test = 'Hello world!';
   $scope.recettes = recettes.recettes;
   $scope.ajouterRecette = function() {
  		if (!$scope.nomr || $scope.nomr ==='') { return; }
@@ -142,9 +188,14 @@ function($scope,recettes){
 		var tampon=recette;
 		recettes.deleterecette(recette).success(function(recette){
 			$scope.recettes.splice($scope.recettes.indexOf(tampon),1);
-	})};
+		})};
 	
-}]);
+	}]);
+
+
+
+
+
 app.controller('RecettesCtrl', [
 	'$scope',
 	'$stateParams',
