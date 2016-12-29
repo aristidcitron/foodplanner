@@ -39,13 +39,25 @@ router.param('recette', function(req,res,next,id){
 	});
 });
 
+//récupérer l'id de l'ingredient en paramètre pour ajouter dans un url
+router.param('ingredient', function(req,res,next,id){
+	var query = Ingredient.findById(id);
+	query.exec(function(err, ingredient){
+		if (err) {return next(err);}
+		if (!ingredient) {return next(new Error("je ne trouve pas cet ingredient :("));}
+		req.ingredient = ingredient;
+	return next();
+	});
+});
+
+
 
 //récupérer l'id de ingredientsdispo en paramètre pour ajouter dans un url
 router.param('ingredientsdispo', function(req,res,next,id){
 	var query = Ingredientsdispo.findById(id);
 	query.exec(function(err, ingredientsdispo){
 		if (err) {return next(err);}
-		if (!ingredientsdispo) {return next(new Error("je ne trouve pas cette ingredient :("));}
+		if (!ingredientsdispo) {return next(new Error("je ne trouve pas cet ingredient dispo :("));}
 		req.ingredientsdispo = ingredientsdispo;
 	return next();
 	});
@@ -106,6 +118,9 @@ router.get('/ingredientsdispos/', function (req,res,next){
 	});
 });
 
+
+
+
 // supprimer un ingredient dispo
 router.delete('/ingredientsdispos/:ingredientsdispo', function(req,res){
 	req.ingredientsdispo.remove(function(err,ingredientsdispo){
@@ -124,5 +139,23 @@ router.delete('/recettes/:recette', function(req,res){
 });
 
 
+//supprimer un ingredient d'une recette
+router.delete('/recettes/:recette/ingredients/:ingredient', function(req,res){
+	req.ingredient.remove(function(err,ingredient){
+		if (err) {return next (err);}
+		res.json(ingredient);
+	});
+});
+
+//editer le nombre d'un ingredient
+router.put('/ingredients/:ingredient', function(req,res){
+		Ingredient.findOneAndUpdate({_id:req.params.ingredient}, req.body, function (err,ingredient){
+		if (err) {return next (err);}
+		//il manque un truc pour aller chercher le ingredient mis à jour, et non pas celui qui existait avant
+		res.json(ingredient);
+	});
+});
 
 module.exports = router;
+
+

@@ -10,12 +10,14 @@
 
     <style> .glyphicon-thumbs-up { cursor:pointer } </style>
     <style> .glyphicon-remove { cursor:pointer } </style>
+    <style> .glyphicon-plus { cursor:pointer } </style>
+    <style> .glyphicon-pencil { cursor:pointer } </style>
   </head>
-  <body ng-app="foodplanner" ng-controller="MainCtrl">
+  <body ng-app="foodplanner">
 
      <div class="row"> 
      <div ui-view ="menu"> </div>
-      <div class="col-md-6 col-md-offset-3" >
+      <div class="col-md-10 col-md-offset-1" >
       <div ui-view="page"> </div>
       </div>
      </div>
@@ -35,21 +37,22 @@
 
 
 
+          <!-- Menu en haut de la page -->
 
-
-    <script type="text/ng-template" id="/menu.html">
+    <script type="text/ng-template" id="/menu.html" >
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header">
-            <a class="navbar-brand" href="#">Food Planner</a>
+            <a class="navbar-brand" href="#">Food Planner </a>
           </div>
 
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Recettes <span class="sr-only">(current)</span></a></li>
-              <li><a href="#/ingredientsdispos">Ingredients</a></li>
+              <li ng-class="{active: $state.current.name == 'home'}"><a href="#/home">Recettes</a></li>
+              <li ng-class="{active: $state.current.name == 'ingredientsdispos'}"><a href="#/ingredientsdispos">Ingredients</a></li>
+              <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>              
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -74,31 +77,13 @@
 
 
 
-
+          <!-- Liste des recettes et home -->
 
      <script type="text/ng-template" id="/home.html">
          <div class="page-header">
           <h1>Liste des recettes</h1>
         </div>
-      <table class="table"> 
-        <tr>
-          <td> Nom de recette </td>
-          <td> temps de préparation </td>
-          <td> temps de cuisson </td>
-          <td>  </td>
-        <tr ng-repeat="recette in recettes | orderBy :'-upvotes'">
-          <td><a href ="#/recettes/{{recette._id}}">{{recette.nomr}}</a></td>
-          <td>{{recette.tempsdepreparation}}</td>
-          <td>{{recette.tempsdecuisson}}</td>
-          <td> <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes (recette)"></span>
-            {{recette.upvotes}} 
-            <span class="glyphicon glyphicon-remove" ng-click="supprimerRecette(recette)"></span>
-           </td>
-        </tr>
-      </table>
-      <br><br><br>
- 
-    <form   ng-submit="ajouterRecette()" style="margin-top:30px;">
+        <form   ng-submit="ajouterRecette()" style="margin-top:30px;">
     <h3>Ajouter une nouvelle recette</h3>
       <div class="row">
       <div class="col-lg-6">
@@ -122,6 +107,25 @@
         </div> 
       </div>
       </form>
+      <table class="table"> 
+        <tr>
+          <td> Nom de recette </td>
+          <td> temps de préparation </td>
+          <td> temps de cuisson </td>
+          <td>  </td>
+        <tr ng-repeat="recette in recettes | orderBy :'-upvotes'">
+          <td><a href ="#/recettes/{{recette._id}}">{{recette.nomr}}</a></td>
+          <td>{{recette.tempsdepreparation}}</td>
+          <td>{{recette.tempsdecuisson}}</td>
+          <td> <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes (recette)"></span>
+            {{recette.upvotes}} 
+            <span class="glyphicon glyphicon-remove" ng-click="supprimerRecette(recette)"></span>
+           </td>
+        </tr>
+      </table>
+      <br><br><br>
+ 
+    
      </script>
 
 
@@ -129,30 +133,13 @@
 
 
 
-
+          <!-- Liste des ingredients disponible -->
 
      <script type="text/ng-template" id="/ingredientsdispos.html">
          <div class="page-header">
           <h1>Liste des ingredients</h1>
         </div>
-      <table class="table"> 
-        <tr>
-          <td> Nom de l'ingredient </td>
-          <td> Rayons </td>
-          <td> Unité </td>
-          <td>  </td>
-        <tr ng-repeat="ingredientdispo in ingredientdispos | orderBy :'nomid'">
-          <td>{{ingredientdispo.nomid}}</a></td>
-          <td>{{ingredientdispo.rayon}}</td>
-          <td>{{ingredientdispo.unite}}</td>
-          <td> 
-            <span class="glyphicon glyphicon-remove" ng-click="supprimerIngredientdispo(ingredientdispo)"></span>
-           </td>
-        </tr>
-      </table>
-      <br><br><br>
- 
-    <form ng-submit="ajouterIngredient()" style="margin-top:30px;">
+        <form ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
     <h3>Ajouter un nouvel ingredient</h3>
       <div class="row">
       <div class="col-lg-6">
@@ -173,6 +160,24 @@
         </div> 
       </div>
       </form>
+      <table class="table"> 
+        <tr>
+          <td> Nom de l'ingredient </td>
+          <td> Rayons </td>
+          <td> Unité </td>
+          <td>  </td>
+        <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid'">
+          <td>{{ingredientsdispo.nomid}}</a></td>
+          <td>{{ingredientsdispo.rayon}}</td>
+          <td>{{ingredientsdispo.unite}}</td>
+          <td> 
+            <span class="glyphicon glyphicon-remove" ng-click="supprimerIngredientsdispos(ingredientsdispo)"></span>
+           </td>
+        </tr>
+      </table>
+      <br><br><br>
+ 
+    
      </script>
 
 
@@ -183,20 +188,37 @@
 
 
 
+
+
+
+          <!-- Liste des ingredients d'une recette -->
+
+
      <script type="text/ng-template" id="/recettes.html">
         <div class="page-header">
           <h1>
              {{recette.nomr}}
           </h1>
         </div>
+        <div class="col-lg-6">
         <table class="table"> 
         <tr>
           <td> nombre </td>
+           <td> unite </td>
           <td> ingredient </td>
+          <td></span></td>
         </tr>
-        <tr ng-repeat="ingredient in recette.ingredients | orderBy:'-nombre'">
-          <td> {{ingredient.nombre}}</td>
+        <tr ng-repeat="ingredient in recette.ingredients | orderBy:'nomi'">
+          <td> 
+           <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
+           <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
+          </td>
+          <td> {{ingredient.unite}}</td>
           <td> {{ingredient.nomi}}</td>
+
+          <td><span class="glyphicon glyphicon-remove" ng-click="supprimerIngredient(ingredient)"></span>
+          <span class="glyphicon glyphicon-pencil" ng-click="editIngredient(ingredient)"></span></td>
+
           </tr>
         </table>      
           <form ng-submit="ajouterIngredient()"
@@ -213,7 +235,322 @@
             <button type="submit" class="btn btn-primary">Ajouter</button>
            </div>
           </form>
+          </div>
+        <div class="col-lg-6"> 
+             
+          <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon"><i class="fa fa-search"></i></div>
+
+              <input type="text" class="form-control" placeholder="Rechercher ingredient" ng-model="rechercheIngredientsdispo">
+
+            </div>      
+          </div>
+        </form>
+        <table class="table"> 
+        <tr>
+          <td> Nom de l'ingredient </td>
+          <td> Rayons </td>
+          <td> Unité </td>
+          <td>  </td>
+        <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid' | filter:rechercheIngredientsdispo">
+          <td>{{ingredientsdispo.nomid}}</a></td>
+          <td>{{ingredientsdispo.rayon}}</td>
+          <td>{{ingredientsdispo.unite}}</td>
+          <td> 
+            <span class="glyphicon glyphicon-plus" ng-click="addtorecette(ingredientsdispo)"></span>
+           </td>
+        </tr>
+      </table>  
+
+         </div>
       </script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <!-- planning -->
+
+     <script type="text/ng-template" id="/planning.html">
+         <div class="page-header">
+          <h1>Planning</h1>
+        </div>
+        <button ng-click=genererplanning(recettes) class="btn btn-primary"> générer planning! </button>
+ <br>
+ <br>
+ <br>
+ <br>
+    <form   ng-submit="genererliste()">
+      <table class="table"> 
+        <tr>
+          <th>  </th>
+          <th> Lundi </th>
+          <th> Mardi </th>
+          <th> Mercredi </th>
+          <th> Jeudi </th>
+          <th> Vendredi </th>
+          <th> Samedi </th>
+          <th> Dimanche </th>
+        </tr>
+        <tr>
+          <th>Midi</th>           
+          <td>
+          <span ng-show="repaspresent1">{{planningrecettes[1].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent1">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent2">{{planningrecettes[2].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent2">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent3">{{planningrecettes[3].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent3">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent4">{{planningrecettes[4].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent4">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent5">{{planningrecettes[5].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent5">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent6">{{planningrecettes[6].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent6">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent7">{{planningrecettes[7].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent7">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+
+        </tr>
+
+        <tr>
+          <th>soir</th>       
+          <td>
+          <span ng-show="repaspresent8">{{planningrecettes[8].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent8">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent9">{{planningrecettes[9].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent9">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent10">{{planningrecettes[10].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent10">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent11">{{planningrecettes[11].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent11">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent12">{{planningrecettes[12].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent12">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent13">{{planningrecettes[13].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent13">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+          <td>
+          <span ng-show="repaspresent14">{{planningrecettes[14].nomr}}</span>
+           <br> pour 
+            <select class="form-control" ng-model="repaspresent14">
+              <option></option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+            </select> personnes
+          </td>
+        </tr>        
+      </table>
+     
+
+      <button type="submit" class="btn btn-primary"> générer liste de course </button>
+       <br>
+
+      
+      <h1>Liste de course</h1>
+      <br>
+
+            <br>
+      <div ng-show="repaspresent1"  ng-repeat="ingredient in donnees1.ingredients">            
+       {{planningvalides[0].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent2" ng-repeat="ingredient in donnees2.ingredients">            
+       {{planningvalides[1].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent3" ng-repeat="ingredient in donnees3.ingredients">            
+       {{planningvalides[2].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent4" ng-repeat="ingredient in donnees4.ingredients">            
+       {{planningvalides[3].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent5" ng-repeat="ingredient in donnees5.ingredients">            
+       {{planningvalides[4].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent6" ng-repeat="ingredient in donnees6.ingredients">            
+       {{planningvalides[5].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>  
+      <div ng-show="repaspresent7" ng-repeat="ingredient in donnees7.ingredients">            
+       {{planningvalides[6].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>        
+      <div ng-show="repaspresent8" ng-repeat="ingredient in donnees8.ingredients">            
+       {{planningvalides[7].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent9" ng-repeat="ingredient in donnees9.ingredients">            
+       {{planningvalides[8].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>   
+      <div ng-show="repaspresent10" ng-repeat="ingredient in donnees10.ingredients">            
+       {{planningvalides[9].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>   
+      <div ng-show="repaspresent11" ng-repeat="ingredient in donnees11.ingredients">            
+       {{planningvalides[10].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>   
+      <div ng-show="repaspresent12" ng-repeat="ingredient in donnees12.ingredients">            
+       {{planningvalides[11].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}   
+      </div>   
+      <div ng-show="repaspresent13" ng-repeat="ingredient in donnees13.ingredients">            
+       {{planningvalides[12].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>  
+      <div ng-show="repaspresent14" ng-repeat="ingredient in donnees14.ingredients">            
+       {{planningvalides[13].nombrepersonne}} x {{ingredient.nombre}} - {{ingredient.nomi}}  
+      </div>   
+     </script>
+
+      </form>
   </body>
 </html>

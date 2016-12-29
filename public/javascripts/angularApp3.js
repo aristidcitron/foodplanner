@@ -10,7 +10,7 @@ app.config([
 				views:{
 					'page':{
 						templateUrl:'/home.html',
-						controller:'MainCtrl',						
+						controller:'MainCtrl',
 						resolve:{
 							recettePromise:['recettes', function(recettes){
 								return recettes.getAll();
@@ -19,7 +19,6 @@ app.config([
 					},
 					'menu':{
 						templateUrl:'/menu.html',
-						controller:'NavCtrl',
 					}
 
 				}
@@ -38,37 +37,14 @@ app.config([
 							}]
 						}
 
-					},
+					}},
 					'menu':{
 						templateUrl:'/menu.html',
-						controller:'NavCtrl',
 					}
 
 				}
 				
-			})
-
-
-			.state('planning',{
-				url:'/planning',
-				views:{
-					'page':{
-						templateUrl:'/planning.html',
-						controller:'PlanningCtrl',
-						resolve:{
-							recettePromise:['recettes', function(recettes){
-								return recettes.getAll();
-							}]
-						}
-					},
-					'menu':{
-						templateUrl:'/menu.html',
-						controller:'NavCtrl',
-					}
-
-				}
-				
-			})
+			)
 
 
 
@@ -91,7 +67,6 @@ app.config([
 					},
 					'menu':{
 						templateUrl:'/menu.html',
-						controller:'NavCtrl',
 					}
 
 				}		
@@ -145,10 +120,6 @@ app.factory('recettes',['$http', function($http){
 			return res.data;
 		});
 	};
-
-		o.getingredients2 = function(id){
-		return $http.get('/recettes/'+ id);
-	};
 	// ajouter une nouvelle recette 	
 	o.createrecette=function(recette){
 		return $http.post('/recettes', recette).success(function(data){
@@ -177,9 +148,6 @@ app.factory('recettes',['$http', function($http){
 		return $http.delete('/recettes/' + recette._id + '/ingredients/' + ingredient._id);
 	};	
 
-	o.updatenombre = function (ingredient,ingredient){
-		return $http.put('/ingredients/' + ingredient._id, ingredient);
-	};	
 	return o;
 }])
 
@@ -209,7 +177,6 @@ function($scope,ingredientsdispos){
 		})};
 	
 	}]);
-
 
 
 app.controller('MainCtrl', [
@@ -247,87 +214,6 @@ function($scope,recettes){
 
 
 
-app.controller('PlanningCtrl', [
-'$scope',
-'recettes',
-function($scope,recettes){
-  $scope.recettes = recettes.recettes;
-  $scope.genererplanning = function(recettes){
-  	$scope.planningrecettes = recettes;
-  	    var j, x, i;
-    for (i = $scope.planningrecettes.length; i; i--) {
-	        j = Math.floor(Math.random() * i);
-	        x = $scope.planningrecettes[i - 1];
-	        $scope.planningrecettes[i - 1] = $scope.planningrecettes[j];
-	        $scope.planningrecettes[j] = x;
-    	}
-    $scope.planningrecettes = $scope.planningrecettes.slice(0,15)	
-	}
- 	$scope.genererliste = function() {
- 		$scope.planningvalides = [
-	 		{idrecette :$scope.planningrecettes[1]._id, nombrepersonne: $scope.repaspresent1,},
-	 		{idrecette :$scope.planningrecettes[2]._id, nombrepersonne: $scope.repaspresent2,},
-	 		{idrecette :$scope.planningrecettes[3]._id, nombrepersonne: $scope.repaspresent3,},
-	  		{idrecette :$scope.planningrecettes[4]._id, nombrepersonne: $scope.repaspresent4,},
-	  		{idrecette :$scope.planningrecettes[5]._id, nombrepersonne: $scope.repaspresent5,},
-	 		{idrecette :$scope.planningrecettes[6]._id, nombrepersonne: $scope.repaspresent6,},
-	 		{idrecette :$scope.planningrecettes[7]._id, nombrepersonne: $scope.repaspresent7, }	,	  		 				 		
-	 		{idrecette :$scope.planningrecettes[8]._id, nombrepersonne: $scope.repaspresent8,},
-	 		{idrecette :$scope.planningrecettes[9]._id, nombrepersonne: $scope.repaspresent9,},
-	 		{idrecette :$scope.planningrecettes[10]._id, nombrepersonne: $scope.repaspresent10,},
-	  		{idrecette :$scope.planningrecettes[11]._id, nombrepersonne: $scope.repaspresent11,},
-	  		{idrecette :$scope.planningrecettes[12]._id, nombrepersonne: $scope.repaspresent12,},
-	 		{idrecette :$scope.planningrecettes[13]._id, nombrepersonne: $scope.repaspresent13,},
-	 		{idrecette :$scope.planningrecettes[14]._id, nombrepersonne: $scope.repaspresent14} ,
- 		];
- 		//var i;
- 		//var $scope.donnees = []
- 		//for ( i=1;i<15;i++){
- 			recettes.getingredients2($scope.planningrecettes[1]._id).success(function(data){
-				$scope.donnees1 = data;})
- 			recettes.getingredients2($scope.planningrecettes[2]._id).success(function(data){
-				$scope.donnees2 = data;})
- 			recettes.getingredients2($scope.planningrecettes[3]._id).success(function(data){
-				$scope.donnees3 = data;})
- 			recettes.getingredients2($scope.planningrecettes[4]._id).success(function(data){
-				$scope.donnees4 = data;})
- 			recettes.getingredients2($scope.planningrecettes[5]._id).success(function(data){
-				$scope.donnees5 = data;})
- 			recettes.getingredients2($scope.planningrecettes[6]._id).success(function(data){
-				$scope.donnees6 = data;})
- 			recettes.getingredients2($scope.planningrecettes[7]._id).success(function(data){
-				$scope.donnees7 = data;})
- 			recettes.getingredients2($scope.planningrecettes[8]._id).success(function(data){
-				$scope.donnees8 = data;})
- 			recettes.getingredients2($scope.planningrecettes[9]._id).success(function(data){
-				$scope.donnees9 = data;})
- 			recettes.getingredients2($scope.planningrecettes[10]._id).success(function(data){
-				$scope.donnees10 = data;})
- 			recettes.getingredients2($scope.planningrecettes[11]._id).success(function(data){
-				$scope.donnees11 = data;})
- 			recettes.getingredients2($scope.planningrecettes[12]._id).success(function(data){
-				$scope.donnees12 = data;})
- 			recettes.getingredients2($scope.planningrecettes[13]._id).success(function(data){
-				$scope.donnees13 = data;})
-  			recettes.getingredients2($scope.planningrecettes[14]._id).success(function(data){
-				$scope.donnees14 = data;})			
- 			;}
- 		//}
-		 		
-}]);
-
-
-
-
-
-app.controller('NavCtrl', [
-	'$scope',
-	'$state',
-function widgetsController($scope, $state) {
-    $scope.$state = $state;
-}]);
-
-
 
 app.controller('RecettesCtrl', [
 	'$scope',
@@ -355,18 +241,6 @@ function($scope,$stateParams,recettes,recette,ingredientsdispos){
 			$scope.recette.ingredients.splice($scope.recette.ingredients.indexOf(tampon),1);
 		})};	
 
-
-	$scope.editIngredient = function (ingredient) {
-        ingredient.editing = true;
-    };
-
-    $scope.doneEditing = function (ingredient) {
-        ingredient.editing = false;
-        var tampon=ingredient;
-        recettes.updatenombre(ingredient, ingredient)
-		};
-        //dong some background ajax calling for persistence...
-    	
 // ancienne fonction avec formulaire
 //	$scope.ajouterIngredient = function(){
 // 		if (!$scope.nomi || $scope.nomi ==='') { return; }
@@ -379,7 +253,25 @@ function($scope,$stateParams,recettes,recette,ingredientsdispos){
 // 		$scope.nomi='';
 // 		$scope.nombre=''; 
 // 	};	
+  // gets the template to ng-include for a table row / item
+    $scope.getTemplate = function (ingredient) {
+        if (ingredient.nomi === $scope.recette.selected.nomi) return 'edit';
+        else return 'display';
+    };
 
+    $scope.editIngredient = function (ingredient) {
+        $scope.recette.selected = angular.copy(contact);
+    };
+
+    $scope.saveIngredient = function (ingredient) {
+        console.log("Saving ingredient");
+        $scope.recette.ingredient[idx] = angular.copy($scope.recette.selected);
+        $scope.reset();
+    };	
+
+    $scope.reset = function () {
+        $scope.recette.selected = {};
+    };
  
 }]);
 
