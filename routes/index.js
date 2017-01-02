@@ -69,6 +69,14 @@ router.get('/recettes/:recette', function (req, res) {
 	});		
 });
 
+//avoir les infos d'une recette
+router.get('/recettes2/:recette', function (req, res) {
+	Recette.findById({_id:req.params.recette}, req.body, function(err,ingredients){
+		res.json(req.ingredients);
+	});		
+});
+
+
 
 // supprimer une recette
 router.delete('/recettes/:recette', function(req,res){
