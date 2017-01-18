@@ -1,4 +1,4 @@
-var app = angular.module('foodplanner', ['ui.router', 'angular.filter']);
+var app = angular.module('foodplanner', ['ui.router','ui.bootstrap', 'angular.filter']);
 
 app.config([
 	'$stateProvider',
@@ -249,10 +249,16 @@ function($scope,recettes){
 
 app.controller('PlanningCtrl', [
 '$scope',
+'$modal',
+'$log',
 'recettes',
-function($scope,recettes){
-  $scope.recettes = recettes.recettes;
+function($scope,$modal, $log,recettes){
 
+    $scope.values = ["0","1","2","3","4","5","6"];
+    $scope.selectedItem = 0;
+
+
+  $scope.recettes = recettes.recettes;
   $scope.genererplanning = function(recettes){
   	$scope.planningrecettes = recettes;
   	    var j, x, i;
@@ -265,6 +271,8 @@ function($scope,recettes){
     $scope.planningrecettes = $scope.planningrecettes.slice(0,14)	
 	};
  	$scope.validernombrepersonnes = function() {
+ 		$scope.donnees=[];
+ 		$scope.coucou=0;
  		$scope.planningvalides = [
 	 		{idrecette :$scope.planningrecettes[0]._id, nombrepersonne: $scope.repaspresent0},
 	 		{idrecette :$scope.planningrecettes[1]._id, nombrepersonne: $scope.repaspresent1},
@@ -281,16 +289,38 @@ function($scope,recettes){
 	  		{idrecette :$scope.planningrecettes[12]._id, nombrepersonne: $scope.repaspresent12},
 	 		{idrecette :$scope.planningrecettes[13]._id, nombrepersonne: $scope.repaspresent13},
  		];
+
+ 		$scope.listerecette = [
+ 			{idrecette :$scope.planningrecettes[0]._id},
+	 		{idrecette :$scope.planningrecettes[1]._id},
+	 		{idrecette :$scope.planningrecettes[2]._id},
+	 		{idrecette :$scope.planningrecettes[3]._id},
+	  		{idrecette :$scope.planningrecettes[4]._id},
+	  		{idrecette :$scope.planningrecettes[5]._id},
+	 		{idrecette :$scope.planningrecettes[6]._id},
+	 		{idrecette :$scope.planningrecettes[7]._id},	  		 				 		
+	 		{idrecette :$scope.planningrecettes[8]._id},
+	 		{idrecette :$scope.planningrecettes[9]._id},
+	 		{idrecette :$scope.planningrecettes[10]._id},
+	  		{idrecette :$scope.planningrecettes[11]._id},
+	  		{idrecette :$scope.planningrecettes[12]._id},
+	 		{idrecette :$scope.planningrecettes[13]._id}
+	 		];
+
  		var i=0;
  		var j=0;
  		var donneestemp1 = [];
  		var donneestemp2 = [];
- 		for ( i=0;i<14;i++){
- 			recettes.getingredients2($scope.planningrecettes[i]._id).success(function(data){
+ 
+
+		$scope.listerecetteunique = new jinqJs().from($scope.listerecette).distinct('idrecette').select();
+
+
+ 		for ( i=0;i<$scope.listerecetteunique.length;i++){
+ 			
+ 			recettes.getingredients2($scope.listerecetteunique[i].idrecette).success(function(data){
 				donneestemp2 = data.ingredients;
-//				for (j=0;j<donneestemp2.length-1;j++){
-//					donneestemp2[j].nombre=donneestemp2[j].nombre * $scope.planningvalides[i].nombrepersonne;
-//					};
+				
 				$scope.donnees= donneestemp1.concat(donneestemp2);
 				donneestemp1=$scope.donnees;
 				});
@@ -298,35 +328,42 @@ function($scope,recettes){
  		donneestemp1 = [];
  		donneestemp2 = [];	
 
+
+
  	};
 
  	$scope.genererliste = function() {
  		var i=0;
  		var j=0;
+ 		var k=0;
  		$scope.coucou=1;
+
+		$scope.result = new jinqJs().from($scope.planningvalides).groupBy('idrecette').sum('nombrepersonne').select();
+
+
+
  		for (i=0; i<$scope.donnees.length; i++){
- 			for (j=0; j<14; j++){
- 				if ($scope.donnees[i].recette == $scope.planningvalides[j].idrecette){
- 						if ( typeof $scope.planningvalides[j].nombrepersonne !== 'undefined') {
- 							$scope.donnees[i].nombre = $scope.donnees[i].nombre*$scope.planningvalides[j].nombrepersonne;
- 						} else{
- 							$scope.donnees[i].nombre = 0;
- 						}
+ 			$scope.donnees[i].total=0;
+ 			for (j=0; j<$scope.result.length; j++){
+ 				if ($scope.donnees[i].recette == $scope.result[j].idrecette){
+ 						if ( $scope.result[j].nombrepersonne > 0) {
+ 							$scope.donnees[i].total = $scope.donnees[i].total+($scope.donnees[i].nombre*$scope.result[j].nombrepersonne);
+ 						};
  					
  					};
  			};
  		};
  		for (i=0; i<$scope.donnees.length; i++){
- 			if ($scope.donnees[i].nombre==0){
+ 			if ($scope.donnees[i].total==0){
  				$scope.donnees.splice(i, 1);
  				i=i-1;
  			};
  		};
  	};
- 		//}
+
 	$scope.getVolumeSum = function(items) {
     return items
-        .map(function(x) { return x.nombre; })
+        .map(function(x) { return x.total; })
         .reduce(function(a, b) { return a + b; });
 	};	 	
 
@@ -335,12 +372,62 @@ function($scope,recettes){
 	$scope.editRepas = function (planningrecette) {
         planningrecette.editing = true;
     };
-//test d'édition des recettes
-   // $scope.doneEditingRepas = function (planningrecette) {
-    //    planningrecette.editing = false;
-    //    planningrecette._id=toto;
-	//	};
+
+
+
+
+
+// edition des repas
+	var k;
+   $scope.open = function (k) {
+
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent.html',
+      controller: 'ModalInstanceCtrl',
+   	  scope: $scope,
+      resolve: {  	
+        items: function () {
+          return $scope.items;
+         },
+        k: function(){
+          return k;
+         }
+       }
+    });
+
+    modalInstance.result.then(function (recette) {
+      $scope.planningrecettes[k] = recette;
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
+
+
+
+
+
+
 }]);
+
+
+
+// modal d'édition du repas
+app.controller('ModalInstanceCtrl',
+	function ($scope, $modalInstance, items, k) {
+		$scope.k=k;
+ 		 $scope.ok = function (recette,k) {
+  			  $modalInstance.close(recette,k);
+  		};
+
+  		$scope.cancel = function () {
+  			  $modalInstance.dismiss('cancel');
+  		};
+	}
+);
+
+
+
+
 
 
 

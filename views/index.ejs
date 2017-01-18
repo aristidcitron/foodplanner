@@ -5,9 +5,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
     <script src="/javascripts/angularApp.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>   
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script src="https://rawgit.com/fordth/jinqJs/master/jinqjs.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.14/angular-filter.js"></script>
+    
+
+
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
 
 
 
@@ -293,11 +298,15 @@
          <div class="page-header">
           <h1>Planning</h1>
         </div>
-        <button ng-click=genererplanning(recettes) class="btn btn-primary"> générer planning aléatoire! </button>
+        <button ng-click=genererplanning(recettes) class="btn btn-primary"> Créer planning aléatoire! </button>
+
+
  <br>
  <br>
- <br>
- <br>
+
+
+
+
 
           <!-- test d'edition des recettes 
 <div ng-repeat="planningrecette in planningrecettes">
@@ -323,193 +332,82 @@
         <tr>
           <th>Midi</th>     
           <td>
-          <span ng-show="repaspresent0">{{planningrecettes[0].nomr}}</span>         
+          <span ng-show="repaspresent0">{{planningrecettes[0].nomr}}</span> <span ng-show="repaspresent0" class="glyphicon glyphicon-pencil" ng-click="open(0)"></span>     
            <br> pour 
-            <select class="form-control" ng-model="repaspresent0">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent0" ng-options="values.indexOf(repaspresent0) as repaspresent0 for repaspresent0 in values"></select>
+            personnes
           </td>
           <td>
-          <span ng-show="repaspresent1">{{planningrecettes[1].nomr}}</span>
+          <span ng-show="repaspresent1">{{planningrecettes[1].nomr}}</span>   <span ng-show="repaspresent1" class="glyphicon glyphicon-pencil" ng-click="open(1)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent1">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent1" ng-options="values.indexOf(repaspresent1) as repaspresent1 for repaspresent1 in values"></select>personnes
           </td>
           <td>
-          <span ng-show="repaspresent2">{{planningrecettes[2].nomr}}</span>
+          <span ng-show="repaspresent2">{{planningrecettes[2].nomr}}</span><span ng-show="repaspresent2" class="glyphicon glyphicon-pencil" ng-click="open(2)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent2">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent2" ng-options="values.indexOf(repaspresent2) as repaspresent2 for repaspresent2 in values"></select> personnes
           </td>
           <td>
-          <span ng-show="repaspresent3">{{planningrecettes[3].nomr}}</span>
+          <span ng-show="repaspresent3">{{planningrecettes[3].nomr}}</span><span ng-show="repaspresent3" class="glyphicon glyphicon-pencil" ng-click="open(3)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent3">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent3" ng-options="values.indexOf(repaspresent3) as repaspresent3 for repaspresent3 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent4">{{planningrecettes[4].nomr}}</span>
+          <span ng-show="repaspresent4">{{planningrecettes[4].nomr}}</span><span ng-show="repaspresent4" class="glyphicon glyphicon-pencil" ng-click="open(4)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent4">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent4" ng-options="values.indexOf(repaspresent4) as repaspresent4 for repaspresent4 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent5">{{planningrecettes[5].nomr}}</span>
+          <span ng-show="repaspresent5">{{planningrecettes[5].nomr}}</span><span ng-show="repaspresent5" class="glyphicon glyphicon-pencil" ng-click="open(5)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent5">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent5" ng-options="values.indexOf(repaspresent5) as repaspresent5 for repaspresent5 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent6">{{planningrecettes[6].nomr}}</span>
+          <span ng-show="repaspresent6">{{planningrecettes[6].nomr}}</span><span ng-show="repaspresent6" class="glyphicon glyphicon-pencil" ng-click="open(6)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent6">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent6" ng-options="values.indexOf(repaspresent6) as repaspresent6 for repaspresent6 in values"></select>  personnes
           </td>
                   </tr>
 
         <tr>
                   <th>soir</th>    
           <td>
-          <span ng-show="repaspresent7">{{planningrecettes[7].nomr}}</span>
+          <span ng-show="repaspresent7">{{planningrecettes[7].nomr}}</span><span ng-show="repaspresent7" class="glyphicon glyphicon-pencil" ng-click="open(7)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent7">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent7" ng-options="values.indexOf(repaspresent7) as repaspresent7 for repaspresent7 in values"></select>  personnes
           </td>
 
 
    
           <td>
-          <span ng-show="repaspresent8">{{planningrecettes[8].nomr}}</span>
+          <span ng-show="repaspresent8">{{planningrecettes[8].nomr}}</span><span ng-show="repaspresent8" class="glyphicon glyphicon-pencil" ng-click="open(8)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent8">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent8" ng-options="values.indexOf(repaspresent8) as repaspresent8 for repaspresent8 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent9">{{planningrecettes[9].nomr}}</span>
+          <span ng-show="repaspresent9">{{planningrecettes[9].nomr}}</span><span ng-show="repaspresent9" class="glyphicon glyphicon-pencil" ng-click="open(9)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent9">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent9" ng-options="values.indexOf(repaspresent9) as repaspresent9 for repaspresent9 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent10">{{planningrecettes[10].nomr}}</span>
+          <span ng-show="repaspresent10">{{planningrecettes[10].nomr}}</span><span ng-show="repaspresent10" class="glyphicon glyphicon-pencil" ng-click="open(10)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent10">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent10" ng-options="values.indexOf(repaspresent10) as repaspresent10 for repaspresent10 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent11">{{planningrecettes[11].nomr}}</span>
+          <span ng-show="repaspresent11">{{planningrecettes[11].nomr}}</span><span ng-show="repaspresent11" class="glyphicon glyphicon-pencil" ng-click="open(11)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent11">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent11" ng-options="values.indexOf(repaspresent11) as repaspresent11 for repaspresent11 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent12">{{planningrecettes[12].nomr}}</span>
+          <span ng-show="repaspresent12">{{planningrecettes[12].nomr}}</span><span ng-show="repaspresent12" class="glyphicon glyphicon-pencil" ng-click="open(12)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent12">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent12" ng-options="values.indexOf(repaspresent12) as repaspresent12 for repaspresent12 in values"></select>  personnes
           </td>
           <td>
-          <span ng-show="repaspresent13">{{planningrecettes[13].nomr}}</span>
+          <span ng-show="repaspresent13">{{planningrecettes[13].nomr}}</span><span ng-show="repaspresent13" class="glyphicon glyphicon-pencil" ng-click="open(13)"></span>
            <br> pour 
-            <select class="form-control" ng-model="repaspresent13">
-              <option></option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-            </select> personnes
+            <select class="form-control" ng-model="repaspresent13" ng-options="values.indexOf(repaspresent13) as repaspresent13 for repaspresent13 in values"></select>  personnes
           </td>
 
         </tr>        
@@ -527,9 +425,78 @@
       </div>
 
 
-
      
      </script>
+
+
+
+
+
+
+
+
+
+
+          <!-- Modal -->
+ 
+
+          <script type="text/ng-template" id="myModalContent.html">
+              <div class="modal-header">
+                  <h3 class="modal-title">Changement de repas: {{planningrecettes[1].nomr}} </h3>
+                  {{k}}
+              </div>
+             
+
+               <!--  <form name = "addFriendForm">
+                <input ng-model = "planningrecettes[0].nomr" class="form-control" type = "text" placeholder="Nom de recette" title=" Username" />
+              </form>  -->
+              
+              <form name = "addFriendForm">
+                        <div class="form-group">
+                          <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-search"></i></div>
+
+                            <input type="text" class="form-control" placeholder="Rechercher ingredient" ng-model="rechercheRecette">
+
+                          </div>      
+                        </div>
+                      </form>
+                      <table class="table"> 
+                      <tr>
+                        <td> Nom de la recette </td>
+                        <td> temps de cuisson </td>
+                        <td> temps de préparation </td>
+                        <td>  </td>
+                      <tr ng-repeat="recette in recettes | orderBy :'nomid' | filter:rechercheRecette">
+                        <td>{{recette.nomr}}</a></td>
+                        <td>{{recette.tempsdecuisson}}</td>
+                        <td>{{recette.tempsdepreparation}}</td>
+                        <td> 
+                          <span class="glyphicon glyphicon-plus" ng-click="ok(recette)"></span>
+                         </td>
+                      </tr>
+                    </table>  
+
+
+
+
+
+
+
+              <div class="modal-footer">
+
+                  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+              </div>
+
+
+
+
+
+
+          </script>
+
+
+
 
 
   </body>
