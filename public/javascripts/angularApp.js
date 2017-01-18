@@ -272,6 +272,9 @@ function($scope,$modal, $log,recettes){
 	};
  	$scope.validernombrepersonnes = function() {
  		$scope.donnees=[];
+ 		$scope.listerecette = [];
+ 		$scope.listerecetteunique = [];
+ 		$scope.planningvalides = [];
  		$scope.coucou=0;
  		$scope.planningvalides = [
 	 		{idrecette :$scope.planningrecettes[0]._id, nombrepersonne: $scope.repaspresent0},
