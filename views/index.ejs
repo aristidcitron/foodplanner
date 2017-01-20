@@ -38,14 +38,6 @@
 
 
 
-
-
-
-
-
-
-
-
           <!-- Menu en haut de la page -->
 
     <script type="text/ng-template" id="/menu.html" >
@@ -59,10 +51,15 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+              <li ng-show="isLoggedIn()"><a>Bienvenu {{ currentUser() }}!</a></li>
               <li ng-class="{active: $state.current.name == 'home'}"><a href="#/home">Recettes</a></li>
               <li ng-class="{active: $state.current.name == 'ingredientsdispos'}"><a href="#/ingredientsdispos">Ingredients</a></li>
               <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>              
-              <li class="dropdown">
+              <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'register'}"><a href="#/register">S'inscrire</a></li>    
+              <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="#/login">Se connecter</a></li>   
+              <li ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="" ng-click="logOut()">Se déconnecter</a></li>                            
+          
+             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li><a href="#">1</a></li>
@@ -115,7 +112,8 @@
          </div>
         </div> 
       </div>
-      </form>
+      </form><br><br><br>
+      {{recettes}}<br><br><br>
       <table class="table"> 
         <tr>
           <td> Nom de recette </td>
@@ -129,6 +127,9 @@
           <td> <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes (recette)"></span>
             {{recette.upvotes}} 
             <span class="glyphicon glyphicon-remove" ng-click="supprimerRecette(recette)"></span>
+            <span ng-show="recette.author">
+            posted by <a>{{recette.author}}</a> |
+            </span>
            </td>
         </tr>
       </table>
@@ -206,7 +207,7 @@
      <script type="text/ng-template" id="/recettes.html">
         <div class="page-header">
           <h1>
-             {{recette.nomr}}
+             {{currentUser()}}
           </h1>
         </div>
         <div class="col-lg-6">
@@ -492,6 +493,76 @@
 
 
           </script>
+
+
+
+
+<script type="text/ng-template" id="/login.html">
+  <div class="page-header">
+    <h1>Food Planner</h1>
+  </div>
+
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+  <form ng-submit="logIn()"
+    style="margin-top:30px;">
+    <h3>Log In</h3>
+
+    <div class="form-group">
+      <input type="text"
+      class="form-control"
+      placeholder="Username"
+      ng-model="user.username"></input>
+    </div>
+    <div class="form-group">
+      <input type="password"
+      class="form-control"
+      placeholder="Password"
+      ng-model="user.password"></input>
+    </div>
+    <button type="submit" class="btn btn-primary">Log In</button>
+  </form>
+</script>
+
+
+
+
+
+
+<script type="text/ng-template" id="/register.html">
+  <div class="page-header">
+    <h1>Food Planner</h1>
+  </div>
+
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+  <form ng-submit="register()"
+    style="margin-top:30px;">
+    <h3>Register</h3>
+
+    <div class="form-group">
+      <input type="text"
+      class="form-control"
+      placeholder="Username"
+      ng-model="user.username"></input>
+    </div>
+    <div class="form-group">
+      <input type="password"
+      class="form-control"
+      placeholder="Password"
+      ng-model="user.password"></input>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</script>
+
+
+
+
 
 
 

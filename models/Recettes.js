@@ -7,7 +7,8 @@ var RecetteSchema = new mongoose.Schema({
 	tempsdepreparation: Number,
 	insctructions: String,
 	lien: String,
-	ingredients: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}]	
+	ingredients: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}],	
+	author: String,
 });
 
 RecetteSchema.methods.upvote = function(cb) {

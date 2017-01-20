@@ -26,6 +26,48 @@ app.config([
 				
 			})
 
+			.state('login',{
+				url:'/login',
+				views:{
+					'page':{
+						templateUrl:'/login.html',
+						controller:'AuthCtrl',
+						onEnter: ['$state','auth', function($state,auth){
+							if(auth.isLoggedIn()){
+								$state.go('home');
+							}
+						}]						
+					},
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}
+				
+			})
+
+			.state('register',{
+				url:'/register',
+				views:{
+					'page':{
+						templateUrl:'/register.html',
+						controller:'AuthCtrl',
+						onEnter: ['$state','auth', function($state,auth){
+							if(auth.isLoggedIn()){
+								$state.go('home');
+							}
+						}]						
+					},
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}
+				
+			})
+
 			.state('ingredientsdispos',{
 				url:'/ingredientsdispos',
 				views:{
@@ -100,6 +142,60 @@ app.config([
 
 	}])
 
+app.factory('auth', ['$http', '$window', function($http, $window){
+	var auth = {};
+	auth.saveToken = function(token) {
+		$window.localStorage['foodplanner-token'] = token;
+
+	}
+	auth.getToken=function(){
+		return $window.localStorage['foodplanner-token'];
+	}
+	auth.isLoggedIn = function(){
+		var token = auth.getToken();
+		if(token){
+			var payload = JSON.parse($window.atob(token.split('.')[1]));
+			return payload.exp > Date.now() / 1000;
+		} else{
+			return false;
+		}
+	}
+
+	auth.currentUser = function(){
+		if (auth.isLoggedIn()){
+			var token = auth.getToken();
+			var payload = JSON.parse($window.atob(token.split('.')[1]));
+			return payload.username;
+
+
+
+		}
+	}
+
+	auth.register = function(user){
+		return $http.post('/register', user).success(function(data){
+			auth.saveToken(data.token);
+		});
+	}
+
+		auth.logIn = function(user){
+		return $http.post('/login', user).success(function(data){
+			auth.saveToken(data.token);
+		});
+	}
+
+	auth.logOut = function(){
+		$window.localStorage.removeItem('foodplanner-token');
+	}
+
+	return auth; 
+}])
+
+
+
+
+
+
 //méthodes d'appel a la bdd
 app.factory('ingredientsdispos',['$http',function($http){
 var i = {
@@ -125,7 +221,7 @@ var i = {
 
 }])
 
-app.factory('recettes',['$http', function($http){
+app.factory('recettes',['$http', 'auth', function($http, auth){
 	var o = {
 		recettes:[]
 	};
@@ -151,7 +247,9 @@ app.factory('recettes',['$http', function($http){
 	};
 	// ajouter une nouvelle recette 	
 	o.createrecette=function(recette){
-		return $http.post('/recettes', recette).success(function(data){
+		return $http.post('/recettes', recette,{
+   			 	headers: {Authorization: 'Bearer '+auth.getToken()}
+ 			 }).success(function(data){
 			o.recettes.push(data);
 		});
 	};
@@ -215,8 +313,12 @@ function($scope,ingredientsdispos){
 app.controller('MainCtrl', [
 '$scope',
 'recettes',
-function($scope,recettes){
+'auth',
+function($scope,recettes,auth){
   $scope.recettes = recettes.recettes;
+  $scope.currentUser = auth.currentUser;
+  $scope.isLoggedIn = auth.isLoggedIn;
+
   $scope.ajouterRecette = function() {
  		if (!$scope.nomr || $scope.nomr ==='') { return; }
  		recettes.createrecette ({
@@ -225,6 +327,7 @@ function($scope,recettes){
  			tempsdecuisson: $scope.tempsdecuisson,
  			tempsdepreparation:$scope.tempsdepreparation,
  			insctructions:$scope.instructions,
+ 			author: $scope.currentUser,
  		});
  		$scope.nomr='';
  		$scope.tempsdepreparation='';
@@ -434,13 +537,47 @@ app.controller('ModalInstanceCtrl',
 
 
 
+app.controller('AuthCtrl', [
+'$scope',
+'$state',
+'auth',
+function($scope, $state, auth){
+  $scope.user = {};
+
+  $scope.register = function(){
+    auth.register($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('home');
+    });
+  };
+
+  $scope.logIn = function(){
+    auth.logIn($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('home');
+    });
+  };
+}])
+
+
+
+
+
+
+
 
 
 app.controller('NavCtrl', [
 	'$scope',
 	'$state',
-function widgetsController($scope, $state) {
+	'auth',
+function widgetsController($scope, $state,auth) {
     $scope.$state = $state;
+  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.currentUser = auth.currentUser;
+  $scope.logOut = auth.logOut;
 }]);
 
 
