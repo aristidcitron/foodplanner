@@ -112,8 +112,7 @@
          </div>
         </div> 
       </div>
-      </form><br><br><br>
-      {{recettes}}<br><br><br>
+      </form>
       <table class="table"> 
         <tr>
           <td> Nom de recette </td>
@@ -128,7 +127,7 @@
             {{recette.upvotes}} 
             <span class="glyphicon glyphicon-remove" ng-click="supprimerRecette(recette)"></span>
             <span ng-show="recette.author">
-            posted by <a>{{recette.author}}</a> |
+            posted by <a>{{recette.author}}</a>
             </span>
            </td>
         </tr>
@@ -418,9 +417,9 @@
        
   
 
-      <br>
+      <br>          <h1 ng-show="coucou">Liste de course</h1>  
       <div ng-show="coucou" ng-repeat="(key, items) in donnees | groupBy :'idingredientdispo' ">  
-          <h1>Liste de course</h1>     volume : {{getVolumeSum(items)}} {{items[0].unite}} - {{items[0].nomi}} - rayon: {{items[0].rayon}} 
+   volume : {{getVolumeSum(items)}} {{items[0].unite}} - {{items[0].nomi}} - rayon: {{items[0].rayon}} 
       </div>
 
 
