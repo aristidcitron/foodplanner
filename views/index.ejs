@@ -2,6 +2,7 @@
   <head>
     <title>Food planner v1</title>
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/style2.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
     <script src="/javascripts/angularApp.js"></script>
@@ -10,10 +11,8 @@
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.14/angular-filter.js"></script>
     
-
-
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
-
+    <script src="/javascripts/main.js"></script>
 
 
 
@@ -25,11 +24,11 @@
   <body ng-app="foodplanner">
 
      <div class="row"> 
-     <div ui-view ="menu"> </div>
-      <div class="col-md-10 col-md-offset-1" >
+     <div ui-view ="menu"> </div>     </div>
+      
       <div ui-view="page"> </div>
-      </div>
-     </div>
+
+
 
 
 
@@ -41,36 +40,27 @@
           <!-- Menu en haut de la page -->
 
     <script type="text/ng-template" id="/menu.html" >
-      <nav class="navbar navbar-default">
-        <div class="container-fluid">
+ <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+
           <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header">
-            <a class="navbar-brand" href="#">Food Planner </a>
+            <a class="navbar-brand" href="#/index">On dine quoi?</a>
           </div>
 
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-              <li ng-show="isLoggedIn()"><a>Bienvenu {{ currentUser() }}!</a></li>
+
               <li ng-class="{active: $state.current.name == 'home'}"><a href="#/home">Recettes</a></li>
               <li ng-class="{active: $state.current.name == 'ingredientsdispos'}"><a href="#/ingredientsdispos">Ingredients</a></li>
-              <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>              
+              <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>  
+            </ul>
+            <ul class="nav navbar-nav navbar-right">            
+              <li ng-show="isLoggedIn()"><a>Bienvenu {{ currentUser() }}!</a></li>
               <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'register'}"><a href="#/register">S'inscrire</a></li>    
               <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="#/login">Se connecter</a></li>   
               <li ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="" ng-click="logOut()">Se déconnecter</a></li>                            
-          
-             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">1</a></li>
-                  <li><a href="#">2</a></li>
-                  <li><a href="#">3</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">Separated link</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">One more separated link</a></li>
-                </ul>
-              </li>
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -296,6 +286,7 @@
 
      <script type="text/ng-template" id="/planning.html">
          <div class="page-header">
+         <br>
           <h1>Planning</h1>
         </div>
         <button ng-click=genererplanning(recettes) class="btn btn-primary"> Créer planning aléatoire! </button>
@@ -562,6 +553,97 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/ng-template" id="/index.html">
+  
+
+
+
+<!-- first section - Home -->
+<div id="home" class="home">
+<div class="text-vcenter">
+<h1>On dine quoi?</h1>
+<h3>L'application qui rend les repas plus funky!</h3>
+<a href="/#home" class="btn btn-success btn-lg">Continue</a>
+</div>
+</div>
+<!-- /first section -->
+
+
+
+<!-- third section - Services -->
+<div id="services" class="pad-section">
+<div class="container">
+<h2 class="text-center">"On dine quoi", qu'est ce que c'est?</h2> <hr />
+<div class="row text-center">
+<div class="col-sm-4 col-xs-6">
+<i class="glyphicon glyphicon-calendar"> </i>
+<h4>Planning de repas</h4>
+<p>L'application répond à la question fatidique: "qu'est-ce qu'on mange ce soir?" en plannifiant vos repas de la semaine</p>
+</div>
+<div class="col-sm-4 col-xs-6">
+<i class="glyphicon glyphicon-th-list"> </i>
+<h4>Liste des courses</h4>
+<p>Finit le gachi et les heures perdues dans les rayons du supermarcher avec la liste des courses automatique</p>
+</div>
+<div class="col-sm-4 col-xs-6">
+<i class="glyphicon glyphicon-hand-up"> </i>
+<h4>C'est vous le chef</h4>
+<p>Ajouter vos propres recettes, ingredients, ... selon vos envies!</p>
+</div>
+</div>
+</div>
+</div>
+<!-- /third section -->
+
+<!-- second section - About -->
+<div id="about" class="pad-section">
+<div class="container">
+<div class="row">
+<div class="col-sm-6">
+<img src="images/planning.jpg" alt="" />
+</div>
+<div class="col-sm-6 ">
+<h2 class ="text-center">Grace à "On dine quoi?"...</h2>
+<p class="lead">
+- Plus de prise de tête: plannifier vos repas et ne soyez jamais a cours d'idée. <br>
+- Plus de gâchi: prévoyer les bonnes quantités de chaque aliments, nous plannifions pour vous les repas en fonction de leur date de péremption.<br>
+- Des repas équilibré: l'application calcule pour vous l'apport moyen des repas sur la semaine. Choisissez vous même.<br>
+- Personalisez a l'infinie: àjouter vos recettes, changez l'ordre du planning, choisissez vos quantités: l'application se configure au plus près de vos besoin.<br>
+- Quelques soit vos préférences alimentaires: vous êtes plutôt veggie? halal? sans gluten? gourmand? C'est vous qui décidez! <br></p>
+</div>
+</div>
+</div>
+</div>
+<!-- /second section -->
+
+<footer>
+<hr />
+<div class="container">
+<p class="text-right">Copyright &copy; On dîne quoi? 2017</p>
+</div>
+</footer>
+<!-- /footer -->
+
+</script>
+
+
+<!-- 
+<script type="text/javascript" src="//api.filestackapi.com/filestack.js"></script>
+
+<input type="filepicker" data-fp-apikey="AP8r820JEQiqGqRVOddP0z"
+onchange="alert(event.fpfile.url)">
+-->
 
 
 

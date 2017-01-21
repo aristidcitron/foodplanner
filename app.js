@@ -7,6 +7,16 @@ var bodyParser = require('body-parser');
 var mongoose = require ('mongoose');
 var passport = require ('passport');
 
+// PHOTO
+//var morgan = require('morgan');
+//var bodyParser = require('body-parser');
+//var food = require('./routes/recette')();
+
+
+
+
+
+
 mongoose.connect ('mongodb://toto:28021986@ec2-54-235-42-48.compute-1.amazonaws.com:27017/dummyDB');
 
 require('./models/Recettes.js');
@@ -24,6 +34,22 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+
+
+// Log with Morgan PHOTO
+//app.use(morgan('dev'));
+
+// PHOTO
+// parse application/json and look for raw text                                   
+//app.use(bodyParser.json());                                     
+//app.use(bodyParser.urlencoded({extended: true}));               
+//app.use(bodyParser.text());                                    
+//app.use(bodyParser.json({ type: 'application/json'}));  
+
+
+
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -32,6 +58,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
+
+
+
+
+
+// PHOTO
+//app.route('/recette')
+  //  .post(recette.post)
+    //.get(recette.getAll);
+//app.route('/recette/:id')
+  //  .get(recette.getOne);
+//app.listen(port);
+//console.log('listening on port ' + port);
+
+
 
 app.use('/', index);
 app.use('/users', users);

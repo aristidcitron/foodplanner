@@ -8,6 +8,7 @@ var RecetteSchema = new mongoose.Schema({
 	insctructions: String,
 	lien: String,
 	ingredients: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}],	
+	//picture: {type: Schema.Types.Mixed, required: true},
 	author: String,
 });
 

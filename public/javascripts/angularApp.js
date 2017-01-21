@@ -5,6 +5,23 @@ app.config([
 	'$urlRouterProvider',
 	function($stateProvider, $urlRouterProvider){
 		$stateProvider
+			.state('index',{
+				url:'/index',
+				views:{
+					'page':{
+						templateUrl:'/index.html',
+			
+
+					},
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}
+				
+			})
+
 			.state('home',{
 				url:'/home',
 				views:{
