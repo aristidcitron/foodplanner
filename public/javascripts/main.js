@@ -26,3 +26,17 @@ var infowindow = new google.maps.InfoWindow({
 content:  '<div class="info"><strong>This is my company</strong><br><br>My company address is here<br> 32846 Sydney</div>'
 });  
 });
+
+
+
+
+
+//slider
+
+
+// Carousel Auto-Cycle
+  $(document).ready(function() {
+    $('.carousel').carousel({
+      interval: 1
+    })
+  });

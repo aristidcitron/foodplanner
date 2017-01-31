@@ -13,8 +13,8 @@
     
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
     <script src="/javascripts/main.js"></script>
-
-
+          <!-- slider -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
 
     <style> .glyphicon-thumbs-up { cursor:pointer } </style>
     <style> .glyphicon-remove { cursor:pointer } </style>
@@ -52,7 +52,7 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
 
-              <li ng-class="{active: $state.current.name == 'home'}"><a href="#/home">Recettes</a></li>
+              <li ng-class="{active: $state.current.name == 'home'}"><a href="#/recettes">Recettes</a></li>
               <li ng-class="{active: $state.current.name == 'ingredientsdispos'}"><a href="#/ingredientsdispos">Ingredients</a></li>
               <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>  
             </ul>
@@ -75,8 +75,8 @@
 
           <!-- Liste des recettes et home -->
 
-     <script type="text/ng-template" id="/home.html">
-         <div class="page-header">
+     <script type="text/ng-template" id="/recettes.html">
+         <div class="page-header"> <br>
           <h1>Liste des recettes</h1>
         </div>
         <form   ng-submit="ajouterRecette()" style="margin-top:30px;">
@@ -135,7 +135,7 @@
           <!-- Liste des ingredients disponible -->
 
      <script type="text/ng-template" id="/ingredientsdispos.html">
-         <div class="page-header">
+         <div class="page-header"> <br> 
           <h1>Liste des ingredients</h1>
         </div>
         <form ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
@@ -193,7 +193,7 @@
           <!-- Liste des ingredients d'une recette -->
 
 
-     <script type="text/ng-template" id="/recettes.html">
+     <script type="text/ng-template" id="/recette.html">
         <div class="page-header">
           <h1>
              {{currentUser()}}
@@ -566,75 +566,110 @@
 
 <script type="text/ng-template" id="/index.html">
   
-
-
-
 <!-- first section - Home -->
-<div id="home" class="home">
-<div class="text-vcenter">
-<h1>On dine quoi?</h1>
-<h3>L'application qui rend les repas plus funky!</h3>
-<a href="/#home" class="btn btn-success btn-lg">Continue</a>
-</div>
-</div>
-<!-- /first section -->
+  <div id="home" class="home">
+    <div class="text-vcenter"><br><br><br><br>
+      <h1>"On dîne quoi ce soir?"</h1><br>
+      <br><br><br>
+      <h3><em>pour vous - par vous - équilibré - économique</em></h3><br><br><br>
+      <a href="/#home" class="btn btn-success btn-lg">Continue</a>
+      <br><br><br><br><br>
 
+      <div class="col-sm-3 col-xs-6">
+        <carousel interval="myInterval1">
+          <slide ng-repeat="slide1 in slides1" active="slide1.active">
+            <img ng-src="{{slide1.image}}">
+            <div class="carousel-caption">
+              <h4>Slide {{$index+1}}</h4>
+            </div>
+          </slide>
+        </carousel>
+      </div>
 
+      <div class="col-sm-3 col-xs-6">
+        <carousel interval="myInterval2">
+          <slide ng-repeat="slide2 in slides2" active="slide2.active">
+            <img ng-src="{{slide2.image}}">
+            <div class="carousel-caption">
+              <h4>Slide {{$index+1}}</h4>
+            </div>
+          </slide>
+        </carousel>
+      </div>
+
+      <div class="col-sm-3 col-xs-6">
+        <carousel interval="myInterval3">
+          <slide ng-repeat="slide3 in slides3" active="slide3.active">
+            <img ng-src="{{slide3.image}}">
+            <div class="carousel-caption">
+              <h4>Slide {{$index+1}}</h4>
+            </div>
+          </slide>
+        </carousel>
+      </div>  
+
+      <div class="col-sm-3 col-xs-6">
+        <carousel interval="myInterval4">
+          <slide ng-repeat="slide4 in slides4" active="slide4.active">
+            <img ng-src="{{slide4.image}}">
+            <div class="carousel-caption">
+              <h4>Slide {{$index+1}}</h4>
+            </div>
+          </slide>
+        </carousel>
+      </div>        
+    </div>
+  </div>
+      
 
 <!-- third section - Services -->
-<div id="services" class="pad-section">
-<div class="container">
-<h2 class="text-center">"On dine quoi", qu'est ce que c'est?</h2> <hr />
-<div class="row text-center">
-<div class="col-sm-4 col-xs-6">
-<i class="glyphicon glyphicon-calendar"> </i>
-<h4>Planning de repas</h4>
-<p>L'application répond à la question fatidique: "qu'est-ce qu'on mange ce soir?" en plannifiant vos repas de la semaine</p>
-</div>
-<div class="col-sm-4 col-xs-6">
-<i class="glyphicon glyphicon-th-list"> </i>
-<h4>Liste des courses</h4>
-<p>Finit le gachi et les heures perdues dans les rayons du supermarcher avec la liste des courses automatique</p>
-</div>
-<div class="col-sm-4 col-xs-6">
-<i class="glyphicon glyphicon-hand-up"> </i>
-<h4>C'est vous le chef</h4>
-<p>Ajouter vos propres recettes, ingredients, ... selon vos envies!</p>
-</div>
-</div>
-</div>
-</div>
+  <div id="services" class="pad-section">
+    <div class="container">
+    <h2 class="text-center">"On dine quoi", qu'est ce que c'est?</h2> <hr />
+      <div class="row text-center">
+        <div class="col-sm-4 col-xs-6">
+          <i class="glyphicon glyphicon-calendar"> </i>
+          <h4>Planning de repas</h4>
+          <p>L'application répond à la question fatidique: "qu'est-ce qu'on mange ce soir?" en plannifiant vos repas de la semaine</p>
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <i class="glyphicon glyphicon-th-list"> </i>
+          <h4>Liste des courses</h4>
+          <p>Finit le gachi et les heures perdues dans les rayons du supermarcher avec la liste des courses automatique</p>
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <i class="glyphicon glyphicon-hand-up"> </i>
+          <h4>C'est vous le chef</h4>
+          <p>Ajouter vos propres recettes, ingredients, ... selon vos envies!</p>
+        </div>
+      </div>
+    </div>
+  </div>
 <!-- /third section -->
 
 <!-- second section - About -->
-<div id="about" class="pad-section">
-<div class="container">
-<div class="row">
-<div class="col-sm-6">
-<img src="images/planning.jpg" alt="" />
-</div>
-<div class="col-sm-6 ">
-<h2 class ="text-center">Grace à "On dine quoi?"...</h2>
-<p class="lead">
-- Plus de prise de tête: plannifier vos repas et ne soyez jamais a cours d'idée. <br>
-- Plus de gâchi: prévoyer les bonnes quantités de chaque aliments, nous plannifions pour vous les repas en fonction de leur date de péremption.<br>
-- Des repas équilibré: l'application calcule pour vous l'apport moyen des repas sur la semaine. Choisissez vous même.<br>
-- Personalisez a l'infinie: àjouter vos recettes, changez l'ordre du planning, choisissez vos quantités: l'application se configure au plus près de vos besoin.<br>
-- Quelques soit vos préférences alimentaires: vous êtes plutôt veggie? halal? sans gluten? gourmand? C'est vous qui décidez! <br></p>
-</div>
-</div>
-</div>
-</div>
+  <div id="about" class="pad-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <img src="images/planning.jpg" alt="" />
+        </div>
+        <div class="col-sm-6 ">
+          <h2 class ="text-center">Grace à "On dine quoi?"...</h2>
+          <p class="lead">
+          - Plus de prise de tête: plannifier vos repas et ne soyez jamais a cours d'idée. <br>
+          - Plus de gâchi: prévoyer les bonnes quantités de chaque aliments, nous plannifions pour vous les repas en fonction de leur date de péremption.<br>
+          - Des repas équilibré: l'application calcule pour vous l'apport moyen des repas sur la semaine. Choisissez vous même.<br>
+          - Personalisez a l'infinie: àjouter vos recettes, changez l'ordre du planning, choisissez vos quantités: l'application se configure au plus près de vos besoin.<br>
+          - Quelques soit vos préférences alimentaires: vous êtes plutôt veggie? halal? sans gluten? gourmand? C'est vous qui décidez! <br></p>
+        </div>
+      </div>
+    </div>
+  </div>
 <!-- /second section -->
 
-<footer>
-<hr />
-<div class="container">
-<p class="text-right">Copyright &copy; On dîne quoi? 2017</p>
-</div>
-</footer>
-<!-- /footer -->
 
+<!-- /footer -->
 </script>
 
 
@@ -645,7 +680,12 @@
 onchange="alert(event.fpfile.url)">
 -->
 
-
+<footer>
+  <hr />
+  <div class="container">
+    <p class="text-right">Copyright &copy; On dîne quoi? 2017</p>
+  </div>
+</footer>
 
 
 

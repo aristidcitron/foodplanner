@@ -10,7 +10,7 @@ app.config([
 				views:{
 					'page':{
 						templateUrl:'/index.html',
-			
+						controller:'IndexCtrl',			
 
 					},
 					'menu':{
@@ -23,14 +23,16 @@ app.config([
 			})
 
 			.state('home',{
-				url:'/home',
+				url:'/recettes',
 				views:{
 					'page':{
-						templateUrl:'/home.html',
+						templateUrl:'/recettes.html',
 						controller:'MainCtrl',						
 						resolve:{
-							recettePromise:['recettes', function(recettes){
-								return recettes.getAll();
+							//simpleObj:['auth', function(auth){return auth.currentUser();}],
+							//var currentUser = auth.currentUser(),
+							recettePromise:['recettes','auth', function(recettes,auth){
+								return recettes.getAllUser(auth.currentUser());
 							}]
 						}
 					},
@@ -137,7 +139,7 @@ app.config([
 				views:{
 					'page':{
 
-						templateUrl:'/recettes.html',
+						templateUrl:'/recette.html',
 						controller: 'RecettesCtrl',
 						resolve: {
 							recette:['$stateParams','recettes', function($stateParams, recettes){
@@ -155,7 +157,7 @@ app.config([
 
 				}		
 			});
-		$urlRouterProvider.otherwise ('home');
+		$urlRouterProvider.otherwise ('index');
 
 	}])
 
@@ -249,6 +251,16 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 			angular.copy(data,o.recettes);
 		});
 	};
+
+
+
+	// récupérer la liste de toutes les recettes d'un user
+	o.getAllUser = function(id){
+		return $http.get('/recettesuser/'+ id).success(function(data){
+			angular.copy(data,o.recettes);
+		});
+	};
+
 
 
 
@@ -595,6 +607,49 @@ function widgetsController($scope, $state,auth) {
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
   $scope.logOut = auth.logOut;
+}]);
+
+
+
+app.controller('IndexCtrl', [
+	'$scope',
+function ($scope){
+  $scope.myInterval1 = 2000;
+  $scope.myInterval2 = 1500;  
+    $scope.myInterval3 = 2500; 
+    $scope.myInterval4 = 3000;     
+  $scope.slides1 = [
+    {
+      image: 'images/repas1.jpg'
+    },
+    {
+      image: 'images/repas2.jpg'
+    },
+  ];
+  $scope.slides2 = [
+    {
+      image: 'images/repas3.jpg'
+    },
+    {
+      image: 'images/repas4.jpg'
+    },
+  ];
+    $scope.slides3 = [
+    {
+      image: 'images/repas1.jpg'
+    },
+    {
+      image: 'images/repas4.jpg'
+    },
+  ];
+      $scope.slides4 = [
+    {
+      image: 'images/repas2.jpg'
+    },
+    {
+      image: 'images/repas3.jpg'
+    },
+  ];
 }]);
 
 

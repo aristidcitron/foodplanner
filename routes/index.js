@@ -58,6 +58,16 @@ router.post('/login', function(req, res, next){
 
 
 
+router.get('/recettesuser/:user', function (req,res,next){
+	Recette.find({$or:[
+    	{author:"aymeric"},
+      	{author:req.params.user},  	
+    	{author: {$exists: false}}]
+    	}, function(err, recettes){
+			if (err) {next(err);}
+			res.json(recettes);
+		});
+});
 
 
 
