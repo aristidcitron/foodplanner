@@ -1,9 +1,10 @@
-var app = angular.module('foodplanner', ['ui.router','ui.bootstrap', 'angular.filter']);
+var app = angular.module('foodplanner', ['ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker']);
 
 app.config([
 	'$stateProvider',
 	'$urlRouterProvider',
-	function($stateProvider, $urlRouterProvider){
+	'filepickerProvider',
+	function($stateProvider, $urlRouterProvider, filepickerProvider){
 		$stateProvider
 			.state('index',{
 				url:'/index',
@@ -44,6 +45,28 @@ app.config([
 				}
 				
 			})
+
+
+			.state('ajouterrecette',{
+				url:'/ajouterrecette',
+				views:{
+					'page':{
+						templateUrl:'/ajouterrecette.html',
+						controller:'ajouterrecetteCtrl',						
+						resolve: {
+							ingredientsdispoPromise:['ingredientsdispos', function(ingredientsdispos){
+								return ingredientsdispos.getIngredientsdispo();
+							}]						
+						},
+					},	
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}})
+
+
 
 			.state('login',{
 				url:'/login',
@@ -158,6 +181,7 @@ app.config([
 				}		
 			});
 		$urlRouterProvider.otherwise ('index');
+		filepickerProvider.setKey('AP8r820JEQiqGqRVOddP0z');
 
 	}])
 
@@ -339,6 +363,99 @@ function($scope,ingredientsdispos){
 
 
 
+
+
+
+app.controller('ajouterrecetteCtrl', [
+'$scope',
+'recettes',
+'auth',
+'filepickerService',
+'ingredientsdispos',
+function($scope,recettes,auth,filepickerService,ingredientsdispos){
+  $scope.recettes = recettes.recettes;
+  $scope.currentUser = auth.currentUser;
+  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.ingredientsdispos = ingredientsdispos.ingredientsdispos;
+  $scope.ingredients = [];
+  $scope.infophoto ='';
+
+    $scope.addtorecette = function(ingredientsdispo) {
+    	ingredientsdispo.nombre=0;
+    	ingredientsdispo.nomi=ingredientsdispo.nomid;
+		$scope.ingredients.push(ingredientsdispo);
+		};
+
+	$scope.supprimerIngredient = function(ingredient) {
+		var tampon=ingredient;
+		recettes.deleteingredient(recette,ingredient).success(function(ingredient){
+			$scope.recette.ingredients.splice($scope.recette.ingredients.indexOf(tampon),1);
+		})};	
+
+
+	$scope.editIngredient = function (ingredient) {
+        ingredient.editing = true;
+    };
+
+    $scope.doneEditing = function (ingredient) {
+        ingredient.editing = false;
+        var tampon=ingredient;
+		};
+
+
+
+  $scope.ajouterRecette = function() {
+ 		if (!$scope.nomr || $scope.nomr ==='') { return; }
+ 		recettes.createrecette ({
+ 			nomr: $scope.nomr,
+ 			upvotes: 0,
+ 			tempsdecuisson: $scope.tempsdecuisson,
+ 			tempsdepreparation:$scope.tempsdepreparation,
+ 			instructions:$scope.instructions,
+ 			author: $scope.currentUser,
+ 			ingredients: $scope.ingredients,
+ 			picture: $scope.infophoto.url
+ 		});
+
+ 		$scope.nomr='';
+ 		$scope.tempsdepreparation='';
+ 		$scope.tempsdecuisson='';
+ 		$scope.instructions='';
+ 		$scope.picture='';
+ 		$scope.ingredients='';
+ 	};
+
+
+
+
+
+
+
+    $scope.upload = function(){
+        filepickerService.pick(
+            {
+                mimetype: 'image/*',
+                language: 'en',
+                services: ['COMPUTER','DROPBOX','GOOGLE_DRIVE','IMAGE_SEARCH', 'FACEBOOK', 'INSTAGRAM'],
+                openTo: 'IMAGE_SEARCH'
+            },
+            function(Blob){
+                console.log(JSON.stringify(Blob));
+                $scope.infophoto = Blob;
+                $scope.$apply();
+            }
+        );
+    };
+
+
+}]);
+
+
+
+
+
+
+
 app.controller('MainCtrl', [
 '$scope',
 'recettes',
@@ -375,6 +492,9 @@ function($scope,recettes,auth){
 		})};
 	
 	}]);
+
+
+
 
 
 

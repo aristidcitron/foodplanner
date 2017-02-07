@@ -10,11 +10,14 @@
     <script src="https://rawgit.com/fordth/jinqJs/master/jinqjs.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.14/angular-filter.js"></script>
-    
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
-    <script src="/javascripts/main.js"></script>
+
+        <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
           <!-- slider -->
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js"></script>
+              <script src="/javascripts/main.js"></script>
+
+<!--filestack widget-->
+    <script src="/javascripts/filepicker.js"></script>
+    <script src="/javascripts/angular_filepicker.js"></script>
 
     <style> .glyphicon-thumbs-up { cursor:pointer } </style>
     <style> .glyphicon-remove { cursor:pointer } </style>
@@ -73,36 +76,25 @@
 
 
 
+
+
+
+
+
+
           <!-- Liste des recettes et home -->
 
      <script type="text/ng-template" id="/recettes.html">
+
          <div class="page-header"> <br>
           <h1>Liste des recettes</h1>
+          
         </div>
-        <form   ng-submit="ajouterRecette()" style="margin-top:30px;">
-    <h3>Ajouter une nouvelle recette</h3>
-      <div class="row">
-      <div class="col-lg-6">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Nom de la recette" ng-model="nomr"/>
-         </div> 
-          <input type="text" class="form-control" placeholder="instructions" ng-model="instructions "/>
-        <div class="form-group">  
-        </div>
-        </div>
-        <div class="col-lg-6">
-         <div class="form-group"> 
-          <input type="number" class="form-control" placeholder="Temps de cuission" ng-model="tempsdecuisson"/>
-        </div>
-        <div class="form-group">         
-        <input type="number" class="form-control" placeholder="Temps de préparation" ng-model="tempsdepreparation"/>
-        </div>
-        <div class="form-group">   
-           <button type="submit" class="btn btn-primary"> Ajoute ta recette! </button>
-         </div>
-        </div> 
-      </div>
-      </form>
+      <br><br>   <a class="btn btn-primary" href="#/ajouterrecette"> Ajoute ta recette! </a><br><br>
+
+
+
+
       <table class="table"> 
         <tr>
           <td> Nom de recette </td>
@@ -110,7 +102,7 @@
           <td> temps de cuisson </td>
           <td>  </td>
         <tr ng-repeat="recette in recettes | orderBy :'-upvotes'">
-          <td><a href ="#/recettes/{{recette._id}}">{{recette.nomr}}</a></td>
+          <td><img ng-src="{{recette.picture}}" class="thumbnailperso" ng-show="recette.picture"> <a href ="#/recettes/{{recette._id}}">{{recette.nomr}}</a></td>
           <td>{{recette.tempsdepreparation}}</td>
           <td>{{recette.tempsdecuisson}}</td>
           <td> <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes (recette)"></span>
@@ -124,6 +116,10 @@
       </table>
       <br><br><br>
  
+
+
+
+  
     
      </script>
 
@@ -189,16 +185,156 @@
 
 
 
+          <!-- Page d'ajout de recette -->
+
+     <script type="text/ng-template" id="/ajouterrecette.html">
+
+      <div class="page-header"> <br>
+          <h1>Ajouter une recette</h1>
+          
+        </div>
+
+
+
+        <form ng-submit="ajouterRecette()" style="margin-top:30px;">
+          <div class="row">
+           <div class="col-lg-6">
+             <div class="form-group">
+              <input type="text" class="form-control" placeholder="Nom de la recette" ng-model="nomr"/>
+             </div> 
+             <div class="form-group">  
+              <textarea type="text"  class="form-control" rows="12" placeholder="instructions" ng-model="instructions "> </textarea>
+             </div>
+            </div>
+            <div class="col-lg-6">
+             <div class="form-group"> 
+              <input type="number" class="form-control" placeholder="Temps de cuission" ng-model="tempsdecuisson"/>
+             </div>
+             <div class="form-group">         
+              <input type="number" class="form-control" placeholder="Temps de préparation" ng-model="tempsdepreparation"/>
+             </div><BR>
+             <div class="form-group">
+                <label for="picture">Photo:</label>
+                 <div class="text-center">
+                   <button type="button" class="btn btn-default" ng-click="upload()">
+                            Upload <span class="caret"></span>
+                        </button>
+                        <div style="margin-top:10px;">
+                            <!-- Show the thumbnail only when the picture is uploaded -->
+                            <a href="{{infophoto.url}}" class="thumbnailperso" ng-show="infophoto.url">
+                            <!-- the picture is rendered with width: 500 and sharpened -->
+                            <img ng-src="{{infophoto.url | fpConvert: {filter:'sharpen'} }}">
+                            </a>
+                        </div>                  
+                    </div>
+                </div>
+
+            </div> 
+           </div> 
+
+<br>
+
+       <div class="row">
+        <div class="form-group">
+         <div class="col-lg-6">
+           <table class="table" for="ingredients"> 
+              <tr>
+                <td> nombre </td>
+                 <td> unite </td>
+                <td> ingredient </td>
+                <td></td>
+              </tr>
+              <tr ng-repeat="ingredient in ingredients | orderBy:'nomid'">
+                <td> 
+                 <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
+                 <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
+                </td>
+                <td> {{ingredient.unite}}</td>
+                <td> {{ingredient.nomid}}</td>
+
+                <td><span class="glyphicon glyphicon-remove" ng-click="supprimerIngredient(ingredient)"></span>
+                <span class="glyphicon glyphicon-pencil" ng-click="editIngredient(ingredient)"></span></td>
+
+                </tr>
+              </table>
+                 </div>
+            </div> 
+           </div> 
+                           <div class="form-group">   
+                   <button type="submit" class="btn btn-primary"> Sauvegarder </button>
+                 </div>
+      </form>    
+
+
+
+         </div>
+        <div class="col-lg-6"> 
+         </form>       
+          <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon"><i class="fa fa-search"></i></div>
+
+              <input type="text" class="form-control" placeholder="Rechercher ingredient" ng-model="rechercheIngredientsdispo">
+
+            </div>      
+          </div>
+        </form>
+        <table class="table"> 
+        <tr>
+          <td> Nom de l'ingredient </td>
+          <td> Rayons </td>
+          <td> Unité </td>
+          <td>  </td>
+         </tr>         
+        <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid' | filter:rechercheIngredientsdispo">
+          <td>{{ingredientsdispo.nomid}}</td>
+          <td>{{ingredientsdispo.rayon}}</td>
+          <td>{{ingredientsdispo.unite}}</td>
+          <td> 
+            <span class="glyphicon glyphicon-plus" ng-click="addtorecette(ingredientsdispo)"></span>
+           </td>
+        </tr>
+      </table>  
+
+         </div>
+           </div>      
+
+    
+      </script>
+
+
+
+
+
 
           <!-- Liste des ingredients d'une recette -->
 
 
      <script type="text/ng-template" id="/recette.html">
         <div class="page-header">
+        <br><br>
           <h1>
-             {{currentUser()}}
+             {{recette.nomr}} 
+            
           </h1>
+          by {{recette.author}}
         </div>
+
+       <div class="row">
+        <div class="col-lg-6"> 
+          <img ng-src="{{recette.picture}}" class="photodescriptionrecette" ng-show="recette.picture"> <br>  <br> 
+        </div>
+         <div class="col-lg-6"> 
+         <h4 ng-show="recette.instructions"> instruction: </h4>
+         {{recette.instructions}}<br>
+         <h4 ng-show="recette.tempsdecuisson"> temps de cuisson:</h4>
+         <div ng-show="recette.tempsdecuisson"> {{recette.tempsdecuisson}} minutes</div> 
+         <h4 ng-show="recette.tempsdepreparation">  temps de préparation:</h4>
+         <div ng-show="recette.tempsdepreparation"> {{recette.tempsdepreparation}} minutes  </div>  <br>  
+        </div>
+       </div>
+       <div class="row">
         <div class="col-lg-6">
         <table class="table"> 
         <tr>
@@ -220,20 +356,7 @@
 
           </tr>
         </table>      
-          <form ng-submit="ajouterIngredient()"
-            style="margin-top:30px;">
-            <h3>ajouter un nouve ingredient</h3>
 
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="nom" ng-model="nomi"/>
-             </div>
-             <div class="form-group">
-              <input type="text" class="form-control" placeholder="nombre" ng-model="nombre"/>
-            </div>
-           <div class="form-group">
-            <button type="submit" class="btn btn-primary">Ajouter</button>
-           </div>
-          </form>
           </div>
         <div class="col-lg-6"> 
              
@@ -264,6 +387,7 @@
       </table>  
 
          </div>
+        </div>  
       </script>
 
 
@@ -566,13 +690,17 @@
 
 <script type="text/ng-template" id="/index.html">
   
+
 <!-- first section - Home -->
   <div id="home" class="home">
+
     <div class="text-vcenter"><br><br><br><br>
       <h1>"On dîne quoi ce soir?"</h1><br>
       <br><br><br>
       <h3><em>pour vous - par vous - équilibré - économique</em></h3><br><br><br>
       <a href="/#home" class="btn btn-success btn-lg">Continue</a>
+        <input type="filepicker" data-fp-apikey="AP8r820JEQiqGqRVOddP0z" onchange="console.log(event.fpfile)">
+
       <br><br><br><br><br>
 
       <div class="col-sm-3 col-xs-6">
@@ -673,12 +801,7 @@
 </script>
 
 
-<!-- 
-<script type="text/javascript" src="//api.filestackapi.com/filestack.js"></script>
 
-<input type="filepicker" data-fp-apikey="AP8r820JEQiqGqRVOddP0z"
-onchange="alert(event.fpfile.url)">
--->
 
 <footer>
   <hr />

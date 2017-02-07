@@ -8,9 +8,11 @@ var mongoose = require ('mongoose');
 var passport = require ('passport');
 
 // PHOTO
-//var morgan = require('morgan');
-//var bodyParser = require('body-parser');
-//var food = require('./routes/recette')();
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+
+
+//var superhero = require('./app/routes/superhero')(); => Pas besoin
 
 
 
@@ -37,15 +39,38 @@ app.set('view engine', 'ejs');
 
 
 
-// Log with Morgan PHOTO
-//app.use(morgan('dev'));
+
+
+
+
+
 
 // PHOTO
+
+// Log with Morgan PHOTO
+app.use(morgan('dev'));
+
+
 // parse application/json and look for raw text                                   
-//app.use(bodyParser.json());                                     
-//app.use(bodyParser.urlencoded({extended: true}));               
-//app.use(bodyParser.text());                                    
-//app.use(bodyParser.json({ type: 'application/json'}));  
+app.use(bodyParser.json());                                     
+app.use(bodyParser.urlencoded({extended: true}));               
+app.use(bodyParser.text());                                    
+app.use(bodyParser.json({ type: 'application/json'}));  
+
+// Static files
+app.use(express.static(__dirname + '/public')); 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

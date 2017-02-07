@@ -5,10 +5,10 @@ var RecetteSchema = new mongoose.Schema({
 	upvotes: {type: Number, default: 0},
 	tempsdecuisson: Number,
 	tempsdepreparation: Number,
-	insctructions: String,
+	instructions: String,
 	lien: String,
-	ingredients: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}],	
-	//picture: {type: Schema.Types.Mixed, required: true},
+	ingredients: [],	
+	picture: {type: mongoose.Schema.Types.Mixed, required: false},
 	author: String,
 });
 
@@ -17,4 +17,6 @@ RecetteSchema.methods.upvote = function(cb) {
 	this.save(cb);
 };
 
-mongoose.model('Recette', RecetteSchema);
+module.exports = mongoose.model('Recette', RecetteSchema);
+
+//{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}
