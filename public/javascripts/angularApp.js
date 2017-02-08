@@ -300,14 +300,32 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	};
 	// ajouter une nouvelle recette 	
 	o.createrecette=function(recette){
-		return $http.post('/recettes', recette,{
+		return  $http.post('/recettes', recette,{
    			 	headers: {Authorization: 'Bearer '+auth.getToken()}
  			 }).success(function(data){
 			o.recettes.push(data);
+			console.log(data._id);
 		});
 	};
 
-
+	o.createrecettecomplette=function(recette,ingredients){
+		return  $http.post('/recettes', recette,{
+   			 	headers: {Authorization: 'Bearer '+auth.getToken()}
+ 			 }).success(function(data){
+					console.log(data._id);
+					var id = data._id;
+		    		for(var i = 0; i < ingredients.length; i++) {
+		    			var postObject = new Object();
+		    			postObject.idingredientdispo = ingredients[i]._id;
+						postObject.rayon = ingredients[i].rayon;
+						postObject.unite = ingredients[i].unite;
+						postObject.nombre = ingredients[i].nombre;
+						postObject.nomi = ingredients[i].nomi;
+						console.log(postObject);
+		    			$http.post('/recettes/' + id + '/ingredients', postObject);
+					}
+		});
+	};
 
 	// upvote une recette
 	o.upvote = function (recette){
@@ -317,7 +335,7 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	};
 	// ajouter un ingredient	
 	o.addingredient = function(id, ingredient){
-		return $http.post('/recettes/' + id + '/ingredients', ingredient);
+		console.log(ingredient); return $http.post('/recettes/' + id + '/ingredients', ingredient);
 	};
 	// supprimer une recette
 	o.deleterecette = function (recette){
@@ -383,6 +401,7 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
     $scope.addtorecette = function(ingredientsdispo) {
     	ingredientsdispo.nombre=0;
     	ingredientsdispo.nomi=ingredientsdispo.nomid;
+    	delete ingredientsdispo.nomid;
 		$scope.ingredients.push(ingredientsdispo);
 		};
 
@@ -406,16 +425,16 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
 
   $scope.ajouterRecette = function() {
  		if (!$scope.nomr || $scope.nomr ==='') { return; }
- 		recettes.createrecette ({
+ 		recettes.createrecettecomplette ({
  			nomr: $scope.nomr,
  			upvotes: 0,
  			tempsdecuisson: $scope.tempsdecuisson,
  			tempsdepreparation:$scope.tempsdepreparation,
  			instructions:$scope.instructions,
  			author: $scope.currentUser,
- 			ingredients: $scope.ingredients,
  			picture: $scope.infophoto.url
- 		});
+ 		},$scope.ingredients);
+
 
  		$scope.nomr='';
  		$scope.tempsdepreparation='';
@@ -423,6 +442,7 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
  		$scope.instructions='';
  		$scope.picture='';
  		$scope.ingredients='';
+
  	};
 
 
@@ -812,20 +832,20 @@ function($scope,$stateParams,recettes,recette,ingredientsdispos){
         var tampon=ingredient;
         recettes.updatenombre(ingredient, ingredient)
 		};
-        //dong some background ajax calling for persistence...
+       
     	
-// ancienne fonction avec formulaire
-//	$scope.ajouterIngredient = function(){
-// 		if (!$scope.nomi || $scope.nomi ==='') { return; }
-// 		recettes.addingredient(recette._id,{
-// 			nomi: $scope.nomi,
-// 			nombre: $scope.nombre
-// 			}).success(function(ingredient){
-// 				$scope.recette.ingredients.push(ingredient);
-// 		});
-// 		$scope.nomi='';
-// 		$scope.nombre=''; 
-// 	};	
+// ancienne fonction add to recette
+//	    $scope.addtorecette = function(ingredientsdispo) {
+//		var tampon=ingredientsdispo;
+//		recettes.addingredient(recette._id,{
+//			nomi: ingredientsdispo.nomid,
+//			unite: ingredientsdispo.unite,
+//			idingredientdispo: ingredientsdispo._id,
+//			rayon: ingredientsdispo.rayon,
+//			nombre:0
+//		}).success(function(ingredient){
+//			$scope.recette.ingredients.push(ingredient);
+//		})};
 
  
 }]);

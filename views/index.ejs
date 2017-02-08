@@ -193,9 +193,6 @@
           <h1>Ajouter une recette</h1>
           
         </div>
-
-
-
         <form ng-submit="ajouterRecette()" style="margin-top:30px;">
           <div class="row">
            <div class="col-lg-6">
@@ -244,13 +241,13 @@
                 <td> ingredient </td>
                 <td></td>
               </tr>
-              <tr ng-repeat="ingredient in ingredients | orderBy:'nomid'">
+              <tr ng-repeat="ingredient in ingredients | orderBy:'nomi'">
                 <td> 
                  <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
                  <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
                 </td>
                 <td> {{ingredient.unite}}</td>
-                <td> {{ingredient.nomid}}</td>
+                <td> {{ingredient.nomi}}</td>
 
                 <td><span class="glyphicon glyphicon-remove" ng-click="supprimerIngredient(ingredient)"></span>
                 <span class="glyphicon glyphicon-pencil" ng-click="editIngredient(ingredient)"></span></td>
@@ -320,7 +317,6 @@
           </h1>
           by {{recette.author}}
         </div>
-
        <div class="row">
         <div class="col-lg-6"> 
           <img ng-src="{{recette.picture}}" class="photodescriptionrecette" ng-show="recette.picture"> <br>  <br> 
