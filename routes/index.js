@@ -14,6 +14,8 @@ var Ingredient = mongoose.model('Ingredient');
 var Ingredientsdispo = mongoose.model('Ingredientsdispo');
 var passport = require('passport');
 var User = mongoose.model('User');
+var jinqJs = require('jinq');
+var async = require('async');
 
 
 
@@ -21,20 +23,28 @@ router.post('/register', function(req, res, next){
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
-
-  var user = new User();
-
-  user.username = req.body.username;
-
-  user.setPassword(req.body.password)
-
-  user.save(function (err){
-    if(err){ return next(err); }
-
-    return res.json({token: user.generateJWT()})
-  });
+	User.count({username: req.body.username}, function (err, count){ 
+	    if(count>0){
+	    	return res.status(400).json({message: 'le nom d utilisateur est déja utilisé'})
+	    	}
+	    	User.count({email: req.body.email}, function (err, count){ 
+	    		if(count>0){
+	    			return res.status(400).json({message: 'l email est deja pris'})
+	    			}
+		    	 {
+		   	 	  var user = new User();
+	 		      user.username = req.body.username;
+	 		      user.email=req.body.email
+		        //document exists });	
+				  user.setPassword(req.body.password)
+				  user.save(function (err){
+				    if(err){ return next(err); }
+				    return res.json({token: user.generateJWT()})
+	 			 });
+	        	}
+	        }); 
+    });
 });
-
 
 
 
@@ -78,6 +88,76 @@ router.get('/recettes', function (req,res,next){
 		res.json(recettes);
 	});
 });
+
+
+//avoir une recette aléatoire
+router.get('/recettealea', function (req,res,next){
+
+	// Get the count of all users
+	Recette.count().exec(function (err, count) {
+
+	  // Get a random entry
+	  var random = Math.floor(Math.random() * count)
+
+	  // Again query all users but only fetch one offset by our random #
+	  Recette.findOne().skip(random).exec(
+	    function (err, result) {
+	      // Tada! random user
+	      res.json(result) 
+	    })
+	});
+});
+
+
+
+
+//avoir la liste des courses
+router.post('/listedecourses', function (req,res,next){
+"use strict";
+  let items = req.body;
+  let ingredients = [];
+  let result = [];
+      async.each(items,
+       function(item, callback) { 
+      	Recette.find({_id:item.idrecette}, function (err, docs) {
+      	 "use strict";
+   			for (var i=0; i<docs[0].ingredients.length; i++){
+   				ingredients = ingredients.concat([{nom:docs[0].ingredients[i],nbpers:item.nbpers}]) 		
+   				}
+    	  callback();
+    	});
+      }, 
+      function (err) {
+      	async.each(ingredients,
+      		function (ingredient,callback){
+      		  Ingredient.find({_id:ingredient.nom}, function (err, docs) { 
+      		  	  "use strict";
+		          var ingredientscomplet = docs[0];
+		          var toto= ingredient.nbpers*ingredientscomplet.nombre;
+		          ingredientscomplet.nombre = toto;
+		          result.push(ingredientscomplet);
+		          callback();
+		        });
+      		},
+      		function(err){
+      			var balance = new jinqJs().from(result).groupBy('idingredientdispo', 'nomi', 'unite', 'rayon').sum('nombre').select();
+         		console.log(balance); 
+         		res.json(balance);  			
+      		}
+      	)	
+
+      }
+    );  
+});			
+
+
+
+
+
+
+
+
+
 
 //ajouter une recette
 router.post('/recettes/',auth, function (req,res,next){
@@ -140,11 +220,15 @@ router.get('/recettes2/:recette', function (req, res) {
 
 
 // supprimer une recette
-router.delete('/recettes/:recette', function(req,res){
-	req.recette.remove(function(err,recette){
-		if (err) {return next (err);}
-		res.json(recette);
-	});
+router.delete('/recettes/:recette', auth, function(req,res){
+	var recette = new Recette(req.body);
+	if(recette.author === req.payload.username){
+		return req.recette.remove(function(err,recette){
+			if (err) {return next (err);}
+			res.json(req.payload.username);
+		});
+	}res.status(400).json({message: 'Impossible de supprimer des recettes crées par d autres utilisateurs!'});
+
 });
 
 
@@ -225,6 +309,23 @@ router.put('/ingredients/:ingredient', function(req,res){
 	});
 });
 
+
+
+//editer une recette
+router.put('/recettes/:recette', auth, function(req,res){
+	var recette = new Recette(req.body);		
+	if(recette.author != req.payload.username){
+		 return res.status(400).json({message: 'Impossible de modifier des recettes crées par d autres utilisateurs, vos changements ne seront donc pas sauvegardés!'})	
+	}{
+		Recette.findOneAndUpdate({_id:req.params.recette}, req.body, function (err,recette){
+			if (err) {return next (err);}
+			res.json(recette);
+		})
+	}	 
+});
+
+
 module.exports = router;
+
 
 

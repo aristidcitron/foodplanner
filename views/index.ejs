@@ -10,6 +10,7 @@
     <script src="https://rawgit.com/fordth/jinqJs/master/jinqjs.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.14/angular-filter.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
 
         <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
           <!-- slider -->
@@ -93,7 +94,9 @@
       <br><br>   <a class="btn btn-primary" href="#/ajouterrecette"> Ajoute ta recette! </a><br><br>
 
 
-
+       <div ng-show="error" class="alert alert-danger row">
+      <span>{{ error.message }}</span>
+     </div>
 
       <table class="table"> 
         <tr>
@@ -126,47 +129,80 @@
 
 
 
-
-
           <!-- Liste des ingredients disponible -->
 
      <script type="text/ng-template" id="/ingredientsdispos.html">
          <div class="page-header"> <br> 
-          <h1>Liste des ingredients</h1>
-        </div>
-        <form ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
+          <h1>Liste des ingredients</h1> 
+          </div>
+        <form ng-show="currentUser() == 'aymeric'" ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
     <h3>Ajouter un nouvel ingredient</h3>
       <div class="row">
-      <div class="col-lg-6">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Nom de l'ingredient" ng-model="nomid"/>
-         </div> 
-          <input type="text" class="form-control" placeholder="rayon" ng-model="rayon "/>
-        <div class="form-group">  
-        </div>
-        </div>
         <div class="col-lg-6">
-         <div class="form-group"> 
-          <input type="text" class="form-control" placeholder="unité" ng-model="unite"/>
-        </div>
+          <label>Nom de l'ingredient</label>
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Pomme de terre" ng-model="nomid"/>
+          </div> 
+          <label>Rayon</label>      
+          <div class="form-group">  
+              <select class="form-control" placeholder="Fruits et légumes" ng-model="rayon "/>
+                <option>Conserves</option>
+                <option>Epicerie</option>                
+                <option>Fruits et légumes</option>
+                <option>Frais</option>                
+                <option>Viandes</option>
+              </select>
+          </div>
+          <label>Unité</label>          
+          <div class="form-group">  
+              <select class="form-control" placeholder="grammes" ng-model="unite "/>
+                <option>cl</option>                 
+                <option>grammes</option>
+                <option>tranche</option>
+                <option>unité</option>
+              </select>
+          </div>
+          <label>Type principal</label>          
+          <div class="form-group">  
+              <select class="form-control" placeholder="protéines" ng-model="type"/>
+                <option>céréales et dérivés</option>    
+                <option>Légumes et fruits</option>                 
+                <option>Lait et produit laitier</option>
+                <option>Viande poisson et oeuf</option>
+                <option>Matières grasses</option>
+                <option>Sucre et produits sucrés</option>
+              </select>              
+          </div>
+          <label>Apport en Kcal pour 100g</label>          
+          <div class="form-group">  
+              <input type="number" class="form-control" placeholder="32" ng-model="apport "/>
+          </div>                        
+         </div>
+          <label>Poid moyen en grammes (seulement si l'unité n'est pas au poid)</label>         
+         <div class="col-lg-6">
+           <div class="form-group"> 
+            <input type="number" class="form-control" placeholder="poid moyen" ng-model="poidmoyen"/>
+          </div>
         <div class="form-group">   
            <button type="submit" class="btn btn-primary"> Ajoute ton ingredient! </button>
          </div>
         </div> 
       </div>
-      </form>
+      </form> 
       <table class="table"> 
         <tr>
           <td> Nom de l'ingredient </td>
           <td> Rayons </td>
           <td> Unité </td>
+          <td> Type </td>
           <td>  </td>
         <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid'">
           <td>{{ingredientsdispo.nomid}}</a></td>
           <td>{{ingredientsdispo.rayon}}</td>
           <td>{{ingredientsdispo.unite}}</td>
+          <td>{{ingredientsdispo.type}}</td>
           <td> 
-            <span class="glyphicon glyphicon-remove" ng-click="supprimerIngredientsdispos(ingredientsdispo)"></span>
+            <span class="glyphicon glyphicon-remove" ng-show="currentUser() == 'aymeric'" ng-click="supprimerIngredientsdispos(ingredientsdispo)"></span>
            </td>
         </tr>
       </table>
@@ -209,7 +245,11 @@
              </div>
              <div class="form-group">         
               <input type="number" class="form-control" placeholder="Temps de préparation" ng-model="tempsdepreparation"/>
-             </div><BR>
+             </div>
+             <div class="form-group">         
+              <input type="number" class="form-control" placeholder="Nombre de personnes" ng-model="portionmini"/>
+             </div>
+             <BR>
              <div class="form-group">
                 <label for="picture">Photo:</label>
                  <div class="text-center">
@@ -312,22 +352,67 @@
         <div class="page-header">
         <br><br>
           <h1>
-             {{recette.nomr}} 
-            
+
+           <span ng-hide="recette.editingnomr" ng-dblclick="editrecettename(recette)"> {{recette.nomr}}  </span>
+           <input ng-show="recette.editingnomr" ng-model="recette.nomr" ng-blur="doneeditrecettename(recette)" autofocus />
+           <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingnomr" ng-click="editrecettename(recette)"></span></td>
+
           </h1>
-          by {{recette.author}}
-        </div>
+          by {{recette.author}}</div>
+            <div ng-show="error" class="alert alert-danger row">
+              <span>{{ error.message }}</span>
+            </div>
+
        <div class="row">
         <div class="col-lg-6"> 
           <img ng-src="{{recette.picture}}" class="photodescriptionrecette" ng-show="recette.picture"> <br>  <br> 
         </div>
          <div class="col-lg-6"> 
-         <h4 ng-show="recette.instructions"> instruction: </h4>
-         {{recette.instructions}}<br>
-         <h4 ng-show="recette.tempsdecuisson"> temps de cuisson:</h4>
-         <div ng-show="recette.tempsdecuisson"> {{recette.tempsdecuisson}} minutes</div> 
-         <h4 ng-show="recette.tempsdepreparation">  temps de préparation:</h4>
-         <div ng-show="recette.tempsdepreparation"> {{recette.tempsdepreparation}} minutes  </div>  <br>  
+
+        <h4 > pour
+           <span ng-hide="recette.editingportionmini" ng-dblclick="editrecetteportionmini(recette)"> {{recette.portionmini}}  </span>
+           <input ng-show="recette.editingportionmini" ng-model="recette.portionmini" ng-blur="doneeditrecetteportionmini(recette)" autofocus />personnes
+           <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingportionmini" ng-click="editrecetteportionmini(recette)"></span></td>
+           
+        <h4>   
+
+          <h4 > instruction: <span class="glyphicon glyphicon-pencil" ng-hide="recette.editinginstructions" ng-click="editrecetteinstructions(recette)"></span> </h4>
+          <div ng-hide="recette.editinginstructions">
+            <span ng-hide="recette.instructions" ng-dblclick="editrecetteinstructions(recette)"> A vous d'improviser :) </span> 
+          </div>
+          <div  ng-hide="recette.editinginstructions" ng-dblclick="editrecetteinstructions(recette)" > 
+            <span ng-show="recette.instructions"> {{recette.instructions}} </span>
+          </div>
+          <input ng-show="recette.editinginstructions" ng-model="recette.instructions" ng-blur="doneeditrecetteinstructions(recette)" autofocus />
+
+
+
+
+
+          <h4 > temps de cuisson: <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingtempsdecuisson" ng-click="editrecettetempsdecuisson(recette)"></span> </h4>
+          <div ng-hide="recette.editingtempsdecuisson">
+            <span ng-hide="recette.tempsdecuisson" ng-dblclick="editrecettetempsdecuisson(recette)"> ?? min </span> 
+          </div>
+          <div  ng-hide="recette.editingtempsdecuisson" ng-dblclick="editrecettetempsdecuisson(recette)" > 
+            <span ng-show="recette.tempsdecuisson"> {{recette.tempsdecuisson}} min </span>
+          </div>
+          <input type="number" ng-show="recette.editingtempsdecuisson" ng-model="recette.tempsdecuisson" ng-blur="doneeditrecettetempsdecuisson(recette)" autofocus /> 
+
+
+
+
+
+          <h4 > temps de préparation: <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingtempsdepreparation" ng-click="editrecettetempsdepreparation(recette)"></span> </h4>
+          <div ng-hide="recette.editingtempsdepreparation">
+            <span ng-hide="recette.tempsdepreparation" ng-dblclick="editrecettetempsdepreparation(recette)"> ?? min </span> 
+          </div>
+          <div  ng-hide="recette.editingtempsdepreparation" ng-dblclick="editrecettetempsdepreparation(recette)" > 
+            <span ng-show="recette.tempsdepreparation"> {{recette.tempsdepreparation}} min </span>
+          </div>
+          <input type="number" ng-show="recette.editingtempsdepreparation" ng-model="recette.tempsdepreparation" ng-blur="doneeditrecettetempsdepreparation(recette)" autofocus /> 
+
+
+
         </div>
        </div>
        <div class="row">
@@ -339,7 +424,7 @@
           <td> ingredient </td>
           <td></span></td>
         </tr>
-        <tr ng-repeat="ingredient in recette.ingredients | orderBy:'nomi'">
+        <tr  ng-repeat="ingredient in recette.ingredients | orderBy:'nomi'">
           <td> 
            <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
            <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
@@ -355,7 +440,7 @@
 
           </div>
         <div class="col-lg-6"> 
-             
+             <h4> Ajouter des ingredients </h4>
           <form>
           <div class="form-group">
             <div class="input-group">
@@ -402,27 +487,21 @@
 
 
 
-          <!-- planning -->
+          <!-- planning backup
 
      <script type="text/ng-template" id="/planning.html">
          <div class="page-header">
          <br>
           <h1>Planning</h1>
-        </div>
+        </div>    {{date | date:'dd-MM'}}
+
+
+
+
         <button ng-click=genererplanning(recettes) class="btn btn-primary"> Créer planning aléatoire! </button>
 
 
 
-
-
-          <!-- test d'edition des recettes 
-<div ng-repeat="planningrecette in planningrecettes">
- <span ng-hide="planningrecette.editing" ng-dblclick="editRepas(planningrecette)">{{planningrecettes[0].nomr}}</span>
-  <input ng-show="planningrecette.editing" ng-model="planningrecettes[0].nomr" ng-blur="doneEditingRepas(planningrecette)" autofocus />
-</div>
-
-{{planningrecettes}}
--->
 
     <form   ng-submit="validernombrepersonnes()">
       <table class="table"> 
@@ -536,6 +615,69 @@
 
      
      </script>
+planning -->
+
+
+<script type="text/ng-template" id="/planning.html">
+         <div class="page-header">
+         <br>
+          <h1>Planning</h1>
+        </div>   
+    <row>    
+    <div class="col-sm-6 col-xs-6">
+      <table class="table"> 
+        <tr ng-repeat= "jour in jours  track by $index">
+
+          <td> {{jour.date | date:'dd-MM'}} <BR>
+          midi: {{jour.midi.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'midi')"></span>
+            pour <select ng-model="jour.nbpersmidi">
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+             personnes<BR>
+
+
+          soir: {{jour.soir.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'soir')"></span>
+            pour <select ng-model="jour.nbperssoir">
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+             personnes<BR>
+
+          </td>
+
+        </tr>
+      </table>
+
+ <BR>
+          
+       </div>
+       <div class="col-sm-6 col-xs-6">    
+  
+
+      <br>        
+
+      <table class="table"> 
+                      <tr>
+                        <th> Nombre </th>
+                        <th> Unité </th>
+                        <th> Ingredient </th>
+                        <th>  Rayon </th>        </tr>
+                      <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
+                        <td>{{listedecourse.nombre}}</a></td>
+                        <td>{{listedecourse.unite}}</td>
+                        <td>{{listedecourse.nomi}}</td>
+                        <td>{{listedecourse.rayon}}</td>                        
+
+                      </tr>
+                    </table>  
+      <br>        <br>  
+     
+        <button ng-click=genererplanning2() class="btn btn-primary"> générer liste la liste de courses</button>
+         </div> 
+         </row>
+     </script>
+
+
+
+
+
 
 
 
@@ -608,8 +750,9 @@
 
 
 <script type="text/ng-template" id="/login.html">
-  <div class="page-header">
-    <h1>Food Planner</h1>
+<BR>
+ <div class="page-header">
+    <h1>Se connecter</h1>
   </div>
 
   <div ng-show="error" class="alert alert-danger row">
@@ -618,18 +761,20 @@
 
   <form ng-submit="logIn()"
     style="margin-top:30px;">
-    <h3>Log In</h3>
+
 
     <div class="form-group">
+    <label>Nom d'utilisateur</label>
       <input type="text"
       class="form-control"
-      placeholder="Username"
+      placeholder="Paulette la reine des omelettes"
       ng-model="user.username"></input>
     </div>
     <div class="form-group">
+    <label>Mot de passe</label>    
       <input type="password"
       class="form-control"
-      placeholder="Password"
+      placeholder="Chut! c'est secret.."
       ng-model="user.password"></input>
     </div>
     <button type="submit" class="btn btn-primary">Log In</button>
@@ -641,43 +786,96 @@
 
 
 
+
+
+
+
+
 <script type="text/ng-template" id="/register.html">
-  <div class="page-header">
-    <h1>Food Planner</h1>
+ <BR> <div class="page-header">
+    <h1>S'inscrire</h1>
   </div>
 
   <div ng-show="error" class="alert alert-danger row">
     <span>{{ error.message }}</span>
   </div>
 
-  <form ng-submit="register()"
-    style="margin-top:30px;">
-    <h3>Register</h3>
 
-    <div class="form-group">
-      <input type="text"
-      class="form-control"
-      placeholder="Username"
-      ng-model="user.username"></input>
+
+
+  <form ng-submit="register()" name="newUserForm" novalidate
+    style="margin-top:30px;">
+
+
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.name.$touched && newUserForm.name.$invalid }">
+     <label>Nom d'utilisateur</label>
+      <input type="text" name="name" class="form-control" placeholder="Paulette la reine des omelettes"
+        ng-model="user.username"
+        ng-minlength="5"
+        ng-maxlength="10"
+        required>
+      <div class="help-block" ng-messages="newUserForm.name.$error" ng-if="newUserForm.name.$touched">
+        <p ng-message="minlength">Your name is too short.</p>
+        <p ng-message="maxlength">Your name is too long.</p>
+        <p ng-message="required">Your name is required.</p>
+      </div>
     </div>
-    <div class="form-group">
-      <input type="password"
-      class="form-control"
-      placeholder="Password"
-      ng-model="user.password"></input>
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
+
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.email.$touched && newUserForm.email.$invalid }">
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Paulette@lareinedesomelette.com"
+        ng-model="user.email"
+        ng-minlength="5"
+        ng-maxlength="20"
+        required>     
+      <div class="help-block" ng-messages="newUserForm.email.$error" ng-if="newUserForm.email.$touched">
+        <p ng-message="required">This field is required</p>
+        <p ng-message="minlength">This field is too short</p>
+        <p ng-message="maxlength">This field is too long</p>
+        <p ng-message="required">This field is required</p>
+        <p ng-message="email">This needs to be a valid email</p>
+      </div>
+     </div>
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.password1.$touched && newUserForm.password1.$invalid }">
+      <label>Mot de passe</label>
+      <input  type="password" name="password1" class="form-control" placeholder="chut! c'est secret..."
+        ng-model="user.password1"
+        ng-minlength="5"
+        ng-maxlength="20"
+        required>
+        
+      <div class="help-block" ng-messages="newUserForm.password1.$error" ng-if="newUserForm.password1.$touched">
+        <p ng-message="minlength">mot de passe trop court.</p>
+        <p ng-message="maxlength">mot de passe trop long.</p>
+        <p ng-message="required">Mot de passe obligatoire.</p>
+      </div>
+     </div>
+
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.password.$touched && newUserForm.password.$invalid }">
+      <label>confirmez mot de passe</label>
+      <input type="password" name="password" class="form-control" placeholder="" ng-pattern="{{user.password1}}"
+        ng-model="user.password"
+        required>
+        
+      <div class="help-block" ng-messages="newUserForm.password.$error" ng-if="newUserForm.password.$touched">
+        <p ng-message="pattern">Les mots de passes sont différents.</p>
+        <p ng-message="required">La confirmation de mot de passe est vide.</p>
+      </div>
+     </div>
+
+
+
+    <button type="submit" class="btn btn-primary" ng-disabled="newUserForm.$invalid">Register</button>
   </form>
 </script>
-
-
-
-
-
-
-
-
-
 
 
 
@@ -694,8 +892,7 @@
       <h1>"On dîne quoi ce soir?"</h1><br>
       <br><br><br>
       <h3><em>pour vous - par vous - équilibré - économique</em></h3><br><br><br>
-      <a href="/#home" class="btn btn-success btn-lg">Continue</a>
-        <input type="filepicker" data-fp-apikey="AP8r820JEQiqGqRVOddP0z" onchange="console.log(event.fpfile)">
+      <a href="/#planning" class="btn btn-success btn-lg">Continue</a>
 
       <br><br><br><br><br>
 

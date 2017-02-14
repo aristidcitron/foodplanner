@@ -10,6 +10,7 @@ var RecetteSchema = new mongoose.Schema({
 	ingredients: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}],	
 	picture: {type: mongoose.Schema.Types.Mixed, required: false},
 	author: String,
+	portionmini: {type: Number, default: 1},
 });
 
 RecetteSchema.methods.upvote = function(cb) {

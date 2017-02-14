@@ -1,4 +1,8 @@
-var app = angular.module('foodplanner', ['ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker']);
+var app = angular.module('foodplanner', ['ngMessages','ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker']);
+
+
+
+
 
 app.config([
 	'$stateProvider',
@@ -277,6 +281,22 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	};
 
 
+	// récupérer lune recette aléatoire 
+	o.getrecettealea = function(){
+		return $http.get('/recettealea').success(function(data){
+			angular.copy(data,o.recettealea);
+		});
+	};
+
+
+	// récupérer la liste des courses
+	o.getlistedecourses = function(planningenvoyes){
+		return $http.post('/listedecourses',planningenvoyes).success(function(data){
+			angular.copy(data,o.planningenvoyes);
+	});};
+
+
+
 
 	// récupérer la liste de toutes les recettes d'un user
 	o.getAllUser = function(id){
@@ -339,7 +359,9 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	};
 	// supprimer une recette
 	o.deleterecette = function (recette){
-		return $http.delete('/recettes/' + recette._id);
+		return 	 $http.delete('/recettes/' + recette._id,{
+   			 	headers: {Authorization: 'Bearer '+auth.getToken()}
+ 			 }).success(function(data){	console.log(data);});
 	};
 
 	o.deleteingredient = function (recette, ingredient){
@@ -349,6 +371,13 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	o.updatenombre = function (ingredient,ingredient){
 		return $http.put('/ingredients/' + ingredient._id, ingredient);
 	};	
+
+	o.updaterecette = function (recette,recette){
+		return $http.put('/recettes/' + recette._id, recette,{
+   			 	headers: {Authorization: 'Bearer '+auth.getToken()}
+ 			 }).success(function(data){	console.log(data);});
+	};
+
 	return o;
 }])
 
@@ -356,7 +385,9 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 app.controller('IngredientsdisposCtrl', [
 '$scope',
 'ingredientsdispos',
-function($scope,ingredientsdispos){
+'auth',
+function($scope,ingredientsdispos,auth){
+  $scope.currentUser = auth.currentUser;
   $scope.ingredientsdispos = ingredientsdispos.ingredientsdispos;
   $scope.ajouterIngredientsdispo = function() {
  		if (!$scope.nomid || $scope.nomid ==='') { return; }
@@ -364,6 +395,9 @@ function($scope,ingredientsdispos){
  			nomid: $scope.nomid,
  			rayon: $scope.rayon,
  			unite: $scope.unite,
+ 			type: $scope.type,
+ 			apport: $scope.apport,
+ 			poidmoyen: $scope.poidmoyen,
  		});
  		$scope.nomid='';
  		$scope.rayon='';
@@ -432,7 +466,8 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
  			tempsdepreparation:$scope.tempsdepreparation,
  			instructions:$scope.instructions,
  			author: $scope.currentUser,
- 			picture: $scope.infophoto.url
+ 			picture: $scope.infophoto.url,
+ 			portionmini: $scope.portionmini
  		},$scope.ingredients);
 
 
@@ -442,6 +477,7 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
  		$scope.instructions='';
  		$scope.picture='';
  		$scope.ingredients='';
+ 		$scope.portionmini='';
 
  	};
 
@@ -484,7 +520,6 @@ function($scope,recettes,auth){
   $scope.recettes = recettes.recettes;
   $scope.currentUser = auth.currentUser;
   $scope.isLoggedIn = auth.isLoggedIn;
-
   $scope.ajouterRecette = function() {
  		if (!$scope.nomr || $scope.nomr ==='') { return; }
  		recettes.createrecette ({
@@ -507,7 +542,9 @@ function($scope,recettes,auth){
 
 	$scope.supprimerRecette = function(recette) {
 		var tampon=recette;
-		recettes.deleterecette(recette).success(function(recette){
+		recettes.deleterecette(recette).error(function(error){
+      $scope.error = error;
+    }).success(function(recette){
 			$scope.recettes.splice($scope.recettes.indexOf(tampon),1);
 		})};
 	
@@ -528,9 +565,91 @@ function($scope,$modal, $log,recettes){
 
     $scope.values = ["0","1","2","3","4","5","6"];
     $scope.selectedItem = 0;
+    $scope.date = new Date();
+
+    $scope.jours=[
+    	{id:1,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate())},
+    	{id:2,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	{id:3,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)}, 
+     	{id:4,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)},       	  	
+    	{id:5,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	{id:6,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)}, 
+     	{id:7,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)},   
+     	    ];
+
+
+
+  $scope.ajouterrepasalea = function(jour,moment){
+	recettes.getrecettealea().success(function(recettealea){
+		var index = jour.id-1;
+		var varmoment = moment;
+		$scope.jours[index][varmoment]=recettealea})
+	};
+
+// edition des repas
+	var k;
+   $scope.open = function (jour,moment) {
+
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent.html',
+      controller: 'ModalInstanceCtrl',
+   	  scope: $scope,
+      resolve: {  	
+        items: function () {
+          return $scope.items;
+         },
+        jour: function(){
+          return jour;
+         },
+        moment: function(){
+          return moment;
+         }         
+       }
+    });
+
+    modalInstance.result.then(function (recette) {
+      		var index = jour.id-1;
+		var varmoment = moment;
+		$scope.jours[index][varmoment]=recette
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
+
+
+
+ $scope.genererplanning2 = function(jours,planningvalides){
+    $scope.planningvalides= [];
+    $scope.planningenvoyes= [];    
+ 	for (var i=0; i<7; i++) {
+ 	$scope.planningvalides[i] =
+ 	{idrecette:$scope.jours[i].midi._id,nbpers:$scope.jours[i].nbpersmidi};};
+ 	for (var i=7; i<14;i++){
+  	$scope.planningvalides[i] =
+ 	{idrecette:$scope.jours[i-7].soir._id,nbpers:$scope.jours[i-7].nbperssoir};};
+
+ 	for (var i=0; i<13; i++) {
+		if (typeof $scope.planningvalides[i].idrecette !== 'undefined') {
+			if ( $scope.planningvalides[i].nbpers>0) {		
+				 $scope.planningenvoyes.push($scope.planningvalides[i]);
+			}
+		}
+ 	};
+ 	recettes.getlistedecourses($scope.planningenvoyes).success(function(data){$scope.listedecourses = data;});
+ };
+
+
+
 
 
   $scope.recettes = recettes.recettes;
+
+
+
+
+
+
+
   $scope.genererplanning = function(recettes){
   	$scope.planningrecettes = recettes;
   	    var j, x, i;
@@ -542,6 +661,8 @@ function($scope,$modal, $log,recettes){
     	}
     $scope.planningrecettes = $scope.planningrecettes.slice(0,14)	
 	};
+
+
  	$scope.validernombrepersonnes = function() {
  		$scope.donnees=[];
  		$scope.listerecette = [];
@@ -652,30 +773,7 @@ function($scope,$modal, $log,recettes){
 
 
 
-// edition des repas
-	var k;
-   $scope.open = function (k) {
 
-    var modalInstance = $modal.open({
-      templateUrl: 'myModalContent.html',
-      controller: 'ModalInstanceCtrl',
-   	  scope: $scope,
-      resolve: {  	
-        items: function () {
-          return $scope.items;
-         },
-        k: function(){
-          return k;
-         }
-       }
-    });
-
-    modalInstance.result.then(function (recette) {
-      $scope.planningrecettes[k] = recette;
-    }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
-    });
-  };
 
 
 
@@ -688,10 +786,11 @@ function($scope,$modal, $log,recettes){
 
 // modal d'édition du repas
 app.controller('ModalInstanceCtrl',
-	function ($scope, $modalInstance, items, k) {
-		$scope.k=k;
- 		 $scope.ok = function (recette,k) {
-  			  $modalInstance.close(recette,k);
+	function ($scope, $modalInstance, items, jour,moment) {
+		$scope.jour=jour;
+		$scope.moment=moment;		
+ 		 $scope.ok = function (recette,jour,moment) {
+  			  $modalInstance.close(recette,jour,moment);
   		};
 
   		$scope.cancel = function () {
@@ -743,7 +842,7 @@ app.controller('NavCtrl', [
 	'$state',
 	'auth',
 function widgetsController($scope, $state,auth) {
-    $scope.$state = $state;
+   $scope.$state = $state;
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
   $scope.logOut = auth.logOut;
@@ -830,9 +929,79 @@ function($scope,$stateParams,recettes,recette,ingredientsdispos){
     $scope.doneEditing = function (ingredient) {
         ingredient.editing = false;
         var tampon=ingredient;
-        recettes.updatenombre(ingredient, ingredient)
+        recettes.updatenombre(ingredient, ingredient).error(function(error){
+		      $scope.error = error;
+		    })
 		};
-       
+    
+
+    $scope.editrecettename = function (recette) {
+        recette.editingnomr = true;
+    };
+
+    $scope.doneeditrecettename = function (recette) {
+        recette.editingnomr = false;
+        var tampon=recette;
+        recettes.updaterecette(recette, recette).error(function(error){
+		      $scope.error = error;
+		    })
+		};
+
+    $scope.editrecetteinstructions = function (recette) {
+        recette.editinginstructions = true;
+    };
+
+    $scope.doneeditrecetteinstructions = function (recette) {
+        recette.editinginstructions = false;
+        var tampon=recette;
+        recettes.updaterecette(recette, recette).error(function(error){
+		      $scope.error = error;
+		    })
+		};
+
+
+    $scope.editrecettetempsdecuisson = function (recette) {
+        recette.editingtempsdecuisson = true;
+    };
+
+    $scope.doneeditrecettetempsdecuisson = function (recette) {
+        recette.editingtempsdecuisson = false;
+        var tampon=recette;
+        recettes.updaterecette(recette, recette).error(function(error){
+		      $scope.error = error;
+		    })
+		};
+
+
+
+    $scope.editrecettetempsdepreparation = function (recette) {
+        recette.editingtempsdepreparation = true;
+    };
+
+    $scope.doneeditrecettetempsdepreparation = function (recette) {
+        recette.editingtempsdepreparation = false;
+        var tampon=recette;
+        recettes.updaterecette(recette, recette)
+		};
+
+
+    $scope.editrecetteportionmini = function (recette) {
+        recette.editingportionmini = true;
+    };
+
+    $scope.doneeditrecetteportionmini = function (recette) {
+        recette.editingportionmini = false;
+        var tampon=recette;
+        recettes.updaterecette(recette, recette)
+		};
+
+
+
+
+
+    $scope.modifierrecette = function(recette){
+    	$scope.editrecette = true
+    }
     	
 // ancienne fonction add to recette
 //	    $scope.addtorecette = function(ingredientsdispo) {

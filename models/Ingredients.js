@@ -6,8 +6,10 @@ var IngredientSchema = new mongoose.Schema({
 	idingredientdispo: String,
 	rayon: String,
 	unite: String,
-	recette: {type: mongoose.Schema.Types.ObjectId, ref:'Recette'}
-	
+	recette: {type: mongoose.Schema.Types.ObjectId, ref:'Recette'},
+	type: String, 
+	apport: String, 
+	poidmoyen: String,
 });
 
 mongoose.model('Ingredient', IngredientSchema);
