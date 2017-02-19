@@ -62,6 +62,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">            
               <li ng-show="isLoggedIn()"><a>Bienvenu {{ currentUser() }}!</a></li>
+              <li ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'mesplannings'}"><a href="#/mesplannings"> Mes Plannings</a></li>              
               <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'register'}"><a href="#/register">S'inscrire</a></li>    
               <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="#/login">Se connecter</a></li>   
               <li ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="" ng-click="logOut()">Se déconnecter</a></li>                            
@@ -621,7 +622,7 @@ planning -->
 <script type="text/ng-template" id="/planning.html">
          <div class="page-header">
          <br>
-          <h1>Planning</h1>
+          <h1>Planning {{currentUser()}}</h1>
         </div>   
     <row>    
     <div class="col-sm-6 col-xs-6">
@@ -675,6 +676,186 @@ planning -->
          </div> 
          </row>
      </script>
+
+
+
+
+
+
+
+<script type="text/ng-template" id="/1planning.html">
+         <div class="page-header">
+         <br>
+          <h1>Planning</h1>
+        </div>   
+    <row>   
+    <div class="col-sm-6 col-xs-6">
+      <table class="table"> 
+        <tr ng-repeat= "jour in jours  track by $index">
+
+          <td> {{jour.date | date:'dd-MM'}} <BR>
+          midi: {{jour.midi.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'midi')"></span>
+            pour <select ng-model="jour.nbpersmidi">
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+             personnes<BR>
+
+
+          soir: {{jour.soir.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'soir')"></span>
+            pour <select ng-model="jour.nbperssoir">
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+             personnes<BR>
+
+          </td>
+
+        </tr>
+      </table>
+
+ <BR>
+          
+       </div>
+       <div class="col-sm-6 col-xs-6">    
+  
+
+      <br>        
+
+      <table class="table"> 
+                      <tr>
+                        <th> Nombre </th>
+                        <th> Unité </th>
+                        <th> Ingredient </th>
+                        <th>  Rayon </th>        </tr>
+                      <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
+                        <td>{{listedecourse.nombre}}</a></td>
+                        <td>{{listedecourse.unite}}</td>
+                        <td>{{listedecourse.nomi}}</td>
+                        <td>{{listedecourse.rayon}}</td>                        
+
+                      </tr>
+                    </table>  
+      <br>        <br>  
+     
+        <button ng-click=genererplanning2() class="btn btn-primary"> générer liste la liste de courses</button>
+        <button ng-click=sauvegarderplanning() class="btn btn-primary"> Sauvegarder planning / liste de courses</button>
+
+         </div> 
+         </row>
+     </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/ng-template" id="/mesplannings.html">
+         <div class="page-header">
+         <br>
+          <h1>Mes Planning </h1> 
+        </div>   
+             <table class="table"> 
+                      <tr>
+                        <th> Jour </th>
+                      </tr>
+                      <tr ng-repeat="planning in plannings ">
+                        <td><a href ="#/plannings/{{planning._id}}">{{planning.date}}</a></td>
+                    
+
+                      </tr>
+                    </table>   
+
+</script>
+
+
+
+
+
+
+
+
+
+<script type="text/ng-template" id="/planning.html">
+         <div class="page-header">
+         <br>
+          <h1>Planning </h1>
+        </div>   
+    <row>    
+    <div class="col-sm-6 col-xs-6">
+      <table class="table"> 
+        <tr ng-repeat= "jour in jours  track by $index">
+
+          <td> {{jour.date | date:'dd-MM'}} <BR>
+          midi: {{jour.midi.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'midi')"></span>
+            pour <select ng-model="jour.nbpersmidi">
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+             personnes<BR>
+
+
+          soir: {{jour.soir.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'soir')"></span>
+            pour <select ng-model="jour.nbperssoir">
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+             personnes<BR>
+
+          </td>
+
+        </tr>
+      </table>
+
+ <BR>
+          
+       </div>
+       <div class="col-sm-6 col-xs-6">    
+  
+
+      <br>        
+
+      <table class="table"> 
+                      <tr>
+                        <th> Nombre </th>
+                        <th> Unité </th>
+                        <th> Ingredient </th>
+                        <th>  Rayon </th>        </tr>
+                      <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
+                        <td>{{listedecourse.nombre}}</a></td>
+                        <td>{{listedecourse.unite}}</td>
+                        <td>{{listedecourse.nomi}}</td>
+                        <td>{{listedecourse.rayon}}</td>                        
+
+                      </tr>
+                    </table>  
+      <br>        <br>  
+     
+        <button ng-click=genererplanning2() class="btn btn-primary"> générer liste la liste de courses</button>
+        <button ng-click=sauvegarderplanning() class="btn btn-primary"> Sauvegarder planning / liste de courses</button>
+
+         </div> 
+         </row>
+     </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

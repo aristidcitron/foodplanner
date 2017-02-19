@@ -22,6 +22,7 @@ var bodyParser = require('body-parser');
 mongoose.connect ('mongodb://toto:28021986@ec2-54-235-42-48.compute-1.amazonaws.com:27017/dummyDB');
 
 require('./models/Recettes.js');
+require('./models/Plannings.js');
 require('./models/Ingredients.js');
 require('./models/Ingredientsdispos.js');
 require('./models/Users.js');

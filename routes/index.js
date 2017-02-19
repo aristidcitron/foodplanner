@@ -350,21 +350,38 @@ router.put('/recettes/:recette', auth, function(req,res){
 
 
 //ajouter un planning
-router.post('/plannings/', function (req,res,next){
+router.post('/plannings/', auth, function (req,res,next){
 	var planning = new Planning(req.body);
+	planning.author = req.payload.username;
 	planning.save(function(err, planning){
 		if (err) { return next (err);}
 		res.json(planning);
 	});
 });	
 
-//récupérer la liste des planning
-router.get('/plannings/', function (req,res,next){
-	Planning.find(function(err, plannings){
-		if (err) {next(err);}
-		res.json(plannings);
-	});
+//avoir les planning d'un utilisateur
+router.get('/mesplannings/:user', function (req,res,next){
+	Planning.find({$or:[
+     	{author:req.params.user}]
+    	}, function(err, plannings){
+			if (err) {next(err);}
+			res.json(plannings);
+		});
 });
+
+//avoir un planning d'utilisateur
+router.get('/plannings/:planning', function (req, res) {
+
+	Planning.find(
+     	{_id:req.params.planning}, function(err, plannings){
+			if (err) {next(err);}
+			res.json(plannings); console.log(plannings)
+		});
+
+});
+
+
+
 
 
 

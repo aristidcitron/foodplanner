@@ -1,9 +1,10 @@
 var mongoose = require ('mongoose');
 
 var PlanningSchema = new mongoose.Schema({
-	jours:[],
 	listedecourses: [],
+	jours:[],
 	author: String,
+	date: { type: Date, default: Date.now },
 });
 
 mongoose.model('Planning', PlanningSchema);

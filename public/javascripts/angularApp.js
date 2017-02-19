@@ -51,6 +51,37 @@ app.config([
 			})
 
 
+
+
+
+			.state('mesplannings',{
+				url:'/mesplannings',
+				views:{
+					'page':{
+						templateUrl:'/mesplannings.html',
+						controller:'MesplanningsCtrl',						
+						resolve:{
+							recettePromise:['recettes','auth', function(recettes,auth){
+								return recettes.getplannings(auth.currentUser());
+							}]
+						}
+					},
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}
+				
+			})
+
+
+
+
+
+
+
+
 			.state('ajouterrecette',{
 				url:'/ajouterrecette',
 				views:{
@@ -146,7 +177,10 @@ app.config([
 						resolve:{
 							recettePromise:['recettes', function(recettes){
 								return recettes.getAll();
-							}]
+							}],
+							recette2Promise:['recettes','auth', function(recettes,auth){
+								return recettes.getAllUser(auth.currentUser());
+							}]							
 						}
 					},
 					'menu':{
@@ -157,6 +191,39 @@ app.config([
 				}
 				
 			})
+
+
+
+			.state('plannings',{
+				url: '/plannings/{id}',				
+				views:{
+					'page':{
+
+						templateUrl:'/1planning.html',
+						controller: '1planningCtrl',
+						resolve: {
+							recette:['$stateParams','recettes', function($stateParams, recettes){
+								return recettes.getplanningdetails($stateParams.id);
+							}],							
+							recettePromise:['recettes', function(recettes){
+								return recettes.getAll();
+							}],
+							recette2Promise:['recettes','auth', function(recettes,auth){
+								return recettes.getAllUser(auth.currentUser());
+							}]		
+						}
+					},
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}		
+			})
+
+
+
+
 
 
 
@@ -276,19 +343,32 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 
 
 
-		// récupérer la liste de tous les plannings 
-	o.getplanning = function(){
-		return $http.get('/plannings').success(function(data){
-			angular.copy(data,i.plannings);
+	// récupérer la liste de toutes les recettes d'un user
+	o.getplannings = function(id){
+		return $http.get('/mesplannings/'+ id).success(function(data){
+			angular.copy(data,o.recettes);console.log(o.recettes);
 		});
-	};	
+	};
+
 	// ajouter un nouve planning
 	o.createplanning=function(planning){console.log(planning);
-		return $http.post('/plannings', planning).success(function(data){
-
-			o.plannings.push(data);
-		});
+		return $http.post('/plannings', planning,{
+   			 	headers: {Authorization: 'Bearer '+auth.getToken()}
+ 			 }).success(function(data){console.log(data);});
 	};	
+
+
+
+	// récupérer un détail de planning
+	o.getplanningdetails = function(id){
+		return $http.get('/plannings/'+ id).success(function(data){
+			angular.copy(data,o.plannings);o.plannings= data;
+		});
+	};
+
+
+
+
 	// supprimer un planning
 	o.deleteplanning = function (planning){
 		return $http.delete('/plannings/' + planning._id);
@@ -582,15 +662,17 @@ function($scope,recettes,auth){
 app.controller('PlanningCtrl', [
 '$scope',
 '$modal',
+'$state',
 '$log',
 'recettes',
 'auth',
-function($scope,$modal, $log,recettes,auth){
+function($scope,$modal,$state,$log,recettes,auth){
 
     $scope.values = ["0","1","2","3","4","5","6"];
     $scope.selectedItem = 0;
     $scope.date = new Date();
     $scope.currentUser = auth.currentUser;
+    $scope.isLoggedIn = auth.isLoggedIn;  
 
 
     $scope.jours=[
@@ -679,7 +761,7 @@ function($scope,$modal, $log,recettes,auth){
   $scope.sauvegarderplanning = function() {
  		recettes.createplanning ({
  			jours: $scope.jours,
- 			listesdecourses: $scope.listedecourses,
+ 			listedecourses: $scope.listedecourses,
  			author: $scope.currentUser});
  	};
 
@@ -739,6 +821,217 @@ app.controller('ModalInstanceCtrl',
 );
 
 
+
+
+
+
+app.controller('1planningCtrl', [
+'$scope',
+'$modal',
+'$state',
+'$log',
+'recettes',
+'auth',
+function($scope,$modal,$state,$log,recettes,auth){
+	$scope.plannings=recettes.plannings;
+	$scope.jours=recettes.plannings[0].jours;
+	$scope.listedecourses=recettes.plannings[0].listedecourses;
+    $scope.values = ["0","1","2","3","4","5","6"];
+    $scope.selectedItem = 0;
+    $scope.date = new Date();
+    $scope.currentUser = auth.currentUser;
+    $scope.isLoggedIn = auth.isLoggedIn;  
+
+
+   
+
+
+  $scope.ajouterrepasalea = function(jour,moment){
+	recettes.getrecettealea().success(function(recettealea){
+		var index = jour.id-1;
+		var varmoment = moment;
+		$scope.jours[index][varmoment]=recettealea})
+	};
+
+// edition des repas
+	var k;
+   $scope.open = function (jour,moment) {
+
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent.html',
+      controller: 'ModalInstanceCtrl',
+   	  scope: $scope,
+      resolve: {  	
+        items: function () {
+          return $scope.items;
+         },
+        jour: function(){
+          return jour;
+         },
+        moment: function(){
+          return moment;
+         }         
+       }
+    });
+
+    modalInstance.result.then(function (recette) {
+      		var index = jour.id-1;
+		var varmoment = moment;
+		$scope.jours[index][varmoment]=recette
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
+
+
+
+ $scope.genererplanning2 = function(jours,planningvalides){
+    $scope.planningvalides= [];
+    $scope.planningenvoyes= [];    
+ 	for (var i=0; i<7; i++) {
+ 	$scope.planningvalides[i] =
+ 	{idrecette:$scope.jours[i].midi._id,nbpers:$scope.jours[i].nbpersmidi};};
+ 	for (var i=7; i<14;i++){
+  	$scope.planningvalides[i] =
+ 	{idrecette:$scope.jours[i-7].soir._id,nbpers:$scope.jours[i-7].nbperssoir};};
+
+ 	for (var i=0; i<13; i++) {
+		if (typeof $scope.planningvalides[i].idrecette !== 'undefined') {
+			if ( $scope.planningvalides[i].nbpers>0) {		
+				 $scope.planningenvoyes.push($scope.planningvalides[i]);
+			}
+		}
+ 	};
+ 	recettes.getlistedecourses($scope.planningenvoyes).success(function(data){$scope.listedecourses = data;});
+ };
+
+
+
+
+
+  $scope.recettes = recettes.recettes;
+
+
+
+
+
+
+
+  $scope.sauvegarderplanning = function() {
+ 		recettes.createplanning ({
+ 			jours: $scope.jours,
+ 			listedecourses: $scope.listedecourses,
+ 			author: $scope.currentUser});
+ 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	$scope.editRepas = function (planningrecette) {
+        planningrecette.editing = true;
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+}]);
+
+
+
+// modal d'édition du repas
+app.controller('ModalInstanceCtrl',
+	function ($scope, $modalInstance, items, jour,moment) {
+		$scope.jour=jour;
+		$scope.moment=moment;		
+ 		 $scope.ok = function (recette,jour,moment) {
+  			  $modalInstance.close(recette,jour,moment);
+  		};
+
+  		$scope.cancel = function () {
+  			  $modalInstance.dismiss('cancel');
+  		};
+	}
+);
+
+
+
+
+
+
+
+
+
+app.controller('MesplanningsCtrl', [
+'$scope',
+'$modal',
+'$state',
+'$log',
+'recettes',
+'auth',
+function($scope,$modal,$state,$log,recettes,auth){
+
+
+    $scope.currentUser = auth.currentUser;
+    $scope.isLoggedIn = auth.isLoggedIn;  
+    $scope.plannings = recettes.recettes;
+
+
+
+
+}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+// modal d'édition du repas
+app.controller('ModalInstanceCtrl',
+	function ($scope, $modalInstance, items, jour,moment) {
+		$scope.jour=jour;
+		$scope.moment=moment;		
+ 		 $scope.ok = function (recette,jour,moment) {
+  			  $modalInstance.close(recette,jour,moment);
+  		};
+
+  		$scope.cancel = function () {
+  			  $modalInstance.dismiss('cancel');
+  		};
+	}
+);
 
 
 
