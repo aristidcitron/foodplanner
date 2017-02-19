@@ -11,6 +11,7 @@ router.get('/', function(req, res, next) {
 var mongoose = require('mongoose');
 var Recette = mongoose.model('Recette');
 var Ingredient = mongoose.model('Ingredient');
+var Planning = mongoose.model('Planning');
 var Ingredientsdispo = mongoose.model('Ingredientsdispo');
 var passport = require('passport');
 var User = mongoose.model('User');
@@ -180,6 +181,21 @@ router.param('recette', function(req,res,next,id){
 	});
 });
 
+
+//récupérer l'id du planning en paramètre pour ajouter dans un url
+router.param('planning', function(req,res,next,id){
+	var query = Planning.findById(id);
+	query.exec(function(err, planning){
+		if (err) {return next(err);}
+		if (!planning) {return next(new Error("je ne trouve pas ce planning :("));}
+		req.planning = planning;
+	return next();
+	});
+});
+
+
+
+
 //récupérer l'id de l'ingredient en paramètre pour ajouter dans un url
 router.param('ingredient', function(req,res,next,id){
 	var query = Ingredient.findById(id);
@@ -323,6 +339,48 @@ router.put('/recettes/:recette', auth, function(req,res){
 		})
 	}	 
 });
+
+
+
+
+
+
+
+
+
+
+//ajouter un planning
+router.post('/plannings/', function (req,res,next){
+	var planning = new Planning(req.body);
+	planning.save(function(err, planning){
+		if (err) { return next (err);}
+		res.json(planning);
+	});
+});	
+
+//récupérer la liste des planning
+router.get('/plannings/', function (req,res,next){
+	Planning.find(function(err, plannings){
+		if (err) {next(err);}
+		res.json(plannings);
+	});
+});
+
+
+
+
+// supprimer un planning
+router.delete('/plannings/:planning', function(req,res){
+	req.planning.remove(function(err,planning){
+		if (err) {return next (err);}
+		res.json(planning);
+	});
+});
+
+
+
+
+
 
 
 module.exports = router;

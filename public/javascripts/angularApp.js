@@ -272,6 +272,29 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	var o = {
 		recettes:[]
 	};
+
+
+
+
+		// récupérer la liste de tous les plannings 
+	o.getplanning = function(){
+		return $http.get('/plannings').success(function(data){
+			angular.copy(data,i.plannings);
+		});
+	};	
+	// ajouter un nouve planning
+	o.createplanning=function(planning){console.log(planning);
+		return $http.post('/plannings', planning).success(function(data){
+
+			o.plannings.push(data);
+		});
+	};	
+	// supprimer un planning
+	o.deleteplanning = function (planning){
+		return $http.delete('/plannings/' + planning._id);
+	};	
+
+
 	
 	// récupérer la liste de toutes les recettes 
 	o.getAll = function(){
@@ -561,11 +584,14 @@ app.controller('PlanningCtrl', [
 '$modal',
 '$log',
 'recettes',
-function($scope,$modal, $log,recettes){
+'auth',
+function($scope,$modal, $log,recettes,auth){
 
     $scope.values = ["0","1","2","3","4","5","6"];
     $scope.selectedItem = 0;
     $scope.date = new Date();
+    $scope.currentUser = auth.currentUser;
+
 
     $scope.jours=[
     	{id:1,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate())},
@@ -650,118 +676,31 @@ function($scope,$modal, $log,recettes){
 
 
 
-  $scope.genererplanning = function(recettes){
-  	$scope.planningrecettes = recettes;
-  	    var j, x, i;
-    for (i = $scope.planningrecettes.length; i; i--) {
-	        j = Math.floor(Math.random() * i);
-	        x = $scope.planningrecettes[i - 1];
-	        $scope.planningrecettes[i - 1] = $scope.planningrecettes[j];
-	        $scope.planningrecettes[j] = x;
-    	}
-    $scope.planningrecettes = $scope.planningrecettes.slice(0,14)	
-	};
-
-
- 	$scope.validernombrepersonnes = function() {
- 		$scope.donnees=[];
- 		$scope.listerecette = [];
- 		$scope.listerecetteunique = [];
- 		$scope.planningvalides = [];
- 		$scope.coucou=0;
- 		$scope.planningvalides = [
-	 		{idrecette :$scope.planningrecettes[0]._id, nombrepersonne: $scope.repaspresent0},
-	 		{idrecette :$scope.planningrecettes[1]._id, nombrepersonne: $scope.repaspresent1},
-	 		{idrecette :$scope.planningrecettes[2]._id, nombrepersonne: $scope.repaspresent2},
-	 		{idrecette :$scope.planningrecettes[3]._id, nombrepersonne: $scope.repaspresent3},
-	  		{idrecette :$scope.planningrecettes[4]._id, nombrepersonne: $scope.repaspresent4},
-	  		{idrecette :$scope.planningrecettes[5]._id, nombrepersonne: $scope.repaspresent5},
-	 		{idrecette :$scope.planningrecettes[6]._id, nombrepersonne: $scope.repaspresent6},
-	 		{idrecette :$scope.planningrecettes[7]._id, nombrepersonne: $scope.repaspresent7},	  		 				 		
-	 		{idrecette :$scope.planningrecettes[8]._id, nombrepersonne: $scope.repaspresent8},
-	 		{idrecette :$scope.planningrecettes[9]._id, nombrepersonne: $scope.repaspresent9},
-	 		{idrecette :$scope.planningrecettes[10]._id, nombrepersonne: $scope.repaspresent10},
-	  		{idrecette :$scope.planningrecettes[11]._id, nombrepersonne: $scope.repaspresent11},
-	  		{idrecette :$scope.planningrecettes[12]._id, nombrepersonne: $scope.repaspresent12},
-	 		{idrecette :$scope.planningrecettes[13]._id, nombrepersonne: $scope.repaspresent13},
- 		];
-
- 		$scope.listerecette = [
- 			{idrecette :$scope.planningrecettes[0]._id},
-	 		{idrecette :$scope.planningrecettes[1]._id},
-	 		{idrecette :$scope.planningrecettes[2]._id},
-	 		{idrecette :$scope.planningrecettes[3]._id},
-	  		{idrecette :$scope.planningrecettes[4]._id},
-	  		{idrecette :$scope.planningrecettes[5]._id},
-	 		{idrecette :$scope.planningrecettes[6]._id},
-	 		{idrecette :$scope.planningrecettes[7]._id},	  		 				 		
-	 		{idrecette :$scope.planningrecettes[8]._id},
-	 		{idrecette :$scope.planningrecettes[9]._id},
-	 		{idrecette :$scope.planningrecettes[10]._id},
-	  		{idrecette :$scope.planningrecettes[11]._id},
-	  		{idrecette :$scope.planningrecettes[12]._id},
-	 		{idrecette :$scope.planningrecettes[13]._id}
-	 		];
-
- 		var i=0;
- 		var j=0;
- 		var donneestemp1 = [];
- 		var donneestemp2 = [];
- 
-
-		$scope.listerecetteunique = new jinqJs().from($scope.listerecette).distinct('idrecette').select();
-
-
- 		for ( i=0;i<$scope.listerecetteunique.length;i++){
- 			
- 			recettes.getingredients2($scope.listerecetteunique[i].idrecette).success(function(data){
-				donneestemp2 = data.ingredients;
-				
-				$scope.donnees= donneestemp1.concat(donneestemp2);
-				donneestemp1=$scope.donnees;
-				});
- 		};
- 		donneestemp1 = [];
- 		donneestemp2 = [];	
-
-
-
+  $scope.sauvegarderplanning = function() {
+ 		recettes.createplanning ({
+ 			jours: $scope.jours,
+ 			listesdecourses: $scope.listedecourses,
+ 			author: $scope.currentUser});
  	};
 
- 	$scope.genererliste = function() {
- 		var i=0;
- 		var j=0;
- 		var k=0;
- 		$scope.coucou=1;
-
-		$scope.result = new jinqJs().from($scope.planningvalides).groupBy('idrecette').sum('nombrepersonne').select();
 
 
 
- 		for (i=0; i<$scope.donnees.length; i++){
- 			$scope.donnees[i].total=0;
- 			for (j=0; j<$scope.result.length; j++){
- 				if ($scope.donnees[i].recette == $scope.result[j].idrecette){
- 						if ( $scope.result[j].nombrepersonne > 0) {
- 							$scope.donnees[i].total = $scope.donnees[i].total+($scope.donnees[i].nombre*$scope.result[j].nombrepersonne);
- 						};
- 					
- 					};
- 			};
- 		};
- 		for (i=0; i<$scope.donnees.length; i++){
- 			if ($scope.donnees[i].total==0){
- 				$scope.donnees.splice(i, 1);
- 				i=i-1;
- 			};
- 		};
- 	};
 
-	$scope.getVolumeSum = function(items) {
-    return items
-        .map(function(x) { return x.total; })
-        .reduce(function(a, b) { return a + b; });
-	};	 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
