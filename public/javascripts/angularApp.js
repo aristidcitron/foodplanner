@@ -673,7 +673,8 @@ function($scope,$modal,$state,$log,recettes,auth){
     $scope.date = new Date();
     $scope.currentUser = auth.currentUser;
     $scope.isLoggedIn = auth.isLoggedIn;  
-
+    $scope.planning = [];
+    $scope.planning.nomp = 'ma recette';
 
     $scope.jours=[
     	{id:1,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate())},
@@ -755,11 +756,35 @@ function($scope,$modal,$state,$log,recettes,auth){
 
 
 
+   $scope.open2 = function (jours,nom,listedecourses,currentUser) {
 
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent2.html',
+      controller: 'ModalInstance2Ctrl',
+   	  scope: $scope,
+      resolve: {  	
+        jours: function () {
+          return $scope.jours;
+         },
+        listedecourses: function () {
+          return $scope.listedecourses;
+         },
+        currentUser: function () {
+          return $scope.currentUser;
+         },                
+       }
+    });
+
+    modalInstance.result.then(function () {
+console.log(coucou) }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
 
 
   $scope.sauvegarderplanning = function() {
  		recettes.createplanning ({
+ 			nomp: $scope.nomp,
  			jours: $scope.jours,
  			listedecourses: $scope.listedecourses,
  			author: $scope.currentUser});
@@ -768,19 +793,14 @@ function($scope,$modal,$state,$log,recettes,auth){
 
 
 
+    $scope.editplanningename = function (planning) {
+        planning.editingnomp = true;
+    };
 
-
-
-
-
-
-
-
-
-
-
-
-
+    $scope.doneeditplanningname = function (planning) {
+        planning.editingnomp = false;
+        $scope.planning.nomp = planning.nomp;
+  		};
 
 
 
@@ -819,6 +839,38 @@ app.controller('ModalInstanceCtrl',
   		};
 	}
 );
+
+
+// modal de sauvegarde d'une recette
+app.controller('ModalInstance2Ctrl', [
+'$scope',
+'$modal',
+'$state',
+'$log',
+'recettes',
+'auth',
+'$modalInstance',
+
+function($scope,$modal,$state,$log,recettes,auth,$modalInstance,jour,nom,listedecourse,currentUser) {
+		$scope.jour=jour;
+		$scope.currentUser=currentUser;		
+		$scope.listedecourse=listedecourse;		
+	  $scope.ok = function(nom,jours,listedecourses,currentUser) {
+	 		recettes.createplanning ({
+	 			nomp: nom,
+	 			jours: $scope.jours,
+	 			listedecourses: $scope.listedecourses,
+	 			author: $scope.currentUser});
+	 		$modalInstance.close();
+	 	};
+
+
+  		$scope.cancel = function () {
+  			  $modalInstance.dismiss('cancel');
+  		};
+	}]
+);
+
 
 
 
@@ -1000,8 +1052,12 @@ function($scope,$modal,$state,$log,recettes,auth){
     $scope.currentUser = auth.currentUser;
     $scope.isLoggedIn = auth.isLoggedIn;  
     $scope.plannings = recettes.recettes;
-
-
+  $scope.supprimerplanning = function(planning) {
+  		var tampon=planning;
+ 		recettes.deleteplanning(planning).success(function(planning){
+			$scope.plannings.splice($scope.plannings.indexOf(tampon),1);
+		})
+ 	};
 
 
 }]);

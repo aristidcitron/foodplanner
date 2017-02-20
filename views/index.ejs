@@ -686,7 +686,7 @@ planning -->
 <script type="text/ng-template" id="/1planning.html">
          <div class="page-header">
          <br>
-          <h1>Planning</h1>
+          <h1>Planning: {{plannings[0].nomp}}</h1>
         </div>   
     <row>   
     <div class="col-sm-6 col-xs-6">
@@ -757,14 +757,15 @@ planning -->
          <div class="page-header">
          <br>
           <h1>Mes Planning </h1> 
-        </div>   
+        </div> 
              <table class="table"> 
                       <tr>
+                      <th> nom </th>
                         <th> Jour </th>
                       </tr>
                       <tr ng-repeat="planning in plannings ">
-                        <td><a href ="#/plannings/{{planning._id}}">{{planning.date}}</a></td>
-                    
+                        <td><a href ="#/plannings/{{planning._id}}">{{planning.nomp}}</a></td>
+                        <td>Créé le {{planning.date | date:'dd-MM'}} à {{planning.date | date:'hh:mm'}} <span class="glyphicon glyphicon-remove" ng-click="supprimerplanning(planning)"></span></td>                    
 
                       </tr>
                     </table>   
@@ -779,10 +780,86 @@ planning -->
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script type="text/ng-template" id="/planning.html">
          <div class="page-header">
          <br>
-          <h1>Planning </h1>
+          <h1>Planning </h1> 
+
+
         </div>   
     <row>    
     <div class="col-sm-6 col-xs-6">
@@ -831,7 +908,7 @@ planning -->
       <br>        <br>  
      
         <button ng-click=genererplanning2() class="btn btn-primary"> générer liste la liste de courses</button>
-        <button ng-click=sauvegarderplanning() class="btn btn-primary"> Sauvegarder planning / liste de courses</button>
+        <button ng-click="open2(jours,nom,listedecourses,currentUser)" class="btn btn-primary"> Sauvegarder planning / liste de courses</button>
 
          </div> 
          </row>
@@ -843,6 +920,35 @@ planning -->
 
 
 
+          <!-- Modal2 -->
+ 
+
+          <script type="text/ng-template" id="myModalContent2.html">
+              <div class="modal-header">
+                  <h3 class="modal-title">Nom du planning: </h3>
+
+              </div>
+             
+
+              <form >
+                      <div class="form-group">
+                  <label>Mot de passe</label>    
+                    <input type="text"
+                    class="form-control"
+                    placeholder="Semaine en famille"
+                    ng-model="nom"></input>
+                  </div>
+                 <button class="btn btn-success" ng-click="ok(nom)">ok</button>                                
+                      
+                      </form>
+                      
+
+
+
+
+
+
+          </script>
 
 
 
