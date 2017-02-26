@@ -123,7 +123,7 @@ router.post('/listedecourses', function (req,res,next){
       	Recette.find({_id:item.idrecette}, function (err, docs) {
       	 "use strict";
    			for (var i=0; i<docs[0].ingredients.length; i++){
-   				ingredients = ingredients.concat([{nom:docs[0].ingredients[i],nbpers:item.nbpers}]) 		
+   				ingredients = ingredients.concat([{nom:docs[0].ingredients[i],nbpers:item.nbpers,portionmini:docs[0].portionmini}]) 	
    				}
     	  callback();
     	});
@@ -134,7 +134,7 @@ router.post('/listedecourses', function (req,res,next){
       		  Ingredient.find({_id:ingredient.nom}, function (err, docs) { 
       		  	  "use strict";
 		          var ingredientscomplet = docs[0];
-		          var toto= ingredient.nbpers*ingredientscomplet.nombre;
+		          var toto= Math.ceil(ingredient.nbpers/ingredient.portionmini)*ingredientscomplet.nombre;
 		          ingredientscomplet.nombre = toto;
 		          result.push(ingredientscomplet);
 		          callback();

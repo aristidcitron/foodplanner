@@ -677,14 +677,35 @@ function($scope,$modal,$state,$log,recettes,auth){
     $scope.planning.nomp = 'ma recette';
 
     $scope.jours=[
-    	{id:1,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate())},
-    	{id:2,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
-     	{id:3,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)}, 
-     	{id:4,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)},       	  	
-    	{id:5,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
-     	{id:6,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)}, 
-     	{id:7,midi:'',nbpersmidi:'',soir:'',nbperssoir:'',date:$scope.date.setDate($scope.date.getDate() + 1)},   
-     	    ];
+    	{id:1,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date:$scope.date.setDate($scope.date.getDate())},
+    	{id:2,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	{id:3,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	{id:4,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},    	  	
+    	{id:5,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	{id:6,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	{id:7,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
+     	    ];   
+
+   $scope.change=function(jour){
+   	
+   	jour.portionrestantemidi=-1;
+   	tampon = jour.midi.portionmini;
+   	while (jour.portionrestantemidi<0){
+   	jour.portionrestantemidi = tampon-jour.nbpersmidi;
+   	tampon = tampon+jour.midi.portionmini;};
+   };
+
+
+
+    $scope.change2=function(jour){
+   	
+   	jour.portionrestantesoir=-1;
+   	tampon = jour.soir.portionmini;
+   	while (jour.portionrestantesoir<0){
+   	jour.portionrestantesoir = tampon-jour.nbperssoir;
+   	tampon = tampon+jour.soir.portionmini;};
+   };
+
 
 
 
@@ -894,8 +915,26 @@ function($scope,$modal,$state,$log,recettes,auth){
     $scope.currentUser = auth.currentUser;
     $scope.isLoggedIn = auth.isLoggedIn;  
 
+   $scope.change=function(jour){
+   	
+   	jour.portionrestantemidi=-1;
+   	tampon = jour.midi.portionmini;
+   	while (jour.portionrestantemidi<0){
+   	jour.portionrestantemidi = tampon-jour.nbpersmidi;
+   	tampon = tampon+jour.midi.portionmini;};
+   };
 
    
+
+    $scope.change2=function(jour){
+   	
+   	jour.portionrestantesoir=-1;
+   	tampon = jour.soir.portionmini;
+   	while (jour.portionrestantesoir<0){
+   	jour.portionrestantesoir = tampon-jour.nbperssoir;
+   	tampon = tampon+jour.soir.portionmini;};
+   };
+  
 
 
   $scope.ajouterrepasalea = function(jour,moment){
