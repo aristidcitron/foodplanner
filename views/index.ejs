@@ -1,7 +1,12 @@
 <html>
   <head>
     <title>Food planner v1</title>
-    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
     <link href="/stylesheets/style2.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.2/angular-ui-router.js"></script>
@@ -24,6 +29,7 @@
     <style> .glyphicon-remove { cursor:pointer } </style>
     <style> .glyphicon-plus { cursor:pointer } </style>
     <style> .glyphicon-pencil { cursor:pointer } </style>
+    <style> .glyphicon-random { cursor:pointer } </style>    
   </head>
   <body ng-app="foodplanner">
 
@@ -82,39 +88,50 @@
 
 
 
-
-
           <!-- Liste des recettes et home -->
 
      <script type="text/ng-template" id="/recettes.html">
-
+     <div class="container">
          <div class="page-header"> <br>
-          <h1>Liste des recettes</h1>
+          <h1>Liste des recettes <a class="btn btn-primary text-right" href="#/ajouterrecette"> <span class="glyphicon glyphicon-plus"></span> Ajoute ta recette! </a> </h1>
           
         </div>
-      <br><br>   <a class="btn btn-primary" href="#/ajouterrecette"> Ajoute ta recette! </a><br><br>
-
-
+  
        <div ng-show="error" class="alert alert-danger row">
       <span>{{ error.message }}</span>
      </div>
 
-      <table class="table"> 
-        <tr>
-          <td> Nom de recette </td>
-          <td> temps de préparation </td>
-          <td> temps de cuisson </td>
-          <td>  </td>
-        <tr ng-repeat="recette in recettes | orderBy :'-upvotes'">
-          <td><img ng-src="{{recette.picture}}" class="thumbnailperso" ng-show="recette.picture"> <a href ="#/recettes/{{recette._id}}">{{recette.nomr}}</a></td>
-          <td>{{recette.tempsdepreparation}}</td>
-          <td>{{recette.tempsdecuisson}}</td>
-          <td> <span class="glyphicon glyphicon-thumbs-up" ng-click="incrementUpvotes (recette)"></span>
+
+          <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon"><i class="fa fa-search"></i></div>
+
+              <input type="text" class="form-control" placeholder="Rechercher recette" ng-model="rechercherecette">
+
+            </div>      
+          </div>
+        </form>
+
+      <table class="table table-condensed table-striped"> 
+        <thead>
+          <th> photo </th>
+          <th> Nom de recette </th>
+          <th> temps de préparation </th>
+          <th> temps de cuisson </th>
+          <th> Auteur </th>
+          <th> like / supprimer </th>           </thead>
+        <tr ng-repeat="recette in recettes | orderBy :'-upvotes'| filter:rechercherecette">
+          
+          <td><img ng-src="{{recette.picture}}" class="thumbnailperso" ng-show="recette.picture"></td>
+          <td> <a href ="#/recettes/{{recette._id}}">{{recette.nomr}}</a></td>
+          <td><span ng-show="recette.tempsdepreparation"> <span class="glyphicon glyphicon-time"> </span> {{recette.tempsdepreparation}} minutes </span></td>
+          <td><span ng-show="recette.tempsdecuisson"> <span class="glyphicon glyphicon-time"> </span> {{recette.tempsdecuisson}} minutes </span></td>
+          <td>            <span ng-show="recette.author">
+            par <a>{{recette.author}}</a> </span> </td>
+          <td> <span class="glyphicon glyphicon-thumbs-up" style="color:blue" ng-click="incrementUpvotes (recette)"></span>
             {{recette.upvotes}} 
-            <span class="glyphicon glyphicon-remove" ng-click="supprimerRecette(recette)"></span>
-            <span ng-show="recette.author">
-            posted by <a>{{recette.author}}</a>
-            </span>
+            <span class="glyphicon glyphicon-remove" style="color:grey" ng-click="supprimerRecette(recette)"></span>
            </td>
         </tr>
       </table>
@@ -124,7 +141,7 @@
 
 
   
-    
+    </div>
      </script>
 
 
@@ -482,63 +499,6 @@
 
 
 
-<script type="text/ng-template" id="/1planning.html">
-         <div class="page-header">
-         <br>
-          <h1>Planning: {{plannings[0].nomp}}</h1>
-        </div>   
-    <row>   
-    <div class="col-sm-6 col-xs-6">
-      <table class="table"> 
-        <tr ng-repeat= "jour in jours  track by $index">
-
-          <td> {{jour.date | date:'dd-MM'}} <BR>
-          midi: {{jour.midi.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'midi')"></span>
-            pour <select ng-model="jour.nbpersmidi" ng-change="change(jour)">
-              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
-             personnes (portions restantes:{{jour.portionrestantemidi}})        <BR> 
-
-          soir: {{jour.soir.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'soir')"></span>
-            pour <select ng-model="jour.nbperssoir" ng-change="change2(jour)">
-              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
-             personnes (portions restantes:{{jour.portionrestantemidi}}) <BR>
-
-          </td>
-
-        </tr>
-      </table>
-
- <BR>
-          
-       </div>
-       <div class="col-sm-6 col-xs-6">    
-  
-
-      <br>        
-
-      <table class="table"> 
-                      <tr>
-                        <th> Nombre </th>
-                        <th> Unité </th>
-                        <th> Ingredient </th>
-                        <th>  Rayon </th>        </tr>
-                      <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
-                        <td>{{listedecourse.nombre}}</a></td>
-                        <td>{{listedecourse.unite}}</td>
-                        <td>{{listedecourse.nomi}}</td>
-                        <td>{{listedecourse.rayon}}</td>                        
-
-                      </tr>
-                    </table>  
-      <br>        <br>  
-     
-        <button ng-click=genererplanning2() class="btn btn-primary"> générer liste la liste de courses</button>
-        <button ng-click=sauvegarderplanning() class="btn btn-primary"> Sauvegarder planning / liste de courses</button>
-
-         </div> 
-         </row>
-     </script>
-
 
 
 
@@ -653,27 +613,29 @@
 
 
 <script type="text/ng-template" id="/planning.html">
+<div class="container">
          <div class="page-header">
          <br>
-          <h1>Planning </h1> {{jours}}
+          <h1>Planning<span ng-hide=plannings[O].nomp>: {{plannings[0].nomp}}</span> </h1>
 
 
         </div>   
     <row>    
-    <div class="col-sm-6 col-xs-6">
-      <table class="table"> 
+    <div class="col-md-7">
+      <table class="table table-condensed table-striped"> 
+
         <tr ng-repeat= "jour in jours  track by $index">
 
-          <td> {{jour.date | date:'dd-MM'}} <BR>
-          midi: {{jour.midi.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'midi')"></span>
-            pour <select ng-model="jour.nbpersmidi" ng-change="change(jour)">
+          <td > <strong> {{jour.date | date:'dd-MM'}} </strong><BR>
+          <span class="text-primary"> <strong> midi: </strong> </span> <span class="text-muted" ng-hide=jour.midi><em> Ajouter une recette</em> </span><span class="bg-faded">{{jour.midi.nomr}}</span> <span class="glyphicon glyphicon-random" style="color:green" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" style="color:green" ng-click="open(jour,'midi')"></span><span ng-show=jour.midi> 
+            pour <select ng-model="jour.nbpersmidi" ng-change="changemidi(jour)">
               <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
-             personnes (portions restantes:{{jour.portionrestantemidi}})        <BR> 
+              personnes <span ng-show="jour.portionrestantemidi" class="text-success"> (<span class="glyphicon glyphicon-apple"> </span> :{{jour.portionrestantemidi}})  </span> <span class="glyphicon glyphicon-scissors" style="color:grey" ng-click="delete(jour,'midi')"></span> </span>     <BR> 
 
-          soir: {{jour.soir.nomr}} <span class="glyphicon glyphicon-plus" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" ng-click="open(jour,'soir')"></span>
-            pour <select ng-model="jour.nbperssoir" ng-change="change2(jour)">
+         <span class="text-primary"> <strong> soir: </strong> </span> <span class="text-muted" ng-hide=jour.soir><em> Ajouter une recette </em></span><span class="bg-faded">{{jour.soir.nomr}}</span> <span class="glyphicon glyphicon-random" style="color:green" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" style="color:green" ng-click="open(jour,'soir')"></span><span ng-show=jour.soir> 
+            pour <select ng-model="jour.nbperssoir" ng-change="changesoir(jour)">
               <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
-             personnes (portions restantes:{{jour.portionrestantemidi}}) <BR>
+              personnes <span ng-show="jour.portionrestantesoir" class="text-success"> (<span class="glyphicon glyphicon-apple"> </span> :{{jour.portionrestantesoir}})  </span> <span class="glyphicon glyphicon-scissors" style="color:grey" ng-click="delete(jour,'soir')"></span> </span>     <BR> 
 
           </td>
 
@@ -683,10 +645,11 @@
  <BR>
           
        </div>
-       <div class="col-sm-6 col-xs-6">    
-  
+         
+           <div class="col-md-5">
+      <div class="row"> 
 
-      <br>        
+      <br>         <h2>Liste de courses </h2>
 
       <table class="table"> 
                       <tr>
@@ -695,7 +658,7 @@
                         <th> Ingredient </th>
                         <th>  Rayon </th>        </tr>
                       <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
-                        <td>{{listedecourse.nombre}}</a></td>
+                        <td>{{listedecourse.nombre}}</td>
                         <td>{{listedecourse.unite}}</td>
                         <td>{{listedecourse.nomi}}</td>
                         <td>{{listedecourse.rayon}}</td>                        
@@ -703,12 +666,18 @@
                       </tr>
                     </table>  
       <br>        <br>  
-     
-        <button ng-click=genererplanning2() class="btn btn-primary"> générer liste la liste de courses</button>
-        <button ng-click="open2(jours,nom,listedecourses,currentUser)" class="btn btn-primary"> Sauvegarder planning / liste de courses</button>
-
+      </div>
+     <div class="row">
+     <div class="col-xs-6 text-center">
+        <button ng-click=genererplanning2() class="btn btn-primary"> <span class="glyphicon glyphicon-shopping-cart"></span> Obtenir la liste</button> 
+     </div>
+     <div class="col-xs-6 text-center">
+             <button ng-click="open2(jours,nom,listedecourses,currentUser)" class="btn btn-primary"> <span class="glyphicon glyphicon-cloud-upload"></span> Sauvegarder </button>
+	</div>	</div>
          </div> 
          </row>
+         </div>
+
      </script>
 
 

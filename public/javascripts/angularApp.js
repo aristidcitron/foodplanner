@@ -199,7 +199,7 @@ app.config([
 				views:{
 					'page':{
 
-						templateUrl:'/1planning.html',
+						templateUrl:'/planning.html',
 						controller: '1planningCtrl',
 						resolve: {
 							recette:['$stateParams','recettes', function($stateParams, recettes){
@@ -686,8 +686,7 @@ function($scope,$modal,$state,$log,recettes,auth){
      	{id:7,midi:'',nbpersmidi:'',portionrestantemidi:'',soir:'',nbperssoir:'',portionrestantesoir:'',date: $scope.date.setDate($scope.date.getDate() + 1)},
      	    ];   
 
-   $scope.change=function(jour){
-   	
+   $scope.changemidi=function(jour){
    	jour.portionrestantemidi=-1;
    	tampon = jour.midi.portionmini;
    	while (jour.portionrestantemidi<0){
@@ -697,8 +696,8 @@ function($scope,$modal,$state,$log,recettes,auth){
 
 
 
-    $scope.change2=function(jour){
-   	
+    $scope.changesoir=function(jour){
+
    	jour.portionrestantesoir=-1;
    	tampon = jour.soir.portionmini;
    	while (jour.portionrestantesoir<0){
@@ -706,6 +705,12 @@ function($scope,$modal,$state,$log,recettes,auth){
    	tampon = tampon+jour.soir.portionmini;};
    };
 
+  $scope.delete = function(jour,moment){
+ 		var index = jour.id-1; 	
+		$scope.jours[index].midi = "";
+		$scope.jours[index].nbpersmidi = "";
+		$scope.jours[index].portionrestantemidi="";
+	};
 
 
 
@@ -713,8 +718,19 @@ function($scope,$modal,$state,$log,recettes,auth){
 	recettes.getrecettealea().success(function(recettealea){
 		var index = jour.id-1;
 		var varmoment = moment;
-		$scope.jours[index][varmoment]=recettealea})
-	};
+		$scope.jours[index][varmoment]=recettealea;
+		if (moment === "midi") {
+			if (jour.nbpersmidi!=0){
+				$scope.changemidi(jour)
+			}
+			
+		}{
+			if (jour.nbperssoir!=0){
+				$scope.changesoir(jour)
+			}	
+		}
+	})
+ };
 
 // edition des repas
 	var k;
@@ -738,9 +754,20 @@ function($scope,$modal,$state,$log,recettes,auth){
     });
 
     modalInstance.result.then(function (recette) {
-      		var index = jour.id-1;
+      	var index = jour.id-1;
 		var varmoment = moment;
-		$scope.jours[index][varmoment]=recette
+		$scope.jours[index][varmoment]=recette;
+		if (moment === "midi") {
+			if (jour.nbpersmidi!=0){
+				$scope.changemidi(jour)
+			}
+			
+		}{
+			if (jour.nbperssoir!=0){
+				$scope.changesoir(jour)
+			}	
+		}			
+
     }, function () {
       $log.info('Modal dismissed at: ' + new Date());
     });
@@ -915,8 +942,7 @@ function($scope,$modal,$state,$log,recettes,auth){
     $scope.currentUser = auth.currentUser;
     $scope.isLoggedIn = auth.isLoggedIn;  
 
-   $scope.change=function(jour){
-   	
+   $scope.changemidi=function(jour){
    	jour.portionrestantemidi=-1;
    	tampon = jour.midi.portionmini;
    	while (jour.portionrestantemidi<0){
@@ -924,25 +950,43 @@ function($scope,$modal,$state,$log,recettes,auth){
    	tampon = tampon+jour.midi.portionmini;};
    };
 
-   
 
-    $scope.change2=function(jour){
-   	
+
+    $scope.changesoir=function(jour){
+
    	jour.portionrestantesoir=-1;
    	tampon = jour.soir.portionmini;
    	while (jour.portionrestantesoir<0){
    	jour.portionrestantesoir = tampon-jour.nbperssoir;
    	tampon = tampon+jour.soir.portionmini;};
    };
-  
+
+  $scope.delete = function(jour,moment){
+ 		var index = jour.id-1; 	
+		$scope.jours[index].midi = "";
+		$scope.jours[index].nbpersmidi = "";
+		$scope.jours[index].portionrestantemidi="";
+	};
+
 
 
   $scope.ajouterrepasalea = function(jour,moment){
 	recettes.getrecettealea().success(function(recettealea){
 		var index = jour.id-1;
 		var varmoment = moment;
-		$scope.jours[index][varmoment]=recettealea})
-	};
+		$scope.jours[index][varmoment]=recettealea;
+		if (moment === "midi") {
+			if (jour.nbpersmidi!=0){
+				$scope.changemidi(jour)
+			}
+			
+		}{
+			if (jour.nbperssoir!=0){
+				$scope.changesoir(jour)
+			}	
+		}
+	})
+ };
 
 // edition des repas
 	var k;
@@ -966,14 +1010,51 @@ function($scope,$modal,$state,$log,recettes,auth){
     });
 
     modalInstance.result.then(function (recette) {
-      		var index = jour.id-1;
+      	var index = jour.id-1;
 		var varmoment = moment;
-		$scope.jours[index][varmoment]=recette
+		$scope.jours[index][varmoment]=recette;
+		if (moment === "midi") {
+			if (jour.nbpersmidi!=0){
+				$scope.changemidi(jour)
+			}
+			
+		}{
+			if (jour.nbperssoir!=0){
+				$scope.changesoir(jour)
+			}	
+		}			
+
     }, function () {
       $log.info('Modal dismissed at: ' + new Date());
     });
   };
 
+
+
+   $scope.open2 = function (jours,nom,listedecourses,currentUser) {
+
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent2.html',
+      controller: 'ModalInstance2Ctrl',
+   	  scope: $scope,
+      resolve: {  	
+        jours: function () {
+          return $scope.jours;
+         },
+        listedecourses: function () {
+          return $scope.listedecourses;
+         },
+        currentUser: function () {
+          return $scope.currentUser;
+         },                
+       }
+    });
+
+    modalInstance.result.then(function () {
+console.log(coucou) }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
 
 
  $scope.genererplanning2 = function(jours,planningvalides){
