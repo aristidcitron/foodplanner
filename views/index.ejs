@@ -16,6 +16,9 @@
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-filter/0.5.14/angular-filter.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+    <script src="/javascripts/angular-locale_fr-fr.js"></script>
+	<script src="/javascripts/Chart.min.js"></script>
+	<script src="/javascripts/angular-chart.min.js"></script>
 
         <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
           <!-- slider -->
@@ -67,11 +70,19 @@
               <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>  
             </ul>
             <ul class="nav navbar-nav navbar-right">            
-              <li ng-show="isLoggedIn()"><a>Bienvenu {{ currentUser() }}!</a></li>
-              <li ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'mesplannings'}"><a href="#/mesplannings"> Mes Plannings</a></li>              
+
+                    <li class="dropdown" ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'mesplannings'}">
+			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Bienvenu {{ currentUser() }}! <span class="caret"></span></a>
+			          <ul class="dropdown-menu">
+			            <li ng-class="{active: $state.current.name == 'mesplannings'}"><a href="#/mesplannings"> Mes Plannings</a></li>
+			            <li ng-class="{active: $state.current.name == 'login'}"><a href="" ng-click="logOut()">Se déconnecter</a></li>
+			            <li role="separator" class="divider"></li>
+			            <li><a href="#">A venir</a></li>
+
+			          </ul>
+			        </li>
               <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'register'}"><a href="#/register">S'inscrire</a></li>    
               <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="#/login">Se connecter</a></li>   
-              <li ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"><a href="" ng-click="logOut()">Se déconnecter</a></li>                            
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -150,10 +161,11 @@
           <!-- Liste des ingredients disponible -->
 
      <script type="text/ng-template" id="/ingredientsdispos.html">
+         <div class="container">
          <div class="page-header"> <br> 
           <h1>Liste des ingredients</h1> 
           </div>
-        <form ng-show="currentUser() == 'aymeric'" ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
+        <form ng-show="currentUser() == 'Aymeric'" ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
     <h3>Ajouter un nouvel ingredient</h3>
       <div class="row">
         <div class="col-lg-6">
@@ -174,7 +186,7 @@
           <label>Unité</label>          
           <div class="form-group">  
               <select class="form-control" placeholder="grammes" ng-model="unite "/>
-                <option>cl</option>                 
+                <option>ml</option>                 
                 <option>grammes</option>
                 <option>tranche</option>
                 <option>unité</option>
@@ -193,14 +205,34 @@
           </div>
           <label>Apport en Kcal pour 100g</label>          
           <div class="form-group">  
-              <input type="number" class="form-control" placeholder="32" ng-model="apport "/>
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="calories"/>
           </div>                        
          </div>
-          <label>Poid moyen en grammes (seulement si l'unité n'est pas au poid)</label>         
          <div class="col-lg-6">
+          <label>Poid moyen en grammes (seulement si l'unité n'est pas au poid ou aux ml)</label>         
            <div class="form-group"> 
-            <input type="number" class="form-control" placeholder="poid moyen" ng-model="poidmoyen"/>
+            <input type="number" step="0.01" class="form-control" placeholder="poid moyen" ng-model="poidmoyen"/>
           </div>
+
+          <label>glucide 100g/100ml</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="glucide"/>
+          </div>   
+           <label>lipide 100g/100ml</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="lipide"/>
+          </div>            
+          <label>protide 100g/100ml</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="protide"/>
+          </div>   
+          <label>prix / 100g, 100ml ou 1 unité ou tranche</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="prix"/>
+          </div>   
+
+
+
         <div class="form-group">   
            <button type="submit" class="btn btn-primary"> Ajoute ton ingredient! </button>
          </div>
@@ -213,7 +245,7 @@
           <td> Rayons </td>
           <td> Unité </td>
           <td> Type </td>
-          <td>  </td>
+          <td>  </td></tr>
         <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid'">
           <td>{{ingredientsdispo.nomid}}</a></td>
           <td>{{ingredientsdispo.rayon}}</td>
@@ -225,7 +257,7 @@
         </tr>
       </table>
       <br><br><br>
- 
+ 	 </div
     
      </script>
 
@@ -242,11 +274,20 @@
           <!-- Page d'ajout de recette -->
 
      <script type="text/ng-template" id="/ajouterrecette.html">
-
+      <div class="container">
       <div class="page-header"> <br>
-          <h1>Ajouter une recette</h1>
-          
+          <h1 ng-hide="recette.nomr">Ajouter une recette</h1>  <h1 ng-show="recette.nomr">{{recette.nomr}}</h1> 
         </div>
+        <div class="row text-center" ng-show="recette.nomr">
+           <div class="col-xs-3">
+<canvas id="bar" class="chart chart-bar"
+  chart-data="data" chart-labels="labels"> chart-series="series"
+</canvas>
+		</div>
+		           <div class="col-xs-3">
+          calories: {{recette.calories}}
+          prix: {{recette.prix}} €                         
+        </div>        </div>
         <form ng-submit="ajouterRecette()" style="margin-top:30px;">
           <div class="row">
            <div class="col-lg-6">
@@ -254,7 +295,7 @@
               <input type="text" class="form-control" placeholder="Nom de la recette" ng-model="nomr"/>
              </div> 
              <div class="form-group">  
-              <textarea type="text"  class="form-control" rows="12" placeholder="instructions" ng-model="instructions "> </textarea>
+              <textarea type="text"  class="form-control" rows="6" placeholder="instructions" ng-model="instructions "> </textarea>
              </div>
             </div>
             <div class="col-lg-6">
@@ -267,7 +308,7 @@
              <div class="form-group">         
               <input type="number" class="form-control" placeholder="Nombre de personnes" ng-model="portionmini"/>
              </div>
-             <BR>
+             <br>
              <div class="form-group">
                 <label for="picture">Photo:</label>
                  <div class="text-center">
@@ -287,7 +328,7 @@
             </div> 
            </div> 
 
-<br>
+
 
        <div class="row">
         <div class="form-group">
@@ -305,7 +346,7 @@
                  <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
                 </td>
                 <td> {{ingredient.unite}}</td>
-                <td> {{ingredient.nomi}}</td>
+                <td> {{ingredient.nomid}}</td>
 
                 <td><span class="glyphicon glyphicon-remove" ng-click="supprimerIngredient(ingredient)"></span>
                 <span class="glyphicon glyphicon-pencil" ng-click="editIngredient(ingredient)"></span></td>
@@ -322,7 +363,6 @@
 
 
 
-         </div>
         <div class="col-lg-6"> 
          </form>       
           <form>
@@ -355,7 +395,7 @@
          </div>
            </div>      
 
-    
+    </div>
       </script>
 
 
@@ -367,6 +407,7 @@
 
 
      <script type="text/ng-template" id="/recette.html">
+     <div class="container">
         <div class="page-header">
         <br><br>
           <h1>
@@ -375,7 +416,7 @@
            <input ng-show="recette.editingnomr" ng-model="recette.nomr" ng-blur="doneeditrecettename(recette)" autofocus />
            <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingnomr" ng-click="editrecettename(recette)"></span></td>
 
-          </h1>
+          </h1> 
           by {{recette.author}}</div>
             <div ng-show="error" class="alert alert-danger row">
               <span>{{ error.message }}</span>
@@ -448,7 +489,7 @@
            <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
           </td>
           <td> {{ingredient.unite}}</td>
-          <td> {{ingredient.nomi}}</td>
+          <td> {{ingredient.nomid}}</td>
 
           <td><span class="glyphicon glyphicon-remove" ng-click="supprimerIngredient(ingredient)"></span>
           <span class="glyphicon glyphicon-pencil" ng-click="editIngredient(ingredient)"></span></td>
@@ -487,6 +528,7 @@
 
          </div>
         </div>  
+        </div>
       </script>
 
 
@@ -612,6 +654,7 @@
 
 
 
+
 <script type="text/ng-template" id="/planning.html">
 <div class="container">
          <div class="page-header">
@@ -620,63 +663,113 @@
 
 
         </div>   
-    <row>    
     <div class="col-md-7">
-      <table class="table table-condensed table-striped"> 
+             <div class="panel panel-primary text-center">
+             <div class="panel-heading">
+
+
+
+       <h3>Votre semaine</h3> </div>
+<div class="pannel-body">
+
+      <table class="table table-hover"> 
 
         <tr ng-repeat= "jour in jours  track by $index">
 
-          <td > <strong> {{jour.date | date:'dd-MM'}} </strong><BR>
-          <span class="text-primary"> <strong> midi: </strong> </span> <span class="text-muted" ng-hide=jour.midi><em> Ajouter une recette</em> </span><span class="bg-faded">{{jour.midi.nomr}}</span> <span class="glyphicon glyphicon-random" style="color:green" ng-click="ajouterrepasalea(jour,'midi')"></span> <span class="glyphicon glyphicon-pencil" style="color:green" ng-click="open(jour,'midi')"></span><span ng-show=jour.midi> 
+          <td > <strong> {{jour.date | date:'EEEE dd MMMM'}} </strong><BR>
+          <span class="text-primary"> <strong> midi: </strong> </span> <button ng-click="ajouterrepasalea(jour,'midi')" class="btn btn-success btn-xs"> <span class=" glyphicon glyphicon-refresh"></span></button> <button ng-click="open(jour,'midi')" class="btn btn-success btn-xs"> <span class=" glyphicon glyphicon-cutlery"></span></button> <span class="bg-faded"><strong> {{jour.midi.nomr}}</strong></span>  
+
+
+
+
+          <span ng-show=jour.midi> 
             pour <select ng-model="jour.nbpersmidi" ng-change="changemidi(jour)">
               <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
-              personnes <span ng-show="jour.portionrestantemidi" class="text-success"> (<span class="glyphicon glyphicon-apple"> </span> :{{jour.portionrestantemidi}})  </span> <span class="glyphicon glyphicon-scissors" style="color:grey" ng-click="delete(jour,'midi')"></span> </span>     <BR> 
+              personnes <span ng-show="jour.portionrestantemidi" class="text-success"> (<span class="glyphicon glyphicon-apple"> </span> :{{jour.portionrestantemidi}})  </span> <button ng-click="delete(jour,'midi')" class="btn btn-warning  btn-xs"> <span class=" glyphicon glyphicon-scissors"></span></button>
 
-         <span class="text-primary"> <strong> soir: </strong> </span> <span class="text-muted" ng-hide=jour.soir><em> Ajouter une recette </em></span><span class="bg-faded">{{jour.soir.nomr}}</span> <span class="glyphicon glyphicon-random" style="color:green" ng-click="ajouterrepasalea(jour,'soir')"></span> <span class="glyphicon glyphicon-pencil" style="color:green" ng-click="open(jour,'soir')"></span><span ng-show=jour.soir> 
+
+               </span>    <br>
+
+          <span class="text-primary"> <strong> soir:  </strong> </span>   <button ng-click="ajouterrepasalea(jour,'soir')" class="btn btn-success btn-xs"> <span class=" glyphicon glyphicon-refresh"></span></button> <button ng-click="open(jour,'soir')" class="btn btn-success btn-xs"> <span class=" glyphicon glyphicon-cutlery"></span></button> <span class="bg-faded"><strong> {{jour.soir.nomr}}</strong></span>  
+
+
+
+
+          <span ng-show=jour.soir> 
             pour <select ng-model="jour.nbperssoir" ng-change="changesoir(jour)">
               <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
-              personnes <span ng-show="jour.portionrestantesoir" class="text-success"> (<span class="glyphicon glyphicon-apple"> </span> :{{jour.portionrestantesoir}})  </span> <span class="glyphicon glyphicon-scissors" style="color:grey" ng-click="delete(jour,'soir')"></span> </span>     <BR> 
+              personnes <span ng-show="jour.portionrestantesoir" class="text-success"> (<span class="glyphicon glyphicon-apple"> </span> :{{jour.portionrestantesoir}})  </span> <button ng-click="delete(jour,'soir')" class="btn btn-warning btn-xs"> <span class=" glyphicon glyphicon-scissors"></span></button>
+
 
           </td>
 
         </tr>
       </table>
 
- <BR>
-          
+        </div> 
        </div>
-         
+       </div>
+
            <div class="col-md-5">
-      <div class="row"> 
+             <div class="panel panel-primary text-center">
+             <div class="panel-heading">
 
-      <br>         <h2>Liste de courses </h2>
 
-      <table class="table"> 
+       <h3>Liste de courses </h3> </div>
+<div class="pannel-body"> 
+      <table class="table table-hover"> 
                       <tr>
                         <th> Nombre </th>
                         <th> Unité </th>
-                        <th> Ingredient </th>
+                        <th> Ingreéients </th>
                         <th>  Rayon </th>        </tr>
                       <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
                         <td>{{listedecourse.nombre}}</td>
                         <td>{{listedecourse.unite}}</td>
-                        <td>{{listedecourse.nomi}}</td>
+                        <td>{{listedecourse.nomid}}</td>
                         <td>{{listedecourse.rayon}}</td>                        
 
                       </tr>
                     </table>  
-      <br>        <br>  
-      </div>
-     <div class="row">
-     <div class="col-xs-6 text-center">
+      <br>    <div class="text-center" ng-show="total"> pour un total de : {{total[0]}} € (estimation)  </div> <br>  
+
+ 
         <button ng-click=genererplanning2() class="btn btn-primary"> <span class="glyphicon glyphicon-shopping-cart"></span> Obtenir la liste</button> 
-     </div>
-     <div class="col-xs-6 text-center">
+
              <button ng-click="open2(jours,nom,listedecourses,currentUser)" class="btn btn-primary"> <span class="glyphicon glyphicon-cloud-upload"></span> Sauvegarder </button>
-	</div>	</div>
+   <br>   <br>
+
+   		</div>
          </div> 
-         </row>
+
+<div class="panel panel-primary text-center">
+             <div class="panel-heading">
+
+
+       <h3>Apports de la semaine</h3> </div>
+<div class="pannel-body">
+<div class="container-fluid">
+<br>
+<canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick">
+</canvas>
          </div>
+         </div>
+		</div>
+<div class="panel panel-primary text-center">
+             <div class="panel-heading">
+
+
+       <h3>Prix et calories</h3> </div>
+<div class="pannel-body">
+<div class="container-fluid">
+<br>
+<canvas id="line" class="chart chart-line" chart-data="data2" chart-labels="labels2" chart-series="series2" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick">
+</canvas>
+</canvas>
+         </div>
+         </div>
+		</div>
+         </div> 
 
      </script>
 

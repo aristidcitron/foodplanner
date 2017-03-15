@@ -1,5 +1,4 @@
-var app = angular.module('foodplanner', ['ngMessages','ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker']);
-
+var app = angular.module('foodplanner', ['ngMessages','ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker','chart.js']);
 
 
 
@@ -233,7 +232,7 @@ app.config([
 				views:{
 					'page':{
 
-						templateUrl:'/recette.html',
+						templateUrl:'/ajouterrecette.html',
 						controller: 'RecettesCtrl',
 						resolve: {
 							recette:['$stateParams','recettes', function($stateParams, recettes){
@@ -394,7 +393,7 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 
 	// récupérer la liste des courses
 	o.getlistedecourses = function(planningenvoyes){
-		return $http.post('/listedecourses',planningenvoyes).success(function(data){
+		return $http.post('/listedecourses',planningenvoyes).success(function(data){console.log(data);
 			angular.copy(data,o.planningenvoyes);
 	});};
 
@@ -431,24 +430,26 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 		});
 	};
 
-	o.createrecettecomplette=function(recette,ingredients){
-		return  $http.post('/recettes', recette,{
+
+
+
+
+
+
+
+
+	o.createrecettecomplette=function(recette){
+		return   $http.post('/recettes', recette,{
    			 	headers: {Authorization: 'Bearer '+auth.getToken()}
- 			 }).success(function(data){
-					console.log(data._id);
-					var id = data._id;
-		    		for(var i = 0; i < ingredients.length; i++) {
-		    			var postObject = new Object();
-		    			postObject.idingredientdispo = ingredients[i]._id;
-						postObject.rayon = ingredients[i].rayon;
-						postObject.unite = ingredients[i].unite;
-						postObject.nombre = ingredients[i].nombre;
-						postObject.nomi = ingredients[i].nomi;
-						console.log(postObject);
-		    			$http.post('/recettes/' + id + '/ingredients', postObject);
-					}
-		});
+ 			 })
 	};
+
+
+
+
+
+
+
 
 	// upvote une recette
 	o.upvote = function (recette){
@@ -475,11 +476,29 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 		return $http.put('/ingredients/' + ingredient._id, ingredient);
 	};	
 
-	o.updaterecette = function (recette,recette){
+
+
+
+
+
+
+
+
+	o.updaterecette = function (recette){
 		return $http.put('/recettes/' + recette._id, recette,{
    			 	headers: {Authorization: 'Bearer '+auth.getToken()}
  			 }).success(function(data){	console.log(data);});
 	};
+
+
+
+
+
+
+
+
+
+
 
 	return o;
 }])
@@ -499,7 +518,11 @@ function($scope,ingredientsdispos,auth){
  			rayon: $scope.rayon,
  			unite: $scope.unite,
  			type: $scope.type,
- 			apport: $scope.apport,
+ 			glucide: $scope.glucide,
+ 			lipide: $scope.lipide,
+ 			protide: $scope.protide,
+ 			calories: $scope.calories,
+ 			prix: $scope.prix, 			
  			poidmoyen: $scope.poidmoyen,
  		});
  		$scope.nomid='';
@@ -537,16 +560,15 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
 
     $scope.addtorecette = function(ingredientsdispo) {
     	ingredientsdispo.nombre=0;
-    	ingredientsdispo.nomi=ingredientsdispo.nomid;
-    	delete ingredientsdispo.nomid;
+    	//ingredientsdispo.nomi=ingredientsdispo.nomid;
+    	//delete ingredientsdispo.nomid;
 		$scope.ingredients.push(ingredientsdispo);
 		};
 
 	$scope.supprimerIngredient = function(ingredient) {
 		var tampon=ingredient;
-		recettes.deleteingredient(recette,ingredient).success(function(ingredient){
-			$scope.recette.ingredients.splice($scope.recette.ingredients.indexOf(tampon),1);
-		})};	
+			$scope.ingredients.splice($scope.ingredients.indexOf(tampon),1);
+		};	
 
 
 	$scope.editIngredient = function (ingredient) {
@@ -561,7 +583,11 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
 
 
   $scope.ajouterRecette = function() {
- 		if (!$scope.nomr || $scope.nomr ==='') { return; }
+ 		if (!$scope.nomr || $scope.nomr ==='') { return; } 
+ 		$scope.ingidnb=[];
+ 		for (var i=0; i<$scope.ingredients.length; i++){
+ 			$scope.ingidnb[i]={ _id:$scope.ingredients[i]._id,nombre:$scope.ingredients[i].nombre}
+ 		};
  		recettes.createrecettecomplette ({
  			nomr: $scope.nomr,
  			upvotes: 0,
@@ -570,10 +596,9 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
  			instructions:$scope.instructions,
  			author: $scope.currentUser,
  			picture: $scope.infophoto.url,
- 			portionmini: $scope.portionmini
- 		},$scope.ingredients);
-
-
+ 			portionmini: $scope.portionmini,
+ 			ingredients: $scope.ingidnb,
+ 		});
  		$scope.nomr='';
  		$scope.tempsdepreparation='';
  		$scope.tempsdecuisson='';
@@ -581,7 +606,7 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
  		$scope.picture='';
  		$scope.ingredients='';
  		$scope.portionmini='';
-
+ 		$scope.ingredients=[];
  	};
 
 
@@ -615,6 +640,122 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
 
 
 
+
+
+
+
+
+
+
+app.controller('RecettesCtrl', [
+'$scope',
+'recette',
+'recettes',
+'auth',
+'filepickerService',
+'ingredientsdispos',
+function($scope,recette,recettes,auth,filepickerService,ingredientsdispos){
+	$scope.recette = recette;
+	$scope.nomr = recette.nomr;
+	$scope.tempsdecuisson = recette.tempsdecuisson;
+	$scope.tempsdepreparation = recette.tempsdepreparation;
+	$scope.instructions = recette.instructions;
+	$scope.infophoto = {};
+	$scope.infophoto.url = recette.picture;
+	$scope.portionmini = recette.portionmini;			
+	$scope.ingredients = recette.ingredients;
+
+
+
+
+    $scope.ingredientsdispos = ingredientsdispos.ingredientsdispos;
+
+    $scope.addtorecette = function(ingredientsdispo) {
+    	ingredientsdispo.nombre=0;
+    	//ingredientsdispo.nomi=ingredientsdispo.nomid;
+    	//delete ingredientsdispo.nomid;
+		$scope.ingredients.push(ingredientsdispo);
+		};
+
+	$scope.supprimerIngredient = function(ingredient) {
+		var tampon=ingredient;
+			$scope.ingredients.splice($scope.ingredients.indexOf(tampon),1);
+		};	
+
+
+	$scope.editIngredient = function (ingredient) {
+        ingredient.editing = true;
+    };
+
+    $scope.doneEditing = function (ingredient) {
+        ingredient.editing = false;
+        var tampon=ingredient;
+		};
+
+
+    $scope.ajouterRecette = function () {
+ 		if (!$scope.nomr || $scope.nomr ==='') { return; } 
+ 		$scope.ingidnb=[];
+ 		for (var i=0; i<$scope.ingredients.length; i++){
+ 			$scope.ingidnb[i]={ _id:$scope.ingredients[i]._id,nombre:$scope.ingredients[i].nombre}
+ 		};
+
+
+
+
+
+        recettes.updaterecette({
+ 			nomr: $scope.nomr,
+ 			_id:$scope.recette._id,
+ 			upvotes: 0,
+ 			tempsdecuisson: $scope.tempsdecuisson,
+ 			tempsdepreparation:$scope.tempsdepreparation,
+ 			instructions:$scope.instructions,
+ 			author: $scope.currentUser,
+ 			picture: $scope.infophoto.url,
+ 			portionmini: $scope.portionmini,
+ 			ingredients: $scope.ingidnb,
+ 			author: $scope.recette.author,
+ 		}).error(function(error){
+		      $scope.error = error;
+		    })
+		};
+
+
+  $scope.labels = ['glucides', 'lipides', 'protides'];
+  $scope.series = ['Series A'];
+
+  $scope.data = [
+    [$scope.recette.glucide, $scope.recette.lipide, $scope.recette.protide]
+  ];
+
+
+
+
+
+
+    $scope.upload = function(){
+        filepickerService.pick(
+            {
+                mimetype: 'image/*',
+                language: 'en',
+                services: ['COMPUTER','DROPBOX','GOOGLE_DRIVE','IMAGE_SEARCH', 'FACEBOOK', 'INSTAGRAM'],
+                openTo: 'IMAGE_SEARCH'
+            },
+            function(Blob){
+                console.log(JSON.stringify(Blob));
+                $scope.infophoto = Blob;
+                $scope.$apply();
+            }
+        );
+    };
+
+
+}]);
+
+
+
+
 app.controller('MainCtrl', [
 '$scope',
 'recettes',
@@ -623,21 +764,7 @@ function($scope,recettes,auth){
   $scope.recettes = recettes.recettes;
   $scope.currentUser = auth.currentUser;
   $scope.isLoggedIn = auth.isLoggedIn;
-  $scope.ajouterRecette = function() {
- 		if (!$scope.nomr || $scope.nomr ==='') { return; }
- 		recettes.createrecette ({
- 			nomr: $scope.nomr,
- 			upvotes: 0,
- 			tempsdecuisson: $scope.tempsdecuisson,
- 			tempsdepreparation:$scope.tempsdepreparation,
- 			insctructions:$scope.instructions,
- 			author: $scope.currentUser,
- 		});
- 		$scope.nomr='';
- 		$scope.tempsdepreparation='';
- 		$scope.tempsdecuisson='';
- 		$scope.instructions='';
- 	};
+
 
  	$scope.incrementUpvotes = function(recette){
  		recettes.upvote(recette);
@@ -707,9 +834,72 @@ function($scope,$modal,$state,$log,recettes,auth){
 
   $scope.delete = function(jour,moment){
  		var index = jour.id-1; 	
+ 		if (moment === 'midi'){
 		$scope.jours[index].midi = "";
 		$scope.jours[index].nbpersmidi = "";
 		$scope.jours[index].portionrestantemidi="";
+	}{
+		$scope.jours[index].soir = "";
+		$scope.jours[index].nbperssoir = "";
+		$scope.jours[index].portionrestantesoir="";
+	};
+
+//MAJ du graphe
+		$scope.date = new Date();
+		$scope.semainefr=new Array("Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam","Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam");
+		  $scope.labels = [$scope.semainefr[$scope.date.getDay()] +' midi', $scope.semainefr[$scope.date.getDay()] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+1] +' midi', $scope.semainefr[$scope.date.getDay()+1] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+2] +' midi', $scope.semainefr[$scope.date.getDay()+2] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+3] +' midi', $scope.semainefr[$scope.date.getDay()+3] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+4] +' midi', $scope.semainefr[$scope.date.getDay()+4] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+5] +' midi', $scope.semainefr[$scope.date.getDay()+5] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+6] +' midi', $scope.semainefr[$scope.date.getDay()+6] +' soir',
+		  					];
+		  $scope.series = ['glucides','Lipides', 'Protides'];
+		  $scope.data = [
+		    [$scope.jours[0].midi.glucide,$scope.jours[0].soir.glucide,
+		    $scope.jours[1].midi.glucide,$scope.jours[1].soir.glucide,
+			$scope.jours[2].midi.glucide,$scope.jours[2].soir.glucide,
+		    $scope.jours[3].midi.glucide,$scope.jours[3].soir.glucide,
+			$scope.jours[4].midi.glucide,$scope.jours[4].soir.glucide,
+		    $scope.jours[5].midi.glucide,$scope.jours[5].soir.glucide,
+			$scope.jours[6].midi.glucide,$scope.jours[6].soir.glucide,],
+		    [$scope.jours[0].midi.lipide,$scope.jours[0].soir.lipide,
+		    $scope.jours[1].midi.lipide,$scope.jours[1].soir.lipide,
+			$scope.jours[2].midi.lipide,$scope.jours[2].soir.lipide,
+		    $scope.jours[3].midi.lipide,$scope.jours[3].soir.lipide,
+			$scope.jours[4].midi.lipide,$scope.jours[4].soir.lipide,
+		    $scope.jours[5].midi.lipide,$scope.jours[5].soir.lipide,
+			$scope.jours[6].midi.lipide,$scope.jours[6].soir.lipide,],
+		    [$scope.jours[0].midi.protide,$scope.jours[0].soir.protide,
+		    $scope.jours[1].midi.protide,$scope.jours[1].soir.protide,
+			$scope.jours[2].midi.protide,$scope.jours[2].soir.protide,
+		    $scope.jours[3].midi.protide,$scope.jours[3].soir.protide,
+			$scope.jours[4].midi.protide,$scope.jours[4].soir.protide,
+		    $scope.jours[5].midi.protide,$scope.jours[5].soir.protide,
+			$scope.jours[6].midi.protide,$scope.jours[6].soir.protide,],
+		  ];
+
+
+
+		  $scope.labels2 = $scope.labels;
+		  $scope.series2 = ['Prix','Calories'];
+		  $scope.data2 = [
+		    [$scope.jours[0].midi.prix,$scope.jours[0].soir.prix,
+		    $scope.jours[1].midi.prix,$scope.jours[1].soir.prix,
+			$scope.jours[2].midi.prix,$scope.jours[2].soir.prix,
+		    $scope.jours[3].midi.prix,$scope.jours[3].soir.prix,
+			$scope.jours[4].midi.prix,$scope.jours[4].soir.prix,
+		    $scope.jours[5].midi.prix,$scope.jours[5].soir.prix,
+			$scope.jours[6].midi.prix,$scope.jours[6].soir.prix,],
+		    [$scope.jours[0].midi.calories,$scope.jours[0].soir.calories,
+		    $scope.jours[1].midi.calories,$scope.jours[1].soir.calories,
+			$scope.jours[2].midi.calories,$scope.jours[2].soir.calories,
+		    $scope.jours[3].midi.calories,$scope.jours[3].soir.calories,
+			$scope.jours[4].midi.calories,$scope.jours[4].soir.calories,
+		    $scope.jours[5].midi.calories,$scope.jours[5].soir.calories,
+			$scope.jours[6].midi.calories,$scope.jours[6].soir.calories,],
+		  ];
 	};
 
 
@@ -730,6 +920,59 @@ function($scope,$modal,$state,$log,recettes,auth){
 			}	
 		}
 	})
+			$scope.date = new Date();
+		$scope.semainefr=new Array("Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam","Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam");
+		  $scope.labels = [$scope.semainefr[$scope.date.getDay()] +' midi', $scope.semainefr[$scope.date.getDay()] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+1] +' midi', $scope.semainefr[$scope.date.getDay()+1] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+2] +' midi', $scope.semainefr[$scope.date.getDay()+2] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+3] +' midi', $scope.semainefr[$scope.date.getDay()+3] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+4] +' midi', $scope.semainefr[$scope.date.getDay()+4] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+5] +' midi', $scope.semainefr[$scope.date.getDay()+5] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+6] +' midi', $scope.semainefr[$scope.date.getDay()+6] +' soir',
+		  					];
+		  $scope.series = ['glucides','Lipides', 'Protides',];
+		  $scope.data = [
+		    [$scope.jours[0].midi.glucide,$scope.jours[0].soir.glucide,
+		    $scope.jours[1].midi.glucide,$scope.jours[1].soir.glucide,
+			$scope.jours[2].midi.glucide,$scope.jours[2].soir.glucide,
+		    $scope.jours[3].midi.glucide,$scope.jours[3].soir.glucide,
+			$scope.jours[4].midi.glucide,$scope.jours[4].soir.glucide,
+		    $scope.jours[5].midi.glucide,$scope.jours[5].soir.glucide,
+			$scope.jours[6].midi.glucide,$scope.jours[6].soir.glucide,],
+		    [$scope.jours[0].midi.lipide,$scope.jours[0].soir.lipide,
+		    $scope.jours[1].midi.lipide,$scope.jours[1].soir.lipide,
+			$scope.jours[2].midi.lipide,$scope.jours[2].soir.lipide,
+		    $scope.jours[3].midi.lipide,$scope.jours[3].soir.lipide,
+			$scope.jours[4].midi.lipide,$scope.jours[4].soir.lipide,
+		    $scope.jours[5].midi.lipide,$scope.jours[5].soir.lipide,
+			$scope.jours[6].midi.lipide,$scope.jours[6].soir.lipide,],
+		    [$scope.jours[0].midi.protide,$scope.jours[0].soir.protide,
+		    $scope.jours[1].midi.protide,$scope.jours[1].soir.protide,
+			$scope.jours[2].midi.protide,$scope.jours[2].soir.protide,
+		    $scope.jours[3].midi.protide,$scope.jours[3].soir.protide,
+			$scope.jours[4].midi.protide,$scope.jours[4].soir.protide,
+		    $scope.jours[5].midi.protide,$scope.jours[5].soir.protide,
+			$scope.jours[6].midi.protide,$scope.jours[6].soir.protide,],
+		  ];
+
+		  $scope.labels2 = $scope.labels;
+		  $scope.series2 = ['Prix','Calories'];
+		  $scope.data2 = [
+		    [$scope.jours[0].midi.prix,$scope.jours[0].soir.prix,
+		    $scope.jours[1].midi.prix,$scope.jours[1].soir.prix,
+			$scope.jours[2].midi.prix,$scope.jours[2].soir.prix,
+		    $scope.jours[3].midi.prix,$scope.jours[3].soir.prix,
+			$scope.jours[4].midi.prix,$scope.jours[4].soir.prix,
+		    $scope.jours[5].midi.prix,$scope.jours[5].soir.prix,
+			$scope.jours[6].midi.prix,$scope.jours[6].soir.prix,],
+		    [$scope.jours[0].midi.calories,$scope.jours[0].soir.calories,
+		    $scope.jours[1].midi.calories,$scope.jours[1].soir.calories,
+			$scope.jours[2].midi.calories,$scope.jours[2].soir.calories,
+		    $scope.jours[3].midi.calories,$scope.jours[3].soir.calories,
+			$scope.jours[4].midi.calories,$scope.jours[4].soir.calories,
+		    $scope.jours[5].midi.calories,$scope.jours[5].soir.calories,
+			$scope.jours[6].midi.calories,$scope.jours[6].soir.calories,],
+		  ];		  
  };
 
 // edition des repas
@@ -766,7 +1009,63 @@ function($scope,$modal,$state,$log,recettes,auth){
 			if (jour.nbperssoir!=0){
 				$scope.changesoir(jour)
 			}	
-		}			
+		}		
+
+//MAJ du graphe
+		$scope.date = new Date();
+		$scope.semainefr=new Array("Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam","Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam");
+		  $scope.labels = [$scope.semainefr[$scope.date.getDay()] +' midi', $scope.semainefr[$scope.date.getDay()] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+1] +' midi', $scope.semainefr[$scope.date.getDay()+1] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+2] +' midi', $scope.semainefr[$scope.date.getDay()+2] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+3] +' midi', $scope.semainefr[$scope.date.getDay()+3] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+4] +' midi', $scope.semainefr[$scope.date.getDay()+4] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+5] +' midi', $scope.semainefr[$scope.date.getDay()+5] +' soir',
+		  					$scope.semainefr[$scope.date.getDay()+6] +' midi', $scope.semainefr[$scope.date.getDay()+6] +' soir',
+		  					];
+		  $scope.series = ['glucides','Lipides', 'Protides',];
+		  $scope.data = [
+		    [$scope.jours[0].midi.glucide,$scope.jours[0].soir.glucide,
+		    $scope.jours[1].midi.glucide,$scope.jours[1].soir.glucide,
+			$scope.jours[2].midi.glucide,$scope.jours[2].soir.glucide,
+		    $scope.jours[3].midi.glucide,$scope.jours[3].soir.glucide,
+			$scope.jours[4].midi.glucide,$scope.jours[4].soir.glucide,
+		    $scope.jours[5].midi.glucide,$scope.jours[5].soir.glucide,
+			$scope.jours[6].midi.glucide,$scope.jours[6].soir.glucide,],
+		    [$scope.jours[0].midi.lipide,$scope.jours[0].soir.lipide,
+		    $scope.jours[1].midi.lipide,$scope.jours[1].soir.lipide,
+			$scope.jours[2].midi.lipide,$scope.jours[2].soir.lipide,
+		    $scope.jours[3].midi.lipide,$scope.jours[3].soir.lipide,
+			$scope.jours[4].midi.lipide,$scope.jours[4].soir.lipide,
+		    $scope.jours[5].midi.lipide,$scope.jours[5].soir.lipide,
+			$scope.jours[6].midi.lipide,$scope.jours[6].soir.lipide,],
+		    [$scope.jours[0].midi.protide,$scope.jours[0].soir.protide,
+		    $scope.jours[1].midi.protide,$scope.jours[1].soir.protide,
+			$scope.jours[2].midi.protide,$scope.jours[2].soir.protide,
+		    $scope.jours[3].midi.protide,$scope.jours[3].soir.protide,
+			$scope.jours[4].midi.protide,$scope.jours[4].soir.protide,
+		    $scope.jours[5].midi.protide,$scope.jours[5].soir.protide,
+			$scope.jours[6].midi.protide,$scope.jours[6].soir.protide,],
+		  ];
+		  $scope.labels2 = $scope.labels;
+		  $scope.series2 = ['Prix','Calories'];
+		  $scope.data2 = [
+		    [$scope.jours[0].midi.prix,$scope.jours[0].soir.prix,
+		    $scope.jours[1].midi.prix,$scope.jours[1].soir.prix,
+			$scope.jours[2].midi.prix,$scope.jours[2].soir.prix,
+		    $scope.jours[3].midi.prix,$scope.jours[3].soir.prix,
+			$scope.jours[4].midi.prix,$scope.jours[4].soir.prix,
+		    $scope.jours[5].midi.prix,$scope.jours[5].soir.prix,
+			$scope.jours[6].midi.prix,$scope.jours[6].soir.prix,],
+		    [$scope.jours[0].midi.calories,$scope.jours[0].soir.calories,
+		    $scope.jours[1].midi.calories,$scope.jours[1].soir.calories,
+			$scope.jours[2].midi.calories,$scope.jours[2].soir.calories,
+		    $scope.jours[3].midi.calories,$scope.jours[3].soir.calories,
+			$scope.jours[4].midi.calories,$scope.jours[4].soir.calories,
+		    $scope.jours[5].midi.calories,$scope.jours[5].soir.calories,
+			$scope.jours[6].midi.calories,$scope.jours[6].soir.calories,],
+		  ];
+
+
 
     }, function () {
       $log.info('Modal dismissed at: ' + new Date());
@@ -792,7 +1091,7 @@ function($scope,$modal,$state,$log,recettes,auth){
 			}
 		}
  	};
- 	recettes.getlistedecourses($scope.planningenvoyes).success(function(data){$scope.listedecourses = data;});
+ 	recettes.getlistedecourses($scope.planningenvoyes).success(function(data){$scope.test= data; $scope.listedecourses = $scope.test.liste; $scope.total=$scope.test.total});
  };
 
 
@@ -861,8 +1160,12 @@ console.log(coucou) }, function () {
 
 
 
+  $scope.onClick = function (points, evt) {
+    console.log(points, evt);
+  };
 
 
+  //conf du graphe
 
 
 
@@ -889,7 +1192,7 @@ app.controller('ModalInstanceCtrl',
 );
 
 
-// modal de sauvegarde d'une recette
+// modal de sauvegarde d'un planning
 app.controller('ModalInstance2Ctrl', [
 '$scope',
 '$modal',
@@ -1301,7 +1604,7 @@ function ($scope){
 
 
 
-app.controller('RecettesCtrl', [
+app.controller('RecettestestCtrl', [
 	'$scope',
 	'$stateParams',
 	'recettes',

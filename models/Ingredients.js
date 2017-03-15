@@ -7,8 +7,12 @@ var IngredientSchema = new mongoose.Schema({
 	rayon: String,
 	unite: String,
 	recette: {type: mongoose.Schema.Types.ObjectId, ref:'Recette'},
-	type: String, 
-	apport: String, 
+	type: String,
+	glucide: Number,
+	lipide: Number,
+	protide: Number,
+	calories: String, 
+	prix: Number,
 	poidmoyen: String,
 });
 

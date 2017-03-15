@@ -71,7 +71,7 @@ router.post('/login', function(req, res, next){
 
 router.get('/recettesuser/:user', function (req,res,next){
 	Recette.find({$or:[
-    	{author:"aymeric"},
+    	{author:"Aymeric"},
       	{author:req.params.user},  	
     	{author: {$exists: false}}]
     	}, function(err, recettes){
@@ -116,33 +116,45 @@ router.get('/recettealea', function (req,res,next){
 router.post('/listedecourses', function (req,res,next){
 "use strict";
   let items = req.body;
+
   let ingredients = [];
   let result = [];
       async.each(items,
        function(item, callback) { 
       	Recette.find({_id:item.idrecette}, function (err, docs) {
       	 "use strict";
+      	 
    			for (var i=0; i<docs[0].ingredients.length; i++){
-   				ingredients = ingredients.concat([{nom:docs[0].ingredients[i],nbpers:item.nbpers,portionmini:docs[0].portionmini}]) 	
+
+   				ingredients = ingredients.concat([{id:docs[0].ingredients[i]._id,nombre:docs[0].ingredients[i].nombre,nbpers:item.nbpers,portionmini:docs[0].portionmini}]) 	
    				}
     	  callback();
     	});
-      }, 
+      },  
       function (err) {
       	async.each(ingredients,
       		function (ingredient,callback){
-      		  Ingredient.find({_id:ingredient.nom}, function (err, docs) { 
+
+      		  Ingredientsdispo.find({_id:ingredient.id}, function (err, docs) { 
       		  	  "use strict";
-		          var ingredientscomplet = docs[0];
-		          var toto= Math.ceil(ingredient.nbpers/ingredient.portionmini)*ingredientscomplet.nombre;
+			      var ingredientscomplet= JSON.stringify(docs[0]);
+			      ingredientscomplet= JSON.parse(ingredientscomplet);
+
+		          var toto= Math.ceil(ingredient.nbpers/ingredient.portionmini)*ingredient.nombre;
 		          ingredientscomplet.nombre = toto;
-		          result.push(ingredientscomplet);
+		          console.log(ingredientscomplet);
+		          console.log(toto);console.log(ingredientscomplet.poidmoyen);console.log(ingredientscomplet.prix);
+		          ingredientscomplet.prixtemp = toto*ingredientscomplet.poidmoyen/100*ingredientscomplet.prix;
+
+
+		          result.push(ingredientscomplet); 
 		          callback();
 		        });
       		},
       		function(err){
-      			var balance = new jinqJs().from(result).groupBy('idingredientdispo', 'nomi', 'unite', 'rayon').sum('nombre').select();
-         		console.log(balance); 
+      			var balance = new Object();
+      			balance.liste = new jinqJs().from(result).groupBy('nomid', 'unite', 'rayon').sum('nombre').select();
+         		balance.total=new jinqJs().from(result).sum('prixtemp').select();
          		res.json(balance);  			
       		}
       	)	
@@ -160,15 +172,6 @@ router.post('/listedecourses', function (req,res,next){
 
 
 
-//ajouter une recette
-router.post('/recettes/',auth, function (req,res,next){
-	var recette = new Recette(req.body);
-	recette.author = req.payload.username;
-	recette.save(function(err, recette){
-		if (err) { return next (err);}
-		res.json(recette);
-	});
-});	
 
 //récupérer l'id de recette en paramètre pour ajouter dans un url
 router.param('recette', function(req,res,next,id){
@@ -219,26 +222,234 @@ router.param('ingredientsdispo', function(req,res,next,id){
 	return next();
 	});
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// LES RECETTES
+
+//ajouter une recette
+router.post('/recettes/',auth, function (req,res,next){
+	"use strict";
+	var recette = new Recette(req.body);
+	console.log(recette);
+	recette.author = req.payload.username;
+	 let ingredients = [];
+		  let data =[];
+		  let items = recette.ingredients;
+		  recette.glucide = 0;
+		  recette.lipide = 0;
+		  recette.protide = 0;
+		  recette.calories = 0;	
+		  recette.prix = 0;			  	  		  		  
+	      async.each(items,
+	       function(item, callback) { 
+	      	Ingredientsdispo.find({_id:item._id}, function (err, docs) {
+	      	 	"use strict";
+	      	 	var toto = {};
+	      	 	toto.nomid = docs[0].nomid;
+	      	 	toto._id = docs[0]._id;
+	      	 	toto.nombre = item.nombre;
+	      	 	toto.rayon = docs[0].rayon;
+	      	 	toto.unite = docs[0].unite;
+	      	 	toto.poidmoyen = docs[0].poidmoyen;	  	      	 	
+	      	 	toto.type = docs[0].type;
+ 	      	 	toto.glucide = docs[0].glucide;
+	      	 	toto.lipide = docs[0].lipide;
+ 	      	 	toto.protide = docs[0].protide;
+	      	 	toto.calories = docs[0].calories;
+ 	      	 	toto.prix = docs[0].prix;
+
+
+
+	 	      	var tata = {};  			
+	      	 	tata.glucide = toto.nombre*toto.poidmoyen/100* docs[0].glucide/recette.portionmini;
+	      	 	tata.lipide = toto.nombre*toto.poidmoyen/100* docs[0].lipide/recette.portionmini;
+	      	 	tata.protide = toto.nombre*toto.poidmoyen/100* docs[0].protide/recette.portionmini;
+	      	 	tata.calories = toto.nombre*toto.poidmoyen/100* docs[0].calories/recette.portionmini;
+    	 	 	tata.prix = toto.nombre*toto.poidmoyen/100* docs[0].prix/recette.portionmini;
+
+	   			ingredients.push(toto);
+	   			data.push(tata);
+
+	    	  	callback(err);
+	    	});
+	       }, function (err) {
+	       for (var i = 0; i<data.length; i++)
+	       {
+	       	recette.calories = Math.round(parseFloat(recette.calories)+parseFloat(data[i].calories));
+	       	recette.protide = Math.round(parseFloat(recette.protide) + parseFloat(data[i].protide));
+	       	recette.lipide = Math.round(parseFloat(recette.lipide) + parseFloat(data[i].lipide));
+	       	recette.glucide = Math.round(parseFloat(recette.glucide) + parseFloat(data[i].glucide));	
+	      	recette.prix = Math.round(parseFloat(recette.prix) + parseFloat(data[i].prix));	       	
+	       };
+
+	recette.save(function(err, recette){
+		if (err) { return next (err);}
+		res.json(recette);
+	});})
+});	
+
+
+
+//editer une recette
+router.put('/recettes/:recette', auth, function(req,res){
+			"use strict";
+	let recette = new Recette(req.body);
+	if(recette.author != req.payload.username){
+		 return res.status(400).json({message: 'Impossible de modifier des recettes crées par d autres utilisateurs, vos changements ne seront donc pas sauvegardés!'})	
+	}{
+
+		  let ingredients = [];
+		  let data =[];
+		  let items = recette.ingredients;
+		  recette.glucide = 0;
+		  recette.lipide = 0;
+		  recette.protide = 0;
+		  recette.calories = 0;	
+		  recette.prix = 0;			  	  		  		  
+	      async.each(items,
+	       function(item, callback) { 
+	      	Ingredientsdispo.find({_id:item._id}, function (err, docs) {
+	      	 	"use strict";
+	      	 	var toto = {};
+	      	 	toto.nomid = docs[0].nomid;
+	      	 	toto._id = docs[0]._id;
+	      	 	toto.nombre = item.nombre;
+	      	 	toto.rayon = docs[0].rayon;
+	      	 	toto.unite = docs[0].unite;
+	      	 	toto.poidmoyen = docs[0].poidmoyen;	  	      	 	
+	      	 	toto.type = docs[0].type;
+ 	      	 	toto.glucide = docs[0].glucide;
+	      	 	toto.lipide = docs[0].lipide;
+ 	      	 	toto.protide = docs[0].protide;
+	      	 	toto.calories = docs[0].calories;
+ 	      	 	toto.prix = docs[0].prix;
+
+
+
+	 	      	var tata = {};  			
+	      	 	tata.glucide = toto.nombre*toto.poidmoyen/100* docs[0].glucide/recette.portionmini;
+	      	 	tata.lipide = toto.nombre*toto.poidmoyen/100* docs[0].lipide/recette.portionmini;
+	      	 	tata.protide = toto.nombre*toto.poidmoyen/100* docs[0].protide/recette.portionmini;
+	      	 	tata.calories = toto.nombre*toto.poidmoyen/100* docs[0].calories/recette.portionmini;
+    	 	 	tata.prix = toto.nombre*toto.poidmoyen/100* docs[0].prix/recette.portionmini;
+
+	   			ingredients.push(toto);
+	   			data.push(tata);
+
+	    	  	callback(err);
+	    	});
+	       }, function (err) {
+	       for (var i = 0; i<data.length; i++)
+	       {
+	       	recette.calories = Math.round(parseFloat(recette.calories)+ parseFloat(data[i].calories));
+	       	recette.protide = Math.round(parseFloat(recette.protide) + parseFloat(data[i].protide));
+	       	recette.lipide = Math.round(parseFloat(recette.lipide) + parseFloat(data[i].lipide));
+	       	recette.glucide = Math.round(parseFloat(recette.glucide) + parseFloat(data[i].glucide));	
+	      	recette.prix = Math.round(parseFloat(recette.prix) + parseFloat(data[i].prix));	       	
+	       };
+			       
+	
+		
+
+
+		Recette.findOneAndUpdate({_id:req.params.recette}, recette, function (err,recette){
+			if (err) {return next (err);}
+			res.json(recette);
+			   		}  
+		 );		
+		})
+	}	 
+});
+
+
+
+
+
 //avoir les infos d'une recette
 router.get('/recettes/:recette', function (req, res) {
 	req.recette.populate('ingredients', function(err,recette){
-		res.json(req.recette);
-	});		
+		"use strict";
+		  let ingredients = [];
+		  let data =[];
+		  let items = recette.ingredients;
+		  recette.glucide = 0;
+		  recette.lipide = 0;
+		  recette.protide = 0;
+		  recette.calories = 0;	
+		  recette.prix = 0;			  	  		  		  
+	      async.each(items,
+	       function(item, callback) { 
+	      	Ingredientsdispo.find({_id:item._id}, function (err, docs) {
+	      	 	"use strict";
+	      	 	var toto = {};
+	      	 	toto.nomid = docs[0].nomid;
+	      	 	toto._id = docs[0]._id;
+	      	 	toto.nombre = item.nombre;
+	      	 	toto.rayon = docs[0].rayon;
+	      	 	toto.unite = docs[0].unite;
+	      	 	toto.poidmoyen = docs[0].poidmoyen;	  	      	 	
+	      	 	toto.type = docs[0].type;
+ 	      	 	toto.glucide = docs[0].glucide;
+	      	 	toto.lipide = docs[0].lipide;
+ 	      	 	toto.protide = docs[0].protide;
+	      	 	toto.calories = docs[0].calories;
+ 	      	 	toto.prix = docs[0].prix;
+
+
+
+	 	      	var tata = {};  			
+	      	 	tata.glucide = toto.nombre*toto.poidmoyen/100* docs[0].glucide/recette.portionmini;
+	      	 	tata.lipide = toto.nombre*toto.poidmoyen/100* docs[0].lipide/recette.portionmini;
+	      	 	tata.protide = toto.nombre*toto.poidmoyen/100* docs[0].protide/recette.portionmini;
+	      	 	tata.calories = toto.nombre*toto.poidmoyen/100* docs[0].calories/recette.portionmini;
+    	 	 	tata.prix = toto.nombre*toto.poidmoyen/100* docs[0].prix/recette.portionmini;
+
+	   			ingredients.push(toto);
+	   			data.push(tata);
+	    	  	callback(err);
+	    	});
+	       }, function (err) {
+	       recette.ingredients=ingredients;
+	       for (var i = 0; i<data.length; i++)
+	       {
+	       	recette.calories = Math.round(parseFloat(recette.calories)+parseFloat(data[i].calories));
+	       	recette.protide = Math.round(parseFloat(recette.protide) + parseFloat(data[i].protide));
+	       	recette.lipide = Math.round(parseFloat(recette.lipide) + parseFloat(data[i].lipide));
+	       	recette.glucide = Math.round(parseFloat(recette.glucide) + parseFloat(data[i].glucide));	
+	      	recette.prix = Math.round(parseFloat(recette.prix) + parseFloat(data[i].prix));	       	
+	       };
+			console.log(recette)	   ;   	       
+	       res.json(recette);
+	   		}  
+		 );		
+	});
 });
 
-//avoir les infos d'une recette
-router.get('/recettes2/:recette', function (req, res) {
-	Recette.findById({_id:req.params.recette}, req.body, function(err,ingredients){
-		res.json(req.ingredients);
-	});		
-});
 
 
 
 // supprimer une recette
 router.delete('/recettes/:recette', auth, function(req,res){
-	var recette = new Recette(req.body);
-	if(recette.author === req.payload.username){
+	var coucou = req.recette;
+	if(coucou.author === req.payload.username){
 		return req.recette.remove(function(err,recette){
 			if (err) {return next (err);}
 			res.json(req.payload.username);
@@ -246,6 +457,38 @@ router.delete('/recettes/:recette', auth, function(req,res){
 	}res.status(400).json({message: 'Impossible de supprimer des recettes crées par d autres utilisateurs!'});
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// supprimer un ingredient dispo
+router.delete('/ingredientsdispos/:ingredientsdispo', function(req,res){
+	req.ingredientsdispo.remove(function(err,ingredientsdispo){
+		if (err) {return next (err);}
+		res.json(ingredientsdispo);
+	});
+});
+
+
+
+
 
 
 // ajouter un like
@@ -260,6 +503,10 @@ router.put('/recettes/:recette/upvote', function(req,res,next){
 router.post('/recettes/:recette/ingredients', function(req,res,next){
 	var ingredient = new Ingredient(req.body);
 	ingredient.recette = req.recette;
+
+   // Ingredientsdispo.find({_id:ingredient.idingredientdispo}, function (err, docs) { console.log(docs)});
+
+
 	ingredient.save(function(err,ingredient){
 		if(err) {return next(err);}
 		req.recette.ingredients.push(ingredient);
@@ -267,6 +514,7 @@ router.post('/recettes/:recette/ingredients', function(req,res,next){
 			if(err) {return next(err);}
 			res.json(ingredient);
 		});
+
 	});
 });
 
@@ -299,13 +547,6 @@ router.delete('/ingredientsdispos/:ingredientsdispo', function(req,res){
 });
 
 
-// supprimer une recette
-router.delete('/recettes/:recette', function(req,res){
-	req.recette.remove(function(err,recette){
-		if (err) {return next (err);}
-		res.json(recette);
-	});
-});
 
 
 //supprimer un ingredient d'une recette
@@ -323,21 +564,6 @@ router.put('/ingredients/:ingredient', function(req,res){
 		//il manque un truc pour aller chercher le ingredient mis à jour, et non pas celui qui existait avant
 		res.json(ingredient);
 	});
-});
-
-
-
-//editer une recette
-router.put('/recettes/:recette', auth, function(req,res){
-	var recette = new Recette(req.body);		
-	if(recette.author != req.payload.username){
-		 return res.status(400).json({message: 'Impossible de modifier des recettes crées par d autres utilisateurs, vos changements ne seront donc pas sauvegardés!'})	
-	}{
-		Recette.findOneAndUpdate({_id:req.params.recette}, req.body, function (err,recette){
-			if (err) {return next (err);}
-			res.json(recette);
-		})
-	}	 
 });
 
 

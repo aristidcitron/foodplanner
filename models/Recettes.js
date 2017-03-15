@@ -7,9 +7,14 @@ var RecetteSchema = new mongoose.Schema({
 	tempsdepreparation: Number,
 	instructions: String,
 	lien: String,
-	ingredients: [{type: mongoose.Schema.Types.ObjectId, ref: 'Ingredient'}],	
+	ingredients: Array,
 	picture: {type: mongoose.Schema.Types.Mixed, required: false},
 	author: String,
+	glucide: Number,
+	lipide: Number,
+	protide: Number,
+	calories: String, 
+	prix: Number,
 	portionmini: {type: Number, default: 1},
 });
 
