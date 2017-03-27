@@ -66,8 +66,10 @@
             <ul class="nav navbar-nav">
 
               <li ng-class="{active: $state.current.name == 'home'}"><a href="#/recettes">Recettes</a></li>
-              <li ng-class="{active: $state.current.name == 'ingredientsdispos'}"><a href="#/ingredientsdispos">Ingredients</a></li>
+              <li ng-class="{active: $state.current.name == 'ingredientsdispos'}"><a href="#/ingredientsdispos">Ingrédients</a></li>
               <li ng-class="{active: $state.current.name == 'planning'}"><a href="#/planning">Planning</a></li>  
+              <li ng-class="{active: $state.current.name == 'contact'}"><a href="#/contact">contact</a></li>  
+
             </ul>
             <ul class="nav navbar-nav navbar-right">            
 
@@ -104,7 +106,7 @@
      <script type="text/ng-template" id="/recettes.html">
      <div class="container">
          <div class="page-header"> <br>
-          <h1>Liste des recettes <a class="btn btn-primary text-right" href="#/ajouterrecette"> <span class="glyphicon glyphicon-plus"></span> Ajoute ta recette! </a> </h1>
+          <h1>Liste des recettes <a class="btn btn-primary text-right" href="#/ajouterrecette"> <span class="glyphicon glyphicon-plus"></span> Ajoute ta recette! </a> <a class="btn btn-primary text-right" ng-click="sendmail()"> <span class="glyphicon glyphicon-plus"></span> send mail </a> </h1>
           
         </div>
   
@@ -124,7 +126,7 @@
           </div>
         </form>
 
-      <table class="table table-condensed table-striped"> 
+      <table class="table table-condensed table-hover"> 
         <thead>
           <th> photo </th>
           <th> Nom de recette </th>
@@ -234,12 +236,12 @@
 
 
         <div class="form-group">   
-           <button type="submit" class="btn btn-primary"> Ajoute ton ingredient! </button>
+           <button type="submit" class="btn btn-primary"> <span class="glyphicon glyphicon-plus"></span> Ajoute ton ingredient! </button>
          </div>
         </div> 
       </div>
       </form> 
-      <table class="table"> 
+      <table class="table table-condensed table-hover"> 
         <tr>
           <td> Nom de l'ingredient </td>
           <td> Rayons </td>
@@ -285,7 +287,7 @@
 </canvas>
 		</div>
 		           <div class="col-xs-3">
-          calories: {{recette.calories}}
+          calories: {{recette.calories}} cal
           prix: {{recette.prix}} €                         
         </div>        </div>
         <form ng-submit="ajouterRecette()" style="margin-top:30px;">
@@ -333,13 +335,13 @@
        <div class="row">
         <div class="form-group">
          <div class="col-lg-6">
-           <table class="table" for="ingredients"> 
-              <tr>
-                <td> nombre </td>
-                 <td> unite </td>
-                <td> ingredient </td>
+           <table class="table table-condensed table-hover" for="ingredients"> 
+              <thead>
+                <th> nombre </th>
+                 <th> unite </th>
+                <th> ingredient </th>
                 <td></td>
-              </tr>
+              </thead>
               <tr ng-repeat="ingredient in ingredients | orderBy:'nomi'">
                 <td> 
                  <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
@@ -357,7 +359,7 @@
             </div> 
            </div> 
                            <div class="form-group">   
-                   <button type="submit" class="btn btn-primary"> Sauvegarder </button>
+                   <button type="submit" class="btn btn-primary"> <span class="glyphicon glyphicon-cloud-upload"></span> Sauvegarder </button>
                  </div>
       </form>    
 
@@ -375,13 +377,13 @@
             </div>      
           </div>
         </form>
-        <table class="table"> 
-        <tr>
-          <td> Nom de l'ingredient </td>
-          <td> Rayons </td>
-          <td> Unité </td>
-          <td>  </td>
-         </tr>         
+        <table class="table table-condensed table-hover"> 
+        <thead>
+          <th> Nom de l'ingredient </th>
+          <th> Rayons </th>
+          <th> Unité </th>
+          <th>  </th>
+         </thead>         
         <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid' | filter:rechercheIngredientsdispo">
           <td>{{ingredientsdispo.nomid}}</td>
           <td>{{ingredientsdispo.rayon}}</td>
@@ -476,7 +478,7 @@
        </div>
        <div class="row">
         <div class="col-lg-6">
-        <table class="table"> 
+        <table class="table table-condensed table-hover"> 
         <tr>
           <td> nombre </td>
            <td> unite </td>
@@ -510,7 +512,7 @@
             </div>      
           </div>
         </form>
-        <table class="table"> 
+        <table class="table table-condensed table-hover"> 
         <tr>
           <td> Nom de l'ingredient </td>
           <td> Rayons </td>
@@ -558,7 +560,7 @@
          <br>
           <h1>Mes Planning </h1> 
         </div> 
-             <table class="table"> 
+             <table class="table table-condensed table-hover"> 
                       <tr>
                       <th> nom </th>
                         <th> Jour </th>
@@ -571,6 +573,116 @@
                     </table>   
 
 </script>
+
+
+
+
+
+
+<script type="text/ng-template" id="/contact.html">
+         <div class="page-header">
+         <br>
+          <h1>Contact: </h1> 
+        </div> 
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+        <div class="container">
+              <form ng-submit="contact()" name="contactform" novalidate
+    style="margin-top:30px;">
+			    <div class="form-group" ng-class="{ 'has-error': contactform.name.$touched && contactform.name.$invalid }">
+			    <label>Nom:</label>
+			      <input type="text"
+			      class="form-control" name="name" 
+			      placeholder="Paulette la reine des omelettes"
+			      ng-model="mail.username" 
+		        ng-minlength="5"
+		        ng-maxlength="10"
+		        required ></input>
+              <div class="help-block" ng-messages="contactform.name.$error" ng-if="contactform.name.$touched">
+		        <p ng-message="minlength">Your name is too short.</p>
+		        <p ng-message="maxlength">Your name is too long.</p>
+		        <p ng-message="required">Your name is required.</p>
+		      </div>
+			    </div>
+			    <div class="form-group" ng-class="{ 'has-error': contactform.mail.$touched && contactform.mail.$invalid }"">
+			    <label>E-mail:</label>
+			      <input type="email" name="mail" 
+			      class="form-control"
+			      placeholder="Paulette@lareinedesomelette.com"
+			      ng-model="mail.mail"
+			        ng-minlength="5"
+			        ng-maxlength="40"
+			        required
+			      ></input>
+			            <div class="help-block" ng-messages="contactform.mail.$error" ng-if="contactform.mail.$touched">
+				        <p ng-message="required">This field is required</p>
+				        <p ng-message="minlength">This field is too short</p>
+				        <p ng-message="maxlength">This field is too long</p>
+				        <p ng-message="required">This field is required</p>
+				        <p ng-message="email">This needs to be a valid email</p>
+				      </div>
+			    </div>
+
+			    <div class="form-group" ng-class="{ 'has-error': contactform.objet.$touched && contactform.objet.$invalid }">
+			    <label>Objet:</label>
+			      <select type="text"
+			      name="objet" 
+			      class="form-control"
+			      ng-model="mail.objet" required>
+			      	<option>J'adore ce site!</option>
+			      	<option>Il me manque un ingredient...</option>
+			      	<option>J'ai trouvé un bug</option>
+			      	<option>Rien à voir, mais...</option>			      	
+			      </select>
+			      			            <div class="help-block" ng-messages="contactform.objet.$error" ng-if="contactform.objet.$touched">
+
+				        <p ng-message="required">This field is required</p>
+				       
+				      </div>
+			    </div>
+
+			    <div class="form-group" ng-class="{ 'has-error': contactform.corps.$touched && contactform.corps.$invalid }">
+			    <label>Contenu:</label>
+			      <textarea type="text"
+			      class="form-control" name="corps" 
+			      rows="6"
+			      placeholder="Je trouve que..."
+			      ng-model="mail.contenu" required></textarea>
+			    </div>
+                  <div class="help-block" ng-messages="contactform.corps.$error" ng-if="contactform.corps.$touched">
+
+				        <p ng-message="required">This field is required</p>
+				       
+				      </div>
+                 <button type="submit" class="btn btn-success" ng-disabled="contactform.$invalid" >Envoyer</button>                                
+                      
+               </form>    
+   </div>
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -721,7 +833,7 @@
                       <tr>
                         <th> Nombre </th>
                         <th> Unité </th>
-                        <th> Ingreéients </th>
+                        <th> Ingrédients </th>
                         <th>  Rayon </th>        </tr>
                       <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
                         <td>{{listedecourse.nombre}}</td>
@@ -860,7 +972,7 @@
                           </div>      
                         </div>
                       </form>
-                      <table class="table"> 
+                      <table class="table table-hover"> 
                       <tr>
                         <td> Nom de la recette </td>
                         <td> temps de cuisson </td>

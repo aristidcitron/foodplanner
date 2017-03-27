@@ -77,6 +77,28 @@ app.config([
 
 
 
+			.state('contact',{
+				url:'/contact',
+				views:{
+					'page':{
+						templateUrl:'/contact.html',
+						controller:'ContactCtrl',	
+						resolve: {
+							contactPromise:['recettes','auth', function(recettes,auth){
+								return recettes.getuserinfo(auth.currentUser());
+							}]						
+						},											
+
+					},	
+					'menu':{
+						templateUrl:'/menu.html',
+						controller:'NavCtrl',
+					}
+
+				}})
+
+
+
 
 
 
@@ -285,6 +307,8 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 		}
 	}
 
+
+
 	auth.register = function(user){
 		return $http.post('/register', user).success(function(data){
 			auth.saveToken(data.token);
@@ -297,6 +321,9 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 		});
 	}
 
+
+
+
 	auth.logOut = function(){
 		$window.localStorage.removeItem('foodplanner-token');
 	}
@@ -305,7 +332,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
 }])
 
 
-
+	
 
 
 
@@ -340,7 +367,11 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	};
 
 
-
+	o.getuserinfo = function(user){
+		return $http.get('/user/'+ user).success(function(data){
+			o.userinfo=data; console.log(o.userinfo);
+		});
+	};
 
 	// récupérer la liste de toutes les recettes d'un user
 	o.getplannings = function(id){
@@ -397,6 +428,13 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 			angular.copy(data,o.planningenvoyes);
 	});};
 
+
+
+	// récupérer la liste des courses
+	o.sendmail = function(mail){
+		return $http.post('/pushmail/',mail).success(function(data){
+			angular.copy(data);
+	});};
 
 
 
@@ -687,6 +725,8 @@ function($scope,recette,recettes,auth,filepickerService,ingredientsdispos){
         ingredient.editing = true;
     };
 
+
+
     $scope.doneEditing = function (ingredient) {
         ingredient.editing = false;
         var tampon=ingredient;
@@ -777,7 +817,11 @@ function($scope,recettes,auth){
     }).success(function(recette){
 			$scope.recettes.splice($scope.recettes.indexOf(tampon),1);
 		})};
-	
+  	$scope.sendmail = function () {
+  	console.log('coucou');  		
+  		recettes.sendmail();
+    };  
+
 	}]);
 
 
@@ -1457,6 +1501,29 @@ app.controller('ModalInstanceCtrl',
 
 
 
+
+
+
+app.controller('ContactCtrl', [
+	'$scope',
+	'$state',
+	'recettes',
+	'auth',
+function widgetsController($scope, $state,recettes,auth) {
+  $scope.$state = $state;
+  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.currentUser = auth.currentUser;
+  $scope.coucou = recettes.userinfo ;
+  $scope.mail= [];
+  $scope.mail.username=$scope.coucou.user;
+  $scope.mail.mail=$scope.coucou.email;
+
+  $scope.contact = function () {
+  		
+  		recettes.sendmail($scope.mail);
+    };  
+
+}]);
 
 
 

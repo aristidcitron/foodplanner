@@ -17,6 +17,46 @@ var passport = require('passport');
 var User = mongoose.model('User');
 var jinqJs = require('jinq');
 var async = require('async');
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+						user: "ondinequoi@gmail.com",
+						pass: "LP3CvammG"
+    }
+});
+
+
+
+
+
+router.post('/pushmail/', function (req,res,next){
+// setup email data with unicode symbols
+var test = req.body;
+
+let mailOptions = {
+    from: '"On dine quoi?" <ondinequoi@gmail.com>', // sender address
+    to: 'aymeric.thas-pinot@hotmail.com', // list of receivers
+    subject: test.objet, // Subject line
+    html: '<b> envoyé de: </b>' + test.mail + '<br><b> contenu: </b>' +test.contenu// html body
+};
+
+// send mail with defined transport object
+transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        return console.log(error);
+    }
+    console.log('Message %s sent: %s', info.messageId, info.response);
+});
+});
+
+
+
+
+
+
+
+
 
 
 
@@ -81,6 +121,23 @@ router.get('/recettesuser/:user', function (req,res,next){
 });
 
 
+//getuserinfo
+router.get('/user/:user', function (req,res,next){
+
+	if (req.params.user === 'undefined'){res.json("coucou")}else{
+	User.find({username:req.params.user},function(err,user){
+		var back = {};
+		back.user = user[0].username;
+		back.email	= user[0].email;
+		res.json(back);
+
+	});}
+
+
+		
+});
+
+
 
 //avoir la liste des recettes
 router.get('/recettes', function (req,res,next){
@@ -93,21 +150,17 @@ router.get('/recettes', function (req,res,next){
 
 //avoir une recette aléatoire
 router.get('/recettealea', function (req,res,next){
-
-	// Get the count of all users
-	Recette.count().exec(function (err, count) {
-
-	  // Get a random entry
-	  var random = Math.floor(Math.random() * count)
-
-	  // Again query all users but only fetch one offset by our random #
-	  Recette.findOne().skip(random).exec(
-	    function (err, result) {
-	      // Tada! random user
-	      res.json(result) 
-	    })
-	});
+	Recette.find({$or:[
+    	{author:"Aymeric"},
+      	{author:req.params.user},  	
+    	{author: {$exists: false}}]
+    	}, function(err, recettes){
+			if (err) {next(err);}
+			var recette = recettes[Math.floor(Math.random()*recettes.length)]
+			res.json(recette);
+		});
 });
+
 
 
 
@@ -283,7 +336,7 @@ router.post('/recettes/',auth, function (req,res,next){
 	      	 	tata.lipide = toto.nombre*toto.poidmoyen/100* docs[0].lipide/recette.portionmini;
 	      	 	tata.protide = toto.nombre*toto.poidmoyen/100* docs[0].protide/recette.portionmini;
 	      	 	tata.calories = toto.nombre*toto.poidmoyen/100* docs[0].calories/recette.portionmini;
-    	 	 	tata.prix = toto.nombre*toto.poidmoyen/100* docs[0].prix/recette.portionmini;
+    	 	 	tata.prix = toto.nombre*toto.poidmoyen/100* docs[0].prixtionmini;
 
 	   			ingredients.push(toto);
 	   			data.push(tata);
