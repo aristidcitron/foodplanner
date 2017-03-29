@@ -27,12 +27,150 @@ let transporter = nodemailer.createTransport({
 });
 
 
+//ical event
+var ical = require('ical-generator'),
+    http = require('http'),
+    cal = ical({domain: 'ondinequoi.com', name: 'My iCal invite', timezone: 'Europe/Berlin'});
+
+
+
+
+
+router.post('/pushevent/', auth, function (req,res,next){
+// setup email data with unicode symbols
+var test = req.body;
+user = req.payload.username;
+
+
+User.find({username:user},function(err,user){
+		var back = {};
+		back.email	= user[0].email;
+
+
+for (i=0; i<test.length; i++){ 
+// préparr icall
+
+
+if (test[i].midi!=''){ 
+var d= new Date(test[i].date);
+var f=new Date(test[i].date); 
+d.setHours(11, 00, 00, 00);
+f.setHours(13, 00, 00, 00);
+console.log(d);console.log(f);
+
+cal = ical({
+	domain: 'ondinequoi.com', name: 'My iCal invite', timezone: 'Europe/Berlin',
+    events: [
+        {
+			start: d,
+		    end: f,
+		    title : 'Déjeuné',
+		    description : 'A vous de jouer, chef! pour ce midi il faut cuisiner '+test[i].midi.nomr + ' pour ' +test[i].nbpersmidi +' personnes',
+		    summary: 'Mon repas',
+		    sequence: 0,
+		    method: 'request',
+		    organiser: 'Ondinequoi.com <contact@ondinequoi.com>'
+        }
+    ]
+}).toString();
+
+
+
+// preparer mail
+let mailOptions = {
+    from: '"On dine quoi?" <ondinequoi@gmail.com>', // sender address
+    to: back.email, // list of receivers
+    subject: "repas du midi", // Subject line
+        icalEvent: {
+        filename: 'invitation.ics',
+        method: 'request',
+        content: cal
+    }
+};
+
+// send mail with defined transport object
+transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        return console.log(error);
+    }
+    console.log('Message %s sent: %s', info.messageId, info.response);
+});
+};
+if (test[i].soir!=''){
+var d= new Date(test[i].date);
+var f=new Date(test[i].date); 
+d.setHours(18, 00, 00, 00);
+f.setHours(20, 00, 00, 00);
+console.log(d);console.log(f);
+
+cal = ical({
+	domain: 'ondinequoi.com', name: 'My iCal invite', timezone: 'Europe/Berlin',
+    events: [
+        {
+			start: d,
+		    end: f,
+		    title : 'Diner',
+		    description : 'A vous de jouer, chef! pour ce soir il faut cuisiner '+test[i].soir.nomr + ' pour ' +test[i].nbperssoir + ' personnes',
+		    summary: 'Mon repas',
+		    sequence: 0,
+		    method: 'request',
+		    organiser: 'Ondinequoi.com <contact@ondinequoi.com>'
+        }
+    ]
+}).toString();
+
+
+
+// preparer mail
+let mailOptions = {
+    from: '"On dine quoi?" <ondinequoi@gmail.com>', // sender address
+    to: back.email, // list of receivers
+    subject: "repas du soir", // Subject line
+        icalEvent: {
+        filename: 'invitation.ics',
+        method: 'request',
+        content: cal
+    }
+};
+
+// send mail with defined transport object
+transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        return console.log(error);
+    }
+    console.log('Message %s sent: %s', info.messageId, info.response);
+});
+
+}
+
+}
+});
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 router.post('/pushmail/', function (req,res,next){
 // setup email data with unicode symbols
 var test = req.body;
+console.log(test);
 
 let mailOptions = {
     from: '"On dine quoi?" <ondinequoi@gmail.com>', // sender address

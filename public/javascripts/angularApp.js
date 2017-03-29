@@ -430,12 +430,21 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 
 
 
-	// récupérer la liste des courses
+	//envoyer un mail
 	o.sendmail = function(mail){
 		return $http.post('/pushmail/',mail).success(function(data){
 			angular.copy(data);
 	});};
 
+
+
+	//envoyer un event
+	o.sendevent = function(jours){
+		return $http.post('/pushevent/',jours,{
+   			 	headers: {Authorization: 'Bearer '+auth.getToken()}
+ 			 }).success(function(data){
+			angular.copy(data);
+	});};
 
 
 	// récupérer la liste de toutes les recettes d'un user
@@ -1209,7 +1218,11 @@ console.log(coucou) }, function () {
   };
 
 
-  //conf du graphe
+
+  $scope.event = function () {
+  		
+  		recettes.sendevent($scope.jours);
+    };  
 
 
 
@@ -1514,7 +1527,7 @@ function widgetsController($scope, $state,recettes,auth) {
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
   $scope.coucou = recettes.userinfo ;
-  $scope.mail= [];
+  $scope.mail= {};
   $scope.mail.username=$scope.coucou.user;
   $scope.mail.mail=$scope.coucou.email;
 
@@ -1522,6 +1535,8 @@ function widgetsController($scope, $state,recettes,auth) {
   		
   		recettes.sendmail($scope.mail);
     };  
+
+
 
 }]);
 

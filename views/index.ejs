@@ -656,9 +656,9 @@
 				        <p ng-message="required">This field is required</p>
 				       
 				      </div>
-                 <button type="submit" class="btn btn-success" ng-disabled="contactform.$invalid" >Envoyer</button>                                
-                      
-               </form>    
+                 <button type="submit" class="btn btn-success" ng-disabled="contactform.$invalid" >Envoyer</button>                
+                                 
+               </form>       
    </div>
 
 </script>
@@ -773,7 +773,6 @@
          <br>
           <h1>Planning<span ng-hide=plannings[O].nomp>: {{plannings[0].nomp}}</span> </h1>
 
-
         </div>   
     <div class="col-md-7">
              <div class="panel panel-primary text-center">
@@ -781,7 +780,7 @@
 
 
 
-       <h3>Votre semaine</h3> </div>
+       <h3>Votre semaine  <button ng-click=event() class="btn btn-primary"> <span class="glyphicon glyphicon-calendar"></span> Ajouter à mon calendrier</button> </h3> </div>
 <div class="pannel-body">
 
       <table class="table table-hover"> 
