@@ -1,0 +1,118 @@
+<div class="container">
+     <br>
+     <br>
+
+    <div class="page-header">
+        <br>
+         <h1 ng-hide="recette.nomr">Ajouter une recette</h1> 
+         <h1 ng-show="recette.nomr">{{recette.nomr}}</h1> 
+    </div>
+    <div class="row text-center" ng-show="recette.nomr">
+        <div class="col-3">
+            <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels">chart-series="series"</canvas>
+        </div>
+        <div class="col-3">calories: {{recette.calories}} cal prix: {{recette.prix}} €</div>
+    </div>
+    <form ng-submit="ajouterRecette()" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Nom de la recette"
+                    ng-model="nomr" />
+                </div>
+                <div class="form-group">
+                    <textarea type="text" class="form-control" rows="6" placeholder="instructions"
+                    ng-model="instructions "></textarea>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <input type="number" class="form-control" placeholder="Temps de cuission"
+                    ng-model="tempsdecuisson" />
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" placeholder="Temps de préparation"
+                    ng-model="tempsdepreparation" />
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" placeholder="Nombre de personnes"
+                    ng-model="portionmini" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label for="picture">Photo:</label>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary" ng-click="upload()">Upload <span class="caret"></span>
+                        </button>
+                        <div style="margin-top: 10px;">
+                            <!-- Show the thumbnail only when the picture is uploaded --> <a href="{{infophoto.url}}" class="thumbnailperso" ng-show="infophoto.url">
+
+                            <!-- the picture is rendered with width: 500 and sharpened -->
+
+                            <img ng-src="{{infophoto.url | fpConvert: {filter:'sharpen'} }}" />
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-xl-6">
+                    <table class="table table-sm table-hover" for="ingredients">
+                        <thead>
+                            <th>nombre</th>
+                            <th>unite</th>
+                            <th>ingredient</th>
+                            <td></td>
+                        </thead>
+                        <tr ng-repeat="ingredient in ingredients | orderBy:'nomi'">
+                            <td> <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
+                                <input
+                                ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)"
+                                autofocus="autofocus" />
+                            </td>
+                            <td>{{ingredient.unite}}</td>
+                            <td>{{ingredient.nomid}}</td>
+                            <td><span class="fa fa-remove" ng-click="supprimerIngredient(ingredient)"></span>
+                                <span
+                                class="fa fa-pencil" ng-click="editIngredient(ingredient)"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary"> <span class="fa fa-cloud-upload"></span> Sauvegarder</button>
+        </div>
+    </form>
+    <div class="col-xl-6">
+        <form>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="input-group-addon"><i class="fa fa-search"></i>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Rechercher ingredient"
+                    ng-model="rechercheIngredientsdispo" />
+                </div>
+            </div>
+        </form>
+        <table class="table table-sm table-hover">
+            <thead>
+                <th>Nom de l'ingredient</th>
+                <th>Rayons</th>
+                <th>Unité</th>
+                <th></th>
+            </thead>
+            <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid' | filter:rechercheIngredientsdispo">
+                <td>{{ingredientsdispo.nomid}}</td>
+                <td>{{ingredientsdispo.rayon}}</td>
+                <td>{{ingredientsdispo.unite}}</td>
+                <td> <span class="fa fa-plus" ng-click="addtorecette(ingredientsdispo)"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

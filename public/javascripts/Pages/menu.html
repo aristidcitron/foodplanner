@@ -1,0 +1,44 @@
+<nav class="navbar  navbar-toggleable-md  bg-faded fixed-top";" role="navigation">
+
+        <!-- Brand and toggle get grouped for better mobile display --> <a class="navbar-brand" href="#/index">
+            <img src="/images/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            On dine quoi?</a>
+        <!-- Collect the
+        nav links, forms, and other content for toggling -->
+        <ul class="nav navbar-nav">
+            <li ng-class="{active: $state.current.name == 'home'}" class="nav-item"><a href="#/recettes" class="nav-link">Recettes</a>
+            </li>
+            <li ng-class="{active: $state.current.name == 'ingredientsdispos'}" class="nav-item"><a href="#/ingredientsdispos" class="nav-link">Ingrédients</a>
+            </li>
+            <li ng-class="{active: $state.current.name == 'planning'}" class="nav-item"><a href="#/planning" class="nav-link">Planning</a>
+            </li>
+            <li ng-class="{active: $state.current.name == 'contact'}" class="nav-item"><a href="#/contact" class="nav-link">contact</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav ml-auto">
+            <li class="dropdown nav-item" ng-show="isLoggedIn()" ng-class="{active: $state.current.name == 'mesplannings'}"> <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button"
+                aria-haspopup="true" aria-expanded="false">Bienvenu {{ currentUser() }}! <span class="caret"></span></a>
+                <ul
+                class="dropdown-menu">
+                    <li ng-class="{active: $state.current.name == 'mesplannings'}" class="dropdown-item"><a href="#/mesplannings"> Mes plannings</a>
+                    </li>
+                    <li ng-class="{active: $state.current.name == 'listedecourses'}" class="dropdown-item"><a href="#/listedecourses"> Ma liste de courses</a>
+                    </li>                    
+                    <li ng-class="{active: $state.current.name == 'login'}" class="dropdown-item"><a href="" ng-click="logOut()">Se déconnecter</a>
+                    </li>
+                    <li role="separator" class="divider dropdown-item"></li>
+                    <li class="dropdown-item"><a href="#">A venir</a>
+                    </li>
+        </ul>
+        </li>
+        <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'register'}"
+        class="nav-item"><a href="#/register" class="nav-link">S'inscrire</a>
+        </li>
+        <li ng-hide="isLoggedIn()" ng-class="{active: $state.current.name == 'login'}"
+        class="nav-item"><a href="#/login" class="nav-link">Se connecter</a>
+        </li>
+        </ul>
+        <!-- /.navbar-collapse -->
+
+    <!-- /.container-fluid -->
+</nav>

@@ -8,6 +8,7 @@ var UserSchema = new mongoose.Schema({
   salt: String,
   email: {type:String, unique: true},
   profil: {type: String, default: 'user'},
+  listedecourses: [],
 });
 
 UserSchema.methods.setPassword = function(password){

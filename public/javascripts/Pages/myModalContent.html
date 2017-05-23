@@ -1,0 +1,46 @@
+
+
+
+
+    <div class="modal-content">
+<div class="modal-header">
+     <h3 class="modal-title">Changement de repas: {{planningrecettes[k].nomr}} </h3>
+</div>
+      <div class="modal-body">
+<!-- <form name=" addFriendForm">
+
+                <input ng-model = "planningrecettes[0].nomr" class="form-control" type = "text" placeholder="Nom de recette" title=" Username" />
+
+              </form>  -->
+<form name="addFriendForm">
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-search"></i>
+            </div>
+            <input type="text" class="form-control" placeholder="Rechercher recette"
+            ng-model="rechercheRecette" />
+        </div>
+    </div>
+</form>
+<table class="table table-hover">
+    <tr>
+        <td>Nom de la recette</td>
+        <td>temps de cuisson</td>
+        <td>temps de préparation</td>
+        <td></td>
+        <tr ng-repeat="recette in recettes | orderBy :'nomr' | filter:rechercheRecette">
+            <td>{{recette.nomr}}</td>
+            <td>{{recette.tempsdecuisson}}</td>
+            <td>{{recette.tempsdepreparation}}</td>
+            <td> <span class="fa fa-plus" ng-click="ok(recette)"></span>
+            </td>
+        </tr>
+    </tr>
+</table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+</div>
+
+

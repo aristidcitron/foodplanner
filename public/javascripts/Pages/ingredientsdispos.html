@@ -1,0 +1,100 @@
+<div class="container">
+     <br>
+     <br>
+
+    <div class="page-header"><br> 
+          <h1>Liste des ingredients</h1> 
+          </div>
+        <form ng-show="currentUser() == 'Aymeric'" ng-submit="ajouterIngredientsdispo()" style="margin-top:30px;">
+    <h3>Ajouter un nouvel ingredient</h3>
+      <div class="row">
+        <div class="col-lg-6">
+          <label>Nom de l'ingredient</label>
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Pomme de terre" ng-model="nomid"/>
+          </div> 
+          <label>Rayon</label>      
+          <div class="form-group">  
+              <select class="form-control" placeholder="Fruits et légumes" ng-model="rayon "/>
+                <option>Conserves</option>
+                <option>Epicerie</option>                
+                <option>Fruits et légumes</option>
+                <option>Frais</option>                
+                <option>Viandes</option>
+              </select>
+          </div>
+          <label>Unité</label>          
+          <div class="form-group">  
+              <select class="form-control" placeholder="grammes" ng-model="unite "/>
+                <option>ml</option>                 
+                <option>grammes</option>
+                <option>tranche</option>
+                <option>unité</option>
+              </select>
+          </div>
+          <label>Type principal</label>          
+          <div class="form-group">  
+              <select class="form-control" placeholder="protéines" ng-model="type"/>
+                <option>céréales et dérivés</option>    
+                <option>Légumes et fruits</option>                 
+                <option>Lait et produit laitier</option>
+                <option>Viande poisson et oeuf</option>
+                <option>Matières grasses</option>
+                <option>Sucre et produits sucrés</option>
+              </select>              
+          </div>
+          <label>Apport en Kcal pour 100g</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="calories"/>
+          </div>                        
+         </div>
+         <div class="col-lg-6">
+          <label>Poid moyen en grammes (seulement si l'unité n'est pas au poid ou aux ml)</label>         
+           <div class="form-group"> 
+            <input type="number" step="0.01" class="form-control" placeholder="poid moyen" ng-model="poidmoyen"/>
+          </div>
+
+          <label>glucide 100g/100ml</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="glucide"/>
+          </div>   
+           <label>lipide 100g/100ml</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="lipide"/>
+          </div>            
+          <label>protide 100g/100ml</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="protide"/>
+          </div>   
+          <label>prix / 100g, 100ml ou 1 unité ou tranche</label>          
+          <div class="form-group">  
+              <input type="number" step="0.01" class="form-control" placeholder="32" ng-model="prix"/>
+          </div>   
+
+
+
+        <div class="form-group">   
+           <button type="submit" class="btn btn-primary"> <span class="fa fa-plus"></span> Ajoute ton ingredient! </button>
+         </div>
+        </div> 
+      </div>
+      </form> 
+      <table class="table table-condensed table-hover"> 
+        <tr>
+          <td> Nom de l'ingredient </td>
+          <td> Rayons </td>
+          <td> Unité </td>
+          <td> Type </td>
+          <td>  </td></tr>
+        <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid'">
+          <td>{{ingredientsdispo.nomid}}</a></td>
+          <td>{{ingredientsdispo.rayon}}</td>
+          <td>{{ingredientsdispo.unite}}</td>
+          <td>{{ingredientsdispo.type}}</td>
+          <td> 
+            <span class="fa fa-remove" ng-show="currentUser() == 'aymeric'" ng-click="supprimerIngredientsdispos(ingredientsdispo)"></span>
+           </td>
+        </tr>
+      </table>
+      <br><br><br>
+ 	 </div

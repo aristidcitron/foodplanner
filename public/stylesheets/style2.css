@@ -35,11 +35,61 @@ width: 100%;
 -o-background-size: cover;
 background-size: cover;
 }
-#about {
+
+/* modals */
+.fade.in {
+    opacity: 1;
 }
-#services {
-background-color: #AD655F;
+
+.modal-backdrop.in {
+    filter: alpha(opacity=50);
+    opacity: .5;
+}
+
+
+.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) { 
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+
+
+/* colors */
+
+.dark-primary-color    { background: #0097A7; }
+.default-primary-color { background: #00BCD4; }
+.light-primary-color   { background: #B2EBF2; }
+.text-primary-color    { color: #FFFFFF; }
+.accent-color          { background: #FFC107; }
+.primary-text-color    { color: #212121; }
+.secondary-text-color  { color: #757575; }
+.divider-color         { border-color: #BDBDBD; }
+
+#footer {
+background-color: #0097A7;
 color: #ffffff;
+}
+
+#services {
+color: #ffffff;
+}
+#about {
+background-color: #ffffff;
+color: #757575;
 }
 #services .glyphicon {
 border: 2px solid #FFFFFF;
@@ -83,8 +133,14 @@ color: #306d9f;
 
 
 .thumbnailperso{
-    width: 130px;
-    height: 70px;
+    width: 260px;
+    height: 140px;
+    margin: 0 auto;
+}
+.thumbnailperso2{
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
 }
 
 .photodescriptionrecette{

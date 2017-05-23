@@ -1,0 +1,83 @@
+ <BR> <div class="page-header">
+    <h1>S'inscrire</h1>
+  </div>
+
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+
+
+
+  <form ng-submit="register()" name="newUserForm" novalidate
+    style="margin-top:30px;">
+
+
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.name.$touched && newUserForm.name.$invalid }">
+     <label>Nom d'utilisateur</label>
+      <input type="text" name="name" class="form-control" placeholder="Paulette la reine des omelettes"
+        ng-model="user.username"
+        ng-minlength="5"
+        ng-maxlength="10"
+        required>
+      <div class="help-block" ng-messages="newUserForm.name.$error" ng-if="newUserForm.name.$touched">
+        <p ng-message="minlength">Your name is too short.</p>
+        <p ng-message="maxlength">Your name is too long.</p>
+        <p ng-message="required">Your name is required.</p>
+      </div>
+    </div>
+
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.email.$touched && newUserForm.email.$invalid }">
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" placeholder="Paulette@lareinedesomelette.com"
+        ng-model="user.email"
+        ng-minlength="5"
+        ng-maxlength="20"
+        required>     
+      <div class="help-block" ng-messages="newUserForm.email.$error" ng-if="newUserForm.email.$touched">
+        <p ng-message="required">This field is required</p>
+        <p ng-message="minlength">This field is too short</p>
+        <p ng-message="maxlength">This field is too long</p>
+        <p ng-message="required">This field is required</p>
+        <p ng-message="email">This needs to be a valid email</p>
+      </div>
+     </div>
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.password1.$touched && newUserForm.password1.$invalid }">
+      <label>Mot de passe</label>
+      <input  type="password" name="password1" class="form-control" placeholder="chut! c'est secret..."
+        ng-model="user.password1"
+        ng-minlength="5"
+        ng-maxlength="20"
+        required>
+        
+      <div class="help-block" ng-messages="newUserForm.password1.$error" ng-if="newUserForm.password1.$touched">
+        <p ng-message="minlength">mot de passe trop court.</p>
+        <p ng-message="maxlength">mot de passe trop long.</p>
+        <p ng-message="required">Mot de passe obligatoire.</p>
+      </div>
+     </div>
+
+
+
+    <div class="form-group" ng-class="{ 'has-error': newUserForm.password.$touched && newUserForm.password.$invalid }">
+      <label>confirmez mot de passe</label>
+      <input type="password" name="password" class="form-control" placeholder="" ng-pattern="{{user.password1}}"
+        ng-model="user.password"
+        required>
+        
+      <div class="help-block" ng-messages="newUserForm.password.$error" ng-if="newUserForm.password.$touched">
+        <p ng-message="pattern">Les mots de passes sont différents.</p>
+        <p ng-message="required">La confirmation de mot de passe est vide.</p>
+      </div>
+     </div>
+
+
+
+    <button type="submit" class="btn btn-primary" ng-disabled="newUserForm.$invalid">Register</button>
+  </form>

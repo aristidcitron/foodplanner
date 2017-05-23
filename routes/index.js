@@ -417,14 +417,32 @@ router.param('ingredientsdispo', function(req,res,next,id){
 
 
 
+//LA LISTE DE COURSE
+//Ajouter une liste de course 
+router.put('/liste/',auth, function (req,res,next){
+	"use strict";
+	var liste = req.body;
+	console.log (liste);
+	
+		User.update({username:req.payload.username},{
+			     $set: {listedecourses: liste}},function (err,ingredient){
+					if (err) {return next (err);}
+					//il manque un truc pour aller chercher le ingredient mis à jour, et non pas celui qui existait avant
+				res.json(liste);
+	});
+});		
 
 
-
-
-
-
-
-
+//Get une liste de course 
+router.get('/liste/',auth, function (req,res,next){
+	"use strict";
+		User.find({username:req.payload.username},function (err,docs){
+					if (err) {return next (err);}
+					//il manque un truc pour aller chercher le ingredient mis à jour, et non pas celui qui existait avant
+				console.log(docs[0]);
+				res.json(docs[0].listedecourses);
+	});
+});		
 
 
 

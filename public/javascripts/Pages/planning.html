@@ -1,0 +1,189 @@
+<div class="container">
+    <br />
+    <div class="page-header">
+        <br />
+        <div class="row">
+            <div class="col-lg-6">
+                <br />
+                	<h1>Planning<span ng-hide="plannings[O].nomp">: {{plannings[0].nomp}}</span> </h1>
+
+
+               
+            </div> 
+            <div class="col-lg-6">
+               
+                <br />
+                        <div class="form-group row">
+                          <h4>Date :</h4>
+                          <div class="col-10">
+                            <input class="form-control" type="date" ng-model="date"  value="{{date | date: 'yyyy-MM-dd' }}" id="example-date-input">
+                          </div>
+                        </div>
+            </div> <br />
+        </div><br><br>
+    </div>
+
+        <div class="row">  <br>
+
+            <div class="col-lg-4">
+            <div class="card ">
+                <div class="card-header text-center">
+                     <h3>Apports</h3> 
+                </div>
+                <div class="card-block">
+                    <div class="container-fluid">
+                        <br />
+                        <canvas id="line" class="chart chart-line" chart-data="tableauconcat" chart-labels="seriedate"
+                        chart-series="serie" chart-options="options" chart-dataset-override="datasetOverride"
+                        chart-click="onClick"></canvas>
+                    </div>
+                </div>
+            </div><br>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-header text-center">
+                     <h3>calories</h3> 
+                </div> 
+                <div class="card-block">
+                    <div class="container-fluid">
+                        <br />
+                        <canvas id="line" class="chart chart-line" chart-data="seriecalories2" chart-labels="seriedate"
+                        chart-series="serie2" chart-options="options" chart-dataset-override="datasetOverride"
+                        chart-click="onClick"></canvas>
+                    </div>
+                </div>
+            </div> <br>
+        </div>
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-header text-center">
+                     <h3>Prix</h3> 
+                </div> 
+                <div class="card-block">
+                    <div class="container-fluid">
+                        <br />
+                        <canvas id="line" class="chart chart-line" chart-data="serieprix2" chart-labels="seriedate"
+                        chart-series="serie3" chart-options="options" chart-dataset-override="datasetOverride"
+                        chart-click="onClick"></canvas>
+                    </div>
+                </div>
+            </div> <br>
+        </div>
+
+        </div>  
+
+
+
+
+
+
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header text-center">
+                     <h3>Votre semaine  </h3>
+                </div>
+                <div class="card-block">
+                    <table class="table table-hover">
+                        <tr ng-repeat="jour in jours  track by $index">
+                            <td> <strong> {{jour.date | date:'EEEE dd MMMM'}} </strong>
+                                <br />  
+                                <button ng-click="ajouterrepasalea(jour,'midi')"
+                                class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top"
+                                title="Ajouter un repas aléatoire"> <span class=" fa fa-refresh"></span>
+                                </button>
+                                <button ng-click="open(jour,'midi')" class="btn btn-success btn-sm" data-toggle="tooltip"
+                                data-placement="top" title="choisir son repas"> <span class=" fa fa-cutlery"></span>
+                                </button> <span class="text-primary"> <strong> midi: </strong> </span><span class="bg-faded"><strong> {{jour.midi.nomr}}</strong></span> 
+                                <span
+                                ng-show="jour.midi">pour
+                                    <select ng-model="jour.nbpersmidi" ng-change="changemidi(jour)">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                        <option>7</option>
+                                        <option>8</option>
+                                    </select> personnes <span ng-show="jour.portionrestantemidi" class="text-success"> (<span class="fa fa-apple"> </span> :{{jour.portionrestantemidi}})</span>
+                                    <button
+                                    ng-click="delete(jour,'midi')" class="btn btn-warning  btn-sm" data-toggle="tooltip"
+                                    data-placement="top" title="Supprimer"> <span class=" fa fa-scissors"></span>
+                                        </button>
+                                        </span>
+                                        <br />  
+                                        <button ng-click="ajouterrepasalea(jour,'soir')"
+                                        class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top"
+                                        title="Ajouter un repas aléatoire"> <span class=" fa fa-refresh"></span>
+                                        </button>
+                                        <button ng-click="open(jour,'soir')" class="btn btn-success btn-sm" data-toggle="tooltip"
+                                        data-placement="top" title="Choisir son repas"> <span class=" fa fa-cutlery"></span>
+                                        </button> <span class="text-primary"> <strong> soir:  </strong> </span> <span class="bg-faded"><strong> {{jour.soir.nomr}}</strong></span> 
+                                        <span
+                                        ng-show="jour.soir">pour
+                                            <select ng-model="jour.nbperssoir" ng-change="changesoir(jour)">
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                                <option>6</option>
+                                                <option>7</option>
+                                                <option>8</option>
+                                            </select> personnes <span ng-show="jour.portionrestantesoir" class="text-success"> (<span class="fa fa-apple"> </span> :{{jour.portionrestantesoir}})</span>
+                                            <button
+                                            ng-click="delete(jour,'soir')" class="btn btn-warning btn-sm" data-toggle="tooltip"
+                                            data-placement="top" title="Supprimer"> <span class=" fa fa-scissors"></span>
+                                                </button>
+                                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header text-center">
+                     <h3>Liste de courses </h3> 
+                </div>
+                <div class="card-block">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Unité</th>
+                            <th>Ingrédients</th>
+                            <th>Rayon</th>
+                        </tr>
+                        <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' ">
+                            <td>{{listedecourse.nombre}}</td>
+                            <td>{{listedecourse.unite}}</td>
+                            <td>{{listedecourse.nomid}}</td>
+                            <td>{{listedecourse.rayon}}</td>
+                        </tr>
+                    </table>
+                    <br />
+                    <div class="text-center" ng-show="total">pour un total de : {{total[0]}} € (estimation)</div>
+                    <br />
+                    <div class="text-center">
+                    <button ng-click="genererplanning2()" class="btn btn-primary"> <span class="fa fa-shopping-cart"></span> Obtenir la liste</button> <br><br>
+                    <button
+                    ng-click="open2(jours,nom,listedecourses,currentUser)" class="btn btn-primary"> <span class="fa fa-cloud-upload"></span> Sauvegarder planning</button> <br><br>
+                  <button ng-click="sauvegarderliste()" class="btn btn-primary"> <span class="fa fa-cloud-upload"></span> Sauvegarder la liste</button>
+                    </div>
+                </div>
+            </div><br> 
+            </div>
+           </div> 
+<br>
+<br>
+
+
+
+
+    </div>
+</div>
