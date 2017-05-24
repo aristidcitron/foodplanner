@@ -249,7 +249,7 @@ router.post('/login', function(req, res, next){
 
 router.get('/recettesuser/:user', function (req,res,next){
 	Recette.find({$or:[
-    	{author:"Aymeric"},
+    	{public: true},
       	{author:req.params.user},  	
     	{author: {$exists: false}}]
     	}, function(err, recettes){
@@ -520,7 +520,7 @@ router.post('/recettes/',auth, function (req,res,next){
 //editer une recette
 router.put('/recettes/:recette', auth, function(req,res){
 			"use strict";
-	let recette = new Recette(req.body);
+	let recette = new Recette(req.body); 
 	if(recette.author != req.payload.username){
 		 return res.status(400).json({message: 'Impossible de modifier des recettes crées par d autres utilisateurs, vos changements ne seront donc pas sauvegardés!'})	
 	}{
@@ -580,7 +580,7 @@ router.put('/recettes/:recette', auth, function(req,res){
 
 
 		Recette.findOneAndUpdate({_id:req.params.recette}, recette, function (err,recette){
-			if (err) {return next (err);}
+			if (err) {return next (err);}console.log(recette);
 			res.json(recette);
 			   		}  
 		 );		

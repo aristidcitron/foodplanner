@@ -16,6 +16,7 @@ var RecetteSchema = new mongoose.Schema({
 	calories: String, 
 	prix: Number,
 	portionmini: {type: Number, default: 1},
+	public: Boolean,
 });
 
 RecetteSchema.methods.upvote = function(cb) {

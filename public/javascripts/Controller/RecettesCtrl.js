@@ -7,6 +7,7 @@ app.controller('RecettesCtrl', [
 'ingredientsdispos',
 function($scope,recette,recettes,auth,filepickerService,ingredientsdispos){
 	$scope.recette = recette;
+    console.log(recette);
 	$scope.nomr = recette.nomr;
 	$scope.tempsdecuisson = recette.tempsdecuisson;
 	$scope.tempsdepreparation = recette.tempsdepreparation;
@@ -52,11 +53,7 @@ function($scope,recette,recettes,auth,filepickerService,ingredientsdispos){
  		for (var i=0; i<$scope.ingredients.length; i++){
  			$scope.ingidnb[i]={ _id:$scope.ingredients[i]._id,nombre:$scope.ingredients[i].nombre}
  		};
-
-
-
-
-
+            
         recettes.updaterecette({
  			nomr: $scope.nomr,
  			_id:$scope.recette._id,
@@ -65,6 +62,7 @@ function($scope,recette,recettes,auth,filepickerService,ingredientsdispos){
  			tempsdepreparation:$scope.tempsdepreparation,
  			instructions:$scope.instructions,
  			author: $scope.currentUser,
+            public:$scope.recette.public,
  			picture: $scope.infophoto.url,
  			portionmini: $scope.portionmini,
  			ingredients: $scope.ingidnb,

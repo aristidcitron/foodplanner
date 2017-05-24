@@ -1,65 +1,85 @@
 <div class="container">
-     <br>
-     <br>
-
+    <br />
     <div class="page-header">
-        <br>
+        <br />
+        <div class="row">
+            <div class="col-lg-6">
+                <br />
          <h1 ng-hide="recette.nomr">Ajouter une recette</h1> 
          <h1 ng-show="recette.nomr">{{recette.nomr}}</h1> 
-    </div>
-    <div class="row text-center" ng-show="recette.nomr">
+                </div>
+            <div class="col-lg-6 text-right">
+            <br>
+           <md-switch ng-model="recette.public" aria-label="Switch 1">Partager avec les utilisateurs
+            </md-switch>
+                </div>
+    </div>  
+     </div>  <div class="row text-center" ng-show="recette.nomr">
         <div class="col-3">
             <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels">chart-series="series"</canvas>
         </div>
         <div class="col-3">calories: {{recette.calories}} cal prix: {{recette.prix}} €</div>
     </div>
     <form ng-submit="ajouterRecette()" style="margin-top: 30px;">
+          <div class="row text-center">  
+            <div class="form-group">
+            <button type="submit" class="btn btn-primary"> <span class="fa fa-cloud-upload"></span> Sauvegarder</button>
+        </div>
+        </div>
         <div class="row">
-            <div class="col-xl-6">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Nom de la recette"
-                    ng-model="nomr" />
-                </div>
-                <div class="form-group">
-                    <textarea type="text" class="form-control" rows="6" placeholder="instructions"
-                    ng-model="instructions "></textarea>
-                </div>
+            <div class="col-xl-3" style="background-color: #ffffff">
+
+                     <md-input-container class="md-block" flex-gt-xs>
+                      <label>Nom de la recette</label>
+                      <input type="text" ng-model="nomr" >
+                     </md-input-container>
+     
+                     <md-input-container class="md-block" flex-gt-xs>
+                      <label>Instructions</label>
+                      <textarea ng-model="instructions" md-maxlength="150" rows="12" ></textarea>
+                     </md-input-container>
+
+                     
             </div>
-            <div class="col-xl-6">
-                <div class="form-group">
-                    <input type="number" class="form-control" placeholder="Temps de cuission"
-                    ng-model="tempsdecuisson" />
-                </div>
-                <div class="form-group">
-                    <input type="number" class="form-control" placeholder="Temps de préparation"
-                    ng-model="tempsdepreparation" />
-                </div>
-                <div class="form-group">
-                    <input type="number" class="form-control" placeholder="Nombre de personnes"
-                    ng-model="portionmini" />
-                </div>
+            <div class="col-xl-1"></div>
+            <div class="col-xl-3" style="background-color: #ffffff">
+
+                     <md-input-container class="md-block" flex-gt-xs>
+                      <label>Temps de cuission</label>
+                      <input type="number" ng-model="tempsdecuisson" >
+                     </md-input-container>
+
+
+                     <md-input-container class="md-block" flex-gt-xs>
+                      <label>Temps de préparation</label>
+                      <input type="number" ng-model="tempsdepreparation" >
+                     </md-input-container>
+
+                     <md-input-container class="md-block" flex-gt-xs>
+                      <label>Nombre de personnes</label>
+                      <input type="number" ng-model="portionmini" >
+                     </md-input-container>
+
                 <br />
                 <div class="form-group">
-                    <label for="picture">Photo:</label>
                     <div class="text-center">
-                        <button type="button" class="btn btn-secondary" ng-click="upload()">Upload <span class="caret"></span>
+                      
+                        <div class="thumbnailperso2"  >
+                        <img  class="thumbnailperso"  ng-show="infophoto.url" ng-src="{{infophoto.url}}" />
+                        <img ng-src="/images/logo.png" class="thumbnailperso2" ng-hide="recette.picture" />
+
+                         <br>  <br> 
+                        <button type="button" class="btn btn-secondary" ng-click="upload()">Modifier la photo <span class="caret"></span>
                         </button>
-                        <div style="margin-top: 10px;">
-                            <!-- Show the thumbnail only when the picture is uploaded --> <a href="{{infophoto.url}}" class="thumbnailperso" ng-show="infophoto.url">
-
-                            <!-- the picture is rendered with width: 500 and sharpened -->
-
-                            <img ng-src="{{infophoto.url | fpConvert: {filter:'sharpen'} }}" />
-
-                            </a>
+                        
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
+                <div class="col-xl-1"></div>
+               <div class="col-xl-3" style="background-color: #ffffff">
             <div class="form-group">
-                <div class="col-xl-6">
+ 
                     <table class="table table-sm table-hover" for="ingredients">
                         <thead>
                             <th>nombre</th>
@@ -84,11 +104,11 @@
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary"> <span class="fa fa-cloud-upload"></span> Sauvegarder</button>
-        </div>
+
     </form>
-    <div class="col-xl-6">
+    <br>
+    <div class="row text-center">
+
         <form>
             <div class="form-group">
                 <div class="input-group">
@@ -115,4 +135,5 @@
             </tr>
         </table>
     </div>
+
 </div>

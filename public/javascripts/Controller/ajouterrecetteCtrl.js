@@ -6,6 +6,7 @@ app.controller('ajouterrecetteCtrl', [
 'ingredientsdispos',
 function($scope,recettes,auth,filepickerService,ingredientsdispos){
   $scope.recettes = recettes.recettes;
+  console.log("yoman");
   $scope.currentUser = auth.currentUser;
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.ingredientsdispos = ingredientsdispos.ingredientsdispos;
@@ -47,6 +48,7 @@ function($scope,recettes,auth,filepickerService,ingredientsdispos){
  			upvotes: 0,
  			tempsdecuisson: $scope.tempsdecuisson,
  			tempsdepreparation:$scope.tempsdepreparation,
+      public:$scope.recette.public,      
  			instructions:$scope.instructions,
  			author: $scope.currentUser,
  			picture: $scope.infophoto.url,

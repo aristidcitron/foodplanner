@@ -13,6 +13,9 @@ function($scope,$modal,$state,$log,ingredientsdispos,auth,$modalInstance,recette
 		$scope.ingredientsdispos = ingredientsdispos.ingredientsdispos;
    		 $scope.listedecourses = recettes.listedecourses;		
 		$scope.selected = undefined;
+
+
+
 	  $scope.ok = function(selected) {
 	  		for (var i = 0; i < $scope.ingredientsdispos.length; i++) {
  				if ($scope.ingredientsdispos[i].nomid === selected) {

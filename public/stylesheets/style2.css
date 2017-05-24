@@ -70,18 +70,21 @@ background-size: cover;
 
 /* colors */
 
-.dark-primary-color    { background: #0097A7; }
-.default-primary-color { background: #00BCD4; }
-.light-primary-color   { background: #B2EBF2; }
+
+
+.dark-primary-color    { background: #C2185B; }
+.default-primary-color { background: #E91E63; }
+.light-primary-color   { background: #F8BBD0; }
 .text-primary-color    { color: #FFFFFF; }
 .accent-color          { background: #FFC107; }
 .primary-text-color    { color: #212121; }
 .secondary-text-color  { color: #757575; }
 .divider-color         { border-color: #BDBDBD; }
 
+
 #footer {
-background-color: #0097A7;
-color: #ffffff;
+background-color: #FFC107;
+color: #212121;
 }
 
 #services {
@@ -89,7 +92,7 @@ color: #ffffff;
 }
 #about {
 background-color: #ffffff;
-color: #757575;
+color: #212121;
 }
 #services .glyphicon {
 border: 2px solid #FFFFFF;
@@ -148,4 +151,8 @@ color: #306d9f;
     height: 210px;
 }
 
-
+/* autocomplete au premier plan dans modal */
+.md-virtual-repeat-container{
+  z-index:10000 !important;
+  position: absolute !important;
+}

@@ -1,4 +1,4 @@
-var app = angular.module('foodplanner', ['ui.bootstrap.datetimepicker','ngMessages','ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker','chart.js']);
+var app = angular.module('foodplanner', ['ngMaterial','ui.bootstrap.datetimepicker','ngMessages','ui.router','ui.bootstrap', 'angular.filter', 'angular-filepicker','chart.js']);
 
 
 
@@ -557,7 +557,7 @@ app.factory('recettes',['$http', 'auth', function($http, auth){
 	o.updaterecette = function (recette){
 		return $http.put('/recettes/' + recette._id, recette,{
    			 	headers: {Authorization: 'Bearer '+auth.getToken()}
- 			 }).success(function(data){	console.log(data);});
+ 			 }).success(function(data){	console.log(recette);console.log(recette.public);});
 	};
 
 
