@@ -13,12 +13,12 @@ app.config([
 				url:'/index',
 				views:{
 					'page':{
-						templateUrl:'/../javascripts/Pages/home.html',
+						templateUrl:'/../javascripts/pages/home.html',
 						controller:'IndexCtrl',			
 
 					},
 					'menu':{
-						templateUrl:'/../javascripts/Pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
