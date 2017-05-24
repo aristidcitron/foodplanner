@@ -158,7 +158,7 @@ function($scope,$modal,$state,$log,recettes,auth){
    $scope.open = function (jour,moment) {
 
     var modalInstance = $modal.open({
-      templateUrl: '../javascripts/Pages/myModalContent.html',
+      templateUrl: '/../javascripts/Pages/myModalContent.html',
       controller: 'ModalInstanceCtrl',
    	  scope: $scope,
       resolve: {  	
@@ -234,7 +234,7 @@ function($scope,$modal,$state,$log,recettes,auth){
    $scope.open2 = function (jours,nom,listedecourses,currentUser) {
 
     var modalInstance = $modal.open({
-      templateUrl: '/javascripts/pages/myModalContent2.html',
+      templateUrl: '/../javascripts/pages/myModalContent2.html',
       controller: 'ModalInstance2Ctrl',
    	  scope: $scope,
       resolve: {  	

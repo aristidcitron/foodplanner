@@ -36,7 +36,7 @@ function($scope,$modal,$state,$log,recettes,auth){
    $scope.modalajoutlistedecourses = function (currentUser) {
 
     var modalInstance = $modal.open({
-      templateUrl: '/javascripts/pages/Modalajoutlistedecourses.html',
+      templateUrl: '/../javascripts/pages/Modalajoutlistedecourses.html',
       controller: 'ModalajoutlistedecoursesCtrl',
    	  scope: $scope,
       resolve: {  	

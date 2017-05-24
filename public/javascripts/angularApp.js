@@ -30,7 +30,7 @@ app.config([
 				url:'/recettes',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/recettes.html',
+						templateUrl:'/../javascripts/pages/recettes.html',
 						controller:'MainCtrl',						
 						resolve:{
 							//simpleObj:['auth', function(auth){return auth.currentUser();}],
@@ -41,7 +41,7 @@ app.config([
 						}
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -57,7 +57,7 @@ app.config([
 				url:'/mesplannings',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/mesplannings.html',
+						templateUrl:'/../javascripts/pages/mesplannings.html',
 						controller:'MesplanningsCtrl',						
 						resolve:{
 							recettePromise:['recettes','auth', function(recettes,auth){
@@ -66,7 +66,7 @@ app.config([
 						}
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -81,7 +81,7 @@ app.config([
 				url:'/contact',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/contact.html',
+						templateUrl:'/../javascripts/pages/contact.html',
 						controller:'ContactCtrl',	
 						resolve: {
 							contactPromise:['recettes','auth', function(recettes,auth){
@@ -91,7 +91,7 @@ app.config([
 
 					},	
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -107,7 +107,7 @@ app.config([
 				url:'/ajouterrecette',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/ajouterrecette.html',
+						templateUrl:'/../javascripts/pages/ajouterrecette.html',
 						controller:'ajouterrecetteCtrl',						
 						resolve: {
 							ingredientsdispoPromise:['ingredientsdispos', function(ingredientsdispos){
@@ -116,7 +116,7 @@ app.config([
 						},
 					},	
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -128,7 +128,7 @@ app.config([
 				url:'/login',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/login.html',
+						templateUrl:'/../javascripts/pages/login.html',
 						controller:'AuthCtrl',
 						onEnter: ['$state','auth', function($state,auth){
 							if(auth.isLoggedIn()){
@@ -137,7 +137,7 @@ app.config([
 						}]						
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -149,7 +149,7 @@ app.config([
 				url:'/register',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/register.html',
+						templateUrl:'/../javascripts/pages/register.html',
 						controller:'AuthCtrl',
 						onEnter: ['$state','auth', function($state,auth){
 							if(auth.isLoggedIn()){
@@ -158,7 +158,7 @@ app.config([
 						}]						
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -170,7 +170,7 @@ app.config([
 				url:'/ingredientsdispos',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/ingredientsdispos.html',
+						templateUrl:'/../javascripts/pages/ingredientsdispos.html',
 						controller:'IngredientsdisposCtrl',
 						resolve:{
 							ingredientsdispoPromise:['ingredientsdispos', function(ingredientsdispos){
@@ -180,7 +180,7 @@ app.config([
 
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -193,7 +193,7 @@ app.config([
 				url:'/planning',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/planning.html',
+						templateUrl:'/../javascripts/pages/planning.html',
 						controller:'PlanningCtrl',
 						resolve:{
 							recettePromise:['recettes', function(recettes){
@@ -205,7 +205,7 @@ app.config([
 						}
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -220,7 +220,7 @@ app.config([
 				views:{
 					'page':{
 
-						templateUrl:'/javascripts/pages/planning.html',
+						templateUrl:'/../javascripts/pages/planning.html',
 						controller: '1planningCtrl',
 						resolve: {
 							recette:['$stateParams','recettes', function($stateParams, recettes){
@@ -235,7 +235,7 @@ app.config([
 						}
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -247,7 +247,7 @@ app.config([
 				url:'/listedecourses',
 				views:{
 					'page':{
-						templateUrl:'/javascripts/pages/listedecourses.html',
+						templateUrl:'/../javascripts/pages/listedecourses.html',
 						controller:'ListedecoursesCtrl',
 						resolve:{
 							recettePromise:['recettes','auth', function(recettes,auth){
@@ -260,7 +260,7 @@ app.config([
 						}
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
@@ -277,7 +277,7 @@ app.config([
 				views:{
 					'page':{
 
-						templateUrl:'/javascripts/pages/ajouterrecette.html',
+						templateUrl:'/../javascripts/pages/ajouterrecette.html',
 						controller: 'RecettesCtrl',
 						resolve: {
 							recette:['$stateParams','recettes', function($stateParams, recettes){
@@ -289,7 +289,7 @@ app.config([
 						}
 					},
 					'menu':{
-						templateUrl:'/javascripts/pages/menu.html',
+						templateUrl:'/../javascripts/pages/menu.html',
 						controller:'NavCtrl',
 					}
 
