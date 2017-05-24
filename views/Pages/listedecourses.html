@@ -1,0 +1,54 @@
+<div class="container">
+     <br>
+     <br>
+
+    <div class="page-header">
+         <br>
+          <h1>Ma liste de course </h1>
+
+        </div> <div class="row">
+          <div class="col-lg-5">
+
+          <h3>A acheter</h3>
+                    <table class="table table-hover">
+                        <tr>
+                            <th></th>
+                            <th>Nombre</th>
+                            <th>Unité</th>
+                            <th>Ingrédients</th>
+                            <th>Rayon</th>
+                        </tr>
+                        <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' | filter:'todo93' ">
+                            <td><input type="checkbox" class="form-check-input" ng-click="fait(listedecourse)" class="text-success"></td>
+                            <td> <span ng-hide="listedecourse.editing" ng-dblclick="edit(listedecourse)">{{listedecourse.nombre}}</span>
+                                <input
+                                ng-show="listedecourse.editing" ng-model="listedecourse.nombre" ng-blur="doneEditing(listedecourse)"
+                                autofocus="autofocus" /></td>
+                            <td>{{listedecourse.unite}}</td>
+                            <td>{{listedecourse.nomid}}</td>
+                            <td>{{listedecourse.rayon}}</td>
+                        </tr>
+                    </table> <i class="fa fa-plus fa-3x text-success" aria-hidden="true" ng-click="modalajoutlistedecourses()"></i></div>
+
+          <div class="col-lg-2">  </div>                  
+               <div class="col-lg-5">
+                    <h3>J'ai déjà!</h3>  
+                    <table class="table table-hover">
+                        <tr>
+                            <th></th>
+                            <th>Nombre</th>
+                            <th>Unité</th>
+                            <th>Ingrédients</th>
+                            <th>Rayon</th>
+                        </tr>
+                        <tr ng-repeat="listedecourse in listedecourses | orderBy :'rayon' | filter:'done93'" class="text-muted" >
+                            <td><input type="checkbox" checked class="form-check-input" ng-click="fait(listedecourse)"></td>
+                            <td><del><em>{{listedecourse.nombre}}</em></del></td>
+                            <td><del><em>{{listedecourse.unite}}</em></del></td>
+                            <td><del><em>{{listedecourse.nomid}}</em></del></td>
+                            <td><del><em>{{listedecourse.rayon}}</em></del></td>
+                        </tr>
+                    </table>  
+                    </div> </div>                             
+   </div>
+                  

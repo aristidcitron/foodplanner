@@ -1,0 +1,122 @@
+     <div class="container">
+        <div class="page-header">
+        <br><br>
+          <h1>
+
+           <span ng-hide="recette.editingnomr" ng-dblclick="editrecettename(recette)"> {{recette.nomr}}  </span>
+           <input ng-show="recette.editingnomr" ng-model="recette.nomr" ng-blur="doneeditrecettename(recette)" autofocus />
+           <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingnomr" ng-click="editrecettename(recette)"></span></td>
+
+          </h1> 
+          by {{recette.author}}</div>
+            <div ng-show="error" class="alert alert-danger row">
+              <span>{{ error.message }}</span>
+            </div>
+
+       <div class="row">
+        <div class="col-lg-6"> 
+          <img ng-src="{{recette.picture}}" class="photodescriptionrecette" ng-show="recette.picture"> <br>  <br> 
+        </div>
+         <div class="col-lg-6"> 
+
+        <h4 > pour
+           <span ng-hide="recette.editingportionmini" ng-dblclick="editrecetteportionmini(recette)"> {{recette.portionmini}}  </span>
+           <input ng-show="recette.editingportionmini" ng-model="recette.portionmini" ng-blur="doneeditrecetteportionmini(recette)" autofocus />personnes
+           <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingportionmini" ng-click="editrecetteportionmini(recette)"></span></td>
+           
+        <h4>   
+
+          <h4 > instruction: <span class="glyphicon glyphicon-pencil" ng-hide="recette.editinginstructions" ng-click="editrecetteinstructions(recette)"></span> </h4>
+          <div ng-hide="recette.editinginstructions">
+            <span ng-hide="recette.instructions" ng-dblclick="editrecetteinstructions(recette)"> A vous d'improviser :) </span> 
+          </div>
+          <div  ng-hide="recette.editinginstructions" ng-dblclick="editrecetteinstructions(recette)" > 
+            <span ng-show="recette.instructions"> {{recette.instructions}} </span>
+          </div>
+          <input ng-show="recette.editinginstructions" ng-model="recette.instructions" ng-blur="doneeditrecetteinstructions(recette)" autofocus />
+
+
+
+
+
+          <h4 > temps de cuisson: <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingtempsdecuisson" ng-click="editrecettetempsdecuisson(recette)"></span> </h4>
+          <div ng-hide="recette.editingtempsdecuisson">
+            <span ng-hide="recette.tempsdecuisson" ng-dblclick="editrecettetempsdecuisson(recette)"> ?? min </span> 
+          </div>
+          <div  ng-hide="recette.editingtempsdecuisson" ng-dblclick="editrecettetempsdecuisson(recette)" > 
+            <span ng-show="recette.tempsdecuisson"> {{recette.tempsdecuisson}} min </span>
+          </div>
+          <input type="number" ng-show="recette.editingtempsdecuisson" ng-model="recette.tempsdecuisson" ng-blur="doneeditrecettetempsdecuisson(recette)" autofocus /> 
+
+
+
+
+
+          <h4 > temps de préparation: <span class="glyphicon glyphicon-pencil" ng-hide="recette.editingtempsdepreparation" ng-click="editrecettetempsdepreparation(recette)"></span> </h4>
+          <div ng-hide="recette.editingtempsdepreparation">
+            <span ng-hide="recette.tempsdepreparation" ng-dblclick="editrecettetempsdepreparation(recette)"> ?? min </span> 
+          </div>
+          <div  ng-hide="recette.editingtempsdepreparation" ng-dblclick="editrecettetempsdepreparation(recette)" > 
+            <span ng-show="recette.tempsdepreparation"> {{recette.tempsdepreparation}} min </span>
+          </div>
+          <input type="number" ng-show="recette.editingtempsdepreparation" ng-model="recette.tempsdepreparation" ng-blur="doneeditrecettetempsdepreparation(recette)" autofocus /> 
+
+
+
+        </div>
+       </div>
+       <div class="row">
+        <div class="col-lg-6">
+        <table class="table table-condensed table-hover"> 
+        <tr>
+          <td> nombre </td>
+           <td> unite </td>
+          <td> ingredient </td>
+          <td></span></td>
+        </tr>
+        <tr  ng-repeat="ingredient in recette.ingredients | orderBy:'nomi'">
+          <td> 
+           <span ng-hide="ingredient.editing" ng-dblclick="editIngredient(ingredient)">{{ingredient.nombre}}</span>
+           <input ng-show="ingredient.editing" ng-model="ingredient.nombre" ng-blur="doneEditing(ingredient)" autofocus />
+          </td>
+          <td> {{ingredient.unite}}</td>
+          <td> {{ingredient.nomid}}</td>
+
+          <td><span class="glyphicon glyphicon-remove" ng-click="supprimerIngredient(ingredient)"></span>
+          <span class="glyphicon glyphicon-pencil" ng-click="editIngredient(ingredient)"></span></td>
+
+          </tr>
+        </table>      
+
+          </div>
+        <div class="col-lg-6"> 
+             <h4> Ajouter des ingredients </h4>
+          <form>
+          <div class="form-group">
+            <div class="input-group">
+              <div class="input-group-addon"><i class="fa fa-search"></i></div>
+
+              <input type="text" class="form-control" placeholder="Rechercher ingredient" ng-model="rechercheIngredientsdispo">
+
+            </div>      
+          </div>
+        </form>
+        <table class="table table-condensed table-hover"> 
+        <tr>
+          <td> Nom de l'ingredient </td>
+          <td> Rayons </td>
+          <td> Unité </td>
+          <td>  </td>
+        <tr ng-repeat="ingredientsdispo in ingredientsdispos | orderBy :'nomid' | filter:rechercheIngredientsdispo">
+          <td>{{ingredientsdispo.nomid}}</a></td>
+          <td>{{ingredientsdispo.rayon}}</td>
+          <td>{{ingredientsdispo.unite}}</td>
+          <td> 
+            <span class="glyphicon glyphicon-plus" ng-click="addtorecette(ingredientsdispo)"></span>
+           </td>
+        </tr>
+      </table>  
+
+         </div>
+        </div>  
+        </div>

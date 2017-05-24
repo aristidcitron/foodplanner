@@ -1,0 +1,50 @@
+<div class="container">
+     <br>
+     <br>
+
+    <div class="page-header">
+        <br />
+        <div class="row">
+    <div class="col-sm-6">   
+         <h1>Liste des recettes</h1>
+    </div>
+    <div class="col-sm-6 text-right"> <a class="btn btn-primary " href="#/ajouterrecette"> <span class="fa fa-plus"></span> Ajoute ta recette! </a>  
+    </div>   
+    </div> 
+    </div> 
+    <div ng-show="error" class="alert alert-danger row"> <span>{{ error.message }}</span>
+    </div>
+    <form>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-search"></i>
+                </div>
+                <input type="text" class="form-control" placeholder="Rechercher recette"
+                ng-model="rechercherecette" />
+            </div>
+        </div>
+    </form>
+
+<div class="row">
+   <div class="col-sm-4" ng-repeat="recette in recettes | orderBy :'-upvotes'| filter:rechercherecette" >
+      <div  class="card"> <br>
+        <img ng-src="{{recette.picture}}" class="thumbnailperso" ng-show="recette.picture" />
+        <img ng-src="/images/logo.png" class="thumbnailperso2" ng-hide="recette.picture" />
+        <div class="card-block">
+          <h4 class="card-title text-center"><a href="#/recettes/{{recette._id}}">{{recette.nomr}}</a> </h4>
+          <p class="card-text"><span ng-show="recette.instructions"></span>Instructions: {{recette.instructions | limitTo: 80}} ...   
+                </p>
+          <p class="card-text"><small class="text-muted"> <span class="fa fa-thumbs-up" style="color: blue;" ng-click="incrementUpvotes (recette)"></span>
+{{recette.upvotes}}
+                <span
+                class="fa fa-remove" style="" ng-click="supprimerRecette(recette)"></span> <br> Préparation: <span ng-show="recette.tempsdepreparation"> <span class="fa fa-clock-o"> </span> {{recette.tempsdepreparation}}
+                </span><br>
+                <span ng-show="recette.tempsdecuisson">Cuisson: <span class="fa fa-clock-o"> </span>{{recette.tempsdecuisson}}
+                </span>
+                </small></p>
+        </div>
+      </div><br>
+</div> 
+
+</div><br><br>
+</div>

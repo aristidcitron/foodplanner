@@ -1,0 +1,21 @@
+<div class="container">
+     <br>
+     <br>
+
+    <div class="page-header">
+         <br>
+          <h1>Mes Planning </h1> 
+        </div> 
+             <table class="table table-condensed table-hover"> 
+                      <tr>
+                      <th> nom </th>
+                        <th> Jour </th>
+                      </tr>
+                      <tr ng-repeat="planning in plannings ">
+                        <td><a href ="#/plannings/{{planning._id}}">{{planning.nomp}}</a></td>
+                        <td>Créé le {{planning.date | date:'dd-MM'}} à {{planning.date | date:'hh:mm'}} <span class="fa fa-remove" ng-click="supprimerplanning(planning)"></span></td>                    
+
+                      </tr>
+                    </table>   
+                    </div>
+                  

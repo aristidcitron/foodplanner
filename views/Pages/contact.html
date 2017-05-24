@@ -1,0 +1,84 @@
+<div class="container">
+     <br>
+     <br>
+            <br>
+    <div class="page-header">
+
+          <h1>Contact: </h1> 
+        </div> 
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+        <div class="container">
+              <form ng-submit="contact()" name="contactform" novalidate
+    style="margin-top:30px;">
+			    <div class="form-group" ng-class="{ 'has-error': contactform.name.$touched && contactform.name.$invalid }">
+			    <label>Nom:</label>
+			      <input type="text"
+			      class="form-control" name="name" 
+			      placeholder="Paulette la reine des omelettes"
+			      ng-model="mail.username" 
+		        ng-minlength="5"
+		        ng-maxlength="10"
+		        required ></input>
+              <div class="help-block" ng-messages="contactform.name.$error" ng-if="contactform.name.$touched">
+		        <p ng-message="minlength">Your name is too short.</p>
+		        <p ng-message="maxlength">Your name is too long.</p>
+		        <p ng-message="required">Your name is required.</p>
+		      </div>
+			    </div>
+			    <div class="form-group" ng-class="{ 'has-error': contactform.mail.$touched && contactform.mail.$invalid }"">
+			    <label>E-mail:</label>
+			      <input type="email" name="mail" 
+			      class="form-control"
+			      placeholder="Paulette@lareinedesomelette.com"
+			      ng-model="mail.mail"
+			        ng-minlength="5"
+			        ng-maxlength="40"
+			        required
+			      ></input>
+			            <div class="help-block" ng-messages="contactform.mail.$error" ng-if="contactform.mail.$touched">
+				        <p ng-message="required">This field is required</p>
+				        <p ng-message="minlength">This field is too short</p>
+				        <p ng-message="maxlength">This field is too long</p>
+				        <p ng-message="required">This field is required</p>
+				        <p ng-message="email">This needs to be a valid email</p>
+				      </div>
+			    </div>
+
+			    <div class="form-group" ng-class="{ 'has-error': contactform.objet.$touched && contactform.objet.$invalid }">
+			    <label>Objet:</label>
+			      <select type="text"
+			      name="objet" 
+			      class="form-control"
+			      ng-model="mail.objet" required>
+			      	<option>J'adore ce site!</option>
+			      	<option>Il me manque un ingredient...</option>
+			      	<option>J'ai trouvé un bug</option>
+			      	<option>Rien à voir, mais...</option>			      	
+			      </select>
+			      			            <div class="help-block" ng-messages="contactform.objet.$error" ng-if="contactform.objet.$touched">
+
+				        <p ng-message="required">This field is required</p>
+				       
+				      </div>
+			    </div>
+
+			    <div class="form-group" ng-class="{ 'has-error': contactform.corps.$touched && contactform.corps.$invalid }">
+			    <label>Contenu:</label>
+			      <textarea type="text"
+			      class="form-control" name="corps" 
+			      rows="6"
+			      placeholder="Je trouve que..."
+			      ng-model="mail.contenu" required></textarea>
+			    </div>
+                  <div class="help-block" ng-messages="contactform.corps.$error" ng-if="contactform.corps.$touched">
+
+				        <p ng-message="required">This field is required</p>
+				       
+				      </div>
+                 <button type="submit" class="btn btn-success" ng-disabled="contactform.$invalid" >Envoyer</button>                
+                                 
+               </form>     <br><br>  
+   </div>   </div> 
