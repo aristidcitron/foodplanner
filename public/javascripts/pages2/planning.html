@@ -44,7 +44,7 @@
             <div class="col-lg-4">
               <div class="card">
                 <div class="card-header text-center">
-                     <h3>calories</h3> 
+                     <h3>Calories</h3> 
                 </div> 
                 <div class="card-block">
                     <div class="container-fluid">
@@ -97,7 +97,13 @@
                                 </button>
                                 <button ng-click="open(jour,'midi')" class="btn btn-success btn-sm" data-toggle="tooltip"
                                 data-placement="top" title="choisir son repas"> <span class=" fa fa-cutlery"></span>
-                                </button> <span class="text-primary"> <strong> midi: </strong> </span><span class="bg-faded"><strong> {{jour.midi.nomr}}</strong></span> 
+                                </button>
+                                     <button ng-show="jour.midi"
+                                    ng-click="delete(jour,'midi')" class="btn btn-warning  btn-sm" data-toggle="tooltip"
+                                    data-placement="top" title="Supprimer"> <span class=" fa fa-scissors"></span>
+                                        </button>
+
+                                 <span class="text-primary"> <strong> midi: </strong> </span><span class="bg-faded"><strong> {{jour.midi.nomr}}</strong></span> 
                                 <span
                                 ng-show="jour.midi">pour
                                     <select ng-model="jour.nbpersmidi" ng-change="changemidi(jour)">
@@ -110,10 +116,7 @@
                                         <option>7</option>
                                         <option>8</option>
                                     </select> personnes <span ng-show="jour.portionrestantemidi" class="text-success"> (<span class="fa fa-apple"> </span> :{{jour.portionrestantemidi}})</span>
-                                    <button
-                                    ng-click="delete(jour,'midi')" class="btn btn-warning  btn-sm" data-toggle="tooltip"
-                                    data-placement="top" title="Supprimer"> <span class=" fa fa-scissors"></span>
-                                        </button>
+                               
                                         </span>
                                         <br />  
                                         <button ng-click="ajouterrepasalea(jour,'soir')"
@@ -122,7 +125,13 @@
                                         </button>
                                         <button ng-click="open(jour,'soir')" class="btn btn-success btn-sm" data-toggle="tooltip"
                                         data-placement="top" title="Choisir son repas"> <span class=" fa fa-cutlery"></span>
-                                        </button> <span class="text-primary"> <strong> soir:  </strong> </span> <span class="bg-faded"><strong> {{jour.soir.nomr}}</strong></span> 
+                                        </button>
+                                                                                    <button ng-show="jour.soir"
+                                            ng-click="delete(jour,'soir')" class="btn btn-warning btn-sm" data-toggle="tooltip"
+                                            data-placement="top" title="Supprimer"> <span class=" fa fa-scissors"></span>
+                                                </button> 
+
+                                        <span class="text-primary"> <strong> soir:  </strong> </span> <span class="bg-faded"><strong> {{jour.soir.nomr}}</strong></span> 
                                         <span
                                         ng-show="jour.soir">pour
                                             <select ng-model="jour.nbperssoir" ng-change="changesoir(jour)">
@@ -135,10 +144,7 @@
                                                 <option>7</option>
                                                 <option>8</option>
                                             </select> personnes <span ng-show="jour.portionrestantesoir" class="text-success"> (<span class="fa fa-apple"> </span> :{{jour.portionrestantesoir}})</span>
-                                            <button
-                                            ng-click="delete(jour,'soir')" class="btn btn-warning btn-sm" data-toggle="tooltip"
-                                            data-placement="top" title="Supprimer"> <span class=" fa fa-scissors"></span>
-                                                </button>
+
                                                 </span>
                             </td>
                         </tr>
